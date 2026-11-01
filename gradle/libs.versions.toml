@@ -21,12 +21,11 @@ composeBom              = "2026.09.00"
 
 # --- Persistence (docs/ARCHITECTURE.md, D-004): Room for the detector state and the journal, written in
 # one transaction; DataStore for the settings. Versions of App Manager Tech.
+# The first migration test brings room-testing AND, as App Manager Tech does, a kotlinx-serialization 1.8.1
+# version constraint: room-testing reads the schemas with it, and instrumented tests run against the app's
+# library versions (App Manager Tech, 2026-10-08: AbstractMethodError in every migration test).
 room                    = "2.8.5"
 datastore               = "1.1.1"
-# Never declared as a dependency: a version CONSTRAINT only. room-testing 2.8 reads the exported schemas
-# with kotlinx-serialization 1.8.1, and instrumented tests run against the APP's library versions
-# (App Manager Tech, 2026-10-08: AbstractMethodError in every migration test). See app/build.gradle.kts.
-kotlinxSerialization    = "1.8.1"
 
 # --- Hilt ---
 hilt                    = "2.60.1"
@@ -68,9 +67,7 @@ compose-material3                       = { group = "androidx.compose.material3"
 room-runtime                            = { group = "androidx.room",                   name = "room-runtime",                      version.ref = "room" }
 room-ktx                                = { group = "androidx.room",                   name = "room-ktx",                          version.ref = "room" }
 room-compiler                           = { group = "androidx.room",                   name = "room-compiler",                     version.ref = "room" }
-room-testing                            = { group = "androidx.room",                   name = "room-testing",                      version.ref = "room" }
 datastore-preferences                   = { group = "androidx.datastore",              name = "datastore-preferences",             version.ref = "datastore" }
-kotlinx-serialization-core              = { group = "org.jetbrains.kotlinx",           name = "kotlinx-serialization-core",        version.ref = "kotlinxSerialization" }
 
 hilt-android                            = { group = "com.google.dagger",               name = "hilt-android",                      version.ref = "hilt" }
 hilt-android-compiler                   = { group = "com.google.dagger",               name = "hilt-android-compiler",             version.ref = "hilt" }
