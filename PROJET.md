@@ -127,8 +127,9 @@ minSdk probable : 29 (Android 10, rôle de filtrage).
 
 - ~~Nom définitif (« Call Guard Tech » provisoire ; vérifier qu'aucune appli connue ne le porte).~~
   **Tranché le 2026-11-01 : Call Halt Tech** (§ 9.4). INPI : rien ; domaine libre.
-- SMS au proche (permission d'envoi) : oui / non / en option.
-- F-Droid ou GitHub seul.
+- ~~SMS au proche (permission d'envoi) : oui / non / en option.~~ **Oui** (Patrice, 2026-11-01).
+- ~~F-Droid ou GitHub seul.~~ **F-Droid : oui** (Patrice, 2026-11-01). Conséquences : `docs/ARCHITECTURE.md`,
+  D-016.
 - Revérifier, au lancement, la protection de Google en France.
 
 ## 8. Prochaine étape : un prototype de mesure (1 à 2 jours, S9 + émulateur)
