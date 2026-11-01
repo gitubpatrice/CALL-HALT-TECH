@@ -46,6 +46,11 @@ vous demandera jamais cela pendant un appel. Raccrochez, puis rappelez-la vous-m
    vérification CI et la politique de confidentialité. Jamais de permission Internet.
 6. **Pas de service d'accessibilité** : les banques les détectent et refusent de fonctionner.
 7. **Cohabite avec Saracroche** : l'appli ne prend aucun rôle exclusif (filtrage d'appels, téléphone, SMS).
+8. **Le proche est prévenu par SMS** (Patrice, 2026-11-01) : quand un STOP s'affiche, quand « Continuer » est
+   choisi malgré l'alerte, quand la protection est coupée.
+9. **Publication sur F-Droid** (Patrice, 2026-11-01), comme Agenda Tech et SMS Tech : build reproductible,
+   fiche fastlane en 5 langues, l'APK servi est le nôtre. La chaîne de build (AGP, Kotlin, Gradle) monte
+   avec tout le portefeuille, jamais seule.
 
 ## La prochaine étape : le prototype de mesure
 
@@ -65,8 +70,8 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
   depuis une session ouverte dedans). La mémoire du projet est déjà copiée sous le nouveau nom.
 - **Faire relire les phrases de sécurité** allemandes, italiennes et espagnoles par quelqu'un dont c'est la
   langue : une consigne mal traduite ferait faire l'inverse.
-- **Trancher** : SMS au proche (oui, non, en option) ; F-Droid ou GitHub seul ; les mises à jour Dependabot
-  n° 1 (DataStore 1.3.0) et n° 3 (AGP 9.5.0), pour tout le portefeuille à la fois.
+- ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid
+  oui ; DataStore 1.3.0 fusionné, AGP 9.5.0 reporté à la prochaine montée de tout le portefeuille.
 - Facultatif : la recherche de marque sur TMview (Union européenne) ; la calibration de GPT Luna
   (moins de 0,10 $) pour savoir s'il trouve autant que Sol.
 
