@@ -26,7 +26,7 @@ datastore               = "1.1.1"
 # Never declared as a dependency: a version CONSTRAINT only. room-testing 2.8 reads the exported schemas
 # with kotlinx-serialization 1.8.1, and instrumented tests run against the APP's library versions
 # (App Manager Tech, 2026-10-08: AbstractMethodError in every migration test). See app/build.gradle.kts.
-kotlinxSerialization    = "1.8.1"
+kotlinxSerialization    = "1.12.0"
 
 # --- Hilt ---
 hilt                    = "2.60.1"
