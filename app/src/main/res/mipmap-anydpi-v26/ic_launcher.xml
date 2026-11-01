@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- minSdk 29: every supported phone reads adaptive icons (no bitmap fallback; the -v26 qualifier stays, see lint.xml). The checkerboard of
+     the portfolio behind, the shield in front; the monochrome layer is the themed icon of Android 13+. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>

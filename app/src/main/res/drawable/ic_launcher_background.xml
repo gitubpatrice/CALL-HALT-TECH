@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The checkerboard of the Files Tech logo (J:\PSD FILES\background-files-tech.png): blue top-left and bottom-right,
+    red top-right and bottom-left, white seams between the four squares — the values of ui/theme/Damier.kt. Drawn
+    over the whole 108 dp canvas: the launcher's mask shows its centre, the four squares meeting under the shield.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF" android:pathData="M0,0h108v108h-108z" />
+    <path android:fillColor="#0B60C5" android:pathData="M0,0h53v53h-53z" />
+    <path android:fillColor="#CA331F" android:pathData="M55,0h53v53h-53z" />
+    <path android:fillColor="#CA331F" android:pathData="M0,55h53v53h-53z" />
+    <path android:fillColor="#0B60C5" android:pathData="M55,55h53v53h-53z" />
+</vector>

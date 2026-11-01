@@ -1,0 +1,58 @@
+# === Signing keys and their passwords — NEVER committed ===
+# The release key lives OUTSIDE this repository (J:\applications\_keystores\, as Pass Tech's). This file
+# ignores every form of it anyway, from the first commit, whatever directory it lands in.
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.p8
+*.der
+key.properties
+keystore.properties
+# Their copies: a backup of the key is the key (Read Files Tech security review, 2026-10-10, G1).
+*.jks.*
+*.keystore.*
+key.properties.*
+keystore.properties.*
+*.properties.bak
+.env
+.env.*
+
+# === Android local config ===
+local.properties
+
+# === Gradle ===
+.gradle/
+build/
+**/build/
+
+# === Kotlin 2.x compiler session and error files ===
+.kotlin/
+
+# === IDE ===
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# === Android Studio / native ===
+captures/
+.cxx/
+*.ap_
+*.dex
+*.class
+obj/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code agent worktrees (nested git checkouts), never part of the repository
+/.claude/worktrees/
+
+# Python bytecode of the tools
+__pycache__/

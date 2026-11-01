@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lint exceptions of Call Halt Tech. Each one is a decision, with its reason; none hides a defect. -->
+<lint>
+    <!--
+        targetSdk stays at 36 on purpose (docs/ARCHITECTURE.md, D-008): from Android 17, an app targeting API 37+
+        gets SMS carrying a one-time code three hours late unless it is the default SMS app — the very signal of
+        PROJET.md § 4.3. Revisit when that rule changes, not when lint asks.
+    -->
+    <issue id="OldTargetApi" severity="ignore" />
+
+    <!--
+        Lint says mipmap-anydpi-v26 is obsolete under minSdk 29 and should be merged into mipmap-anydpi. Measured on
+        2026-11-01 (AGP 9.4.1): done so, aapt2 no longer finds @mipmap/ic_launcher and the build FAILS. The folder
+        keeps its qualifier; this exception covers that one folder only.
+    -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+</lint>

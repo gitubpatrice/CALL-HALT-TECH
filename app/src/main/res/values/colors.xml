@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window background before Compose draws: the page colour of the light theme (ui/theme/Color.kt), so nothing
+         flashes before the first frame. values-night/ holds the dark one. -->
+    <color name="window_background">#FFFDFCFF</color>
+</resources>

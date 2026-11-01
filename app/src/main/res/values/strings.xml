@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    English is the source language (values/); French is written alongside, and every language stays at
+    parity (tools/check-translations.py, run by the CI before any compilation). Short words, short
+    sentences: the first readers are elderly people (PROJET.md, § 4.14).
+-->
+<resources>
+    <string name="app_name" translatable="false">Call Halt Tech</string>
+
+    <!-- Home -->
+    <string name="home_title">Protection against phone scams</string>
+    <string name="home_rule">Your bank will never ask you to confirm a payment or to give a code during a phone call.</string>
+    <string name="home_status_preview">This version does not protect you yet: it shows what the protection will look like.</string>
+    <string name="home_try_stop">Try the STOP screen</string>
+
+    <!-- STOP screen -->
+    <string name="stop_title">STOP</string>
+    <string name="stop_on_call">You are on the phone.</string>
+    <string name="stop_rule">Your bank will NEVER ask you to confirm a payment or to give a code during a call.</string>
+    <string name="stop_advice">Hang up. Then call your bank yourself, on the number written on your card.</string>
+    <string name="stop_hang_up">Hang up</string>
+    <string name="stop_call_my_bank">Call my bank</string>
+    <string name="stop_continue">Continue</string>
+    <plurals name="stop_continue_in">
+        <item quantity="one">Continue (in %1$d second)</item>
+        <item quantity="other">Continue (in %1$d seconds)</item>
+    </plurals>
+    <string name="stop_demo_banner">Demonstration — nothing happened on your phone.</string>
+</resources>

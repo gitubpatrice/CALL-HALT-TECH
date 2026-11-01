@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accueil -->
+    <string name="home_title">Protection contre les arnaques au téléphone</string>
+    <string name="home_rule">Votre banque ne vous demandera jamais de valider un paiement ou de donner un code pendant un appel.</string>
+    <string name="home_status_preview">Cette version ne vous protège pas encore : elle montre à quoi ressemblera la protection.</string>
+    <string name="home_try_stop">Essayer l\'écran STOP</string>
+
+    <!-- Écran STOP -->
+    <string name="stop_title">STOP</string>
+    <string name="stop_on_call">Vous êtes au téléphone.</string>
+    <string name="stop_rule">Votre banque ne vous demandera JAMAIS de valider un paiement ou de donner un code pendant un appel.</string>
+    <string name="stop_advice">Raccrochez. Puis appelez vous-même votre banque, au numéro écrit sur votre carte.</string>
+    <string name="stop_hang_up">Raccrocher</string>
+    <string name="stop_call_my_bank">Appeler ma banque</string>
+    <string name="stop_continue">Continuer</string>
+    <plurals name="stop_continue_in">
+        <item quantity="one">Continuer (dans %1$d seconde)</item>
+        <item quantity="many">Continuer (dans %1$d secondes)</item>
+        <item quantity="other">Continuer (dans %1$d secondes)</item>
+    </plurals>
+    <string name="stop_demo_banner">Démonstration — rien ne s\'est passé sur votre téléphone.</string>
+</resources>

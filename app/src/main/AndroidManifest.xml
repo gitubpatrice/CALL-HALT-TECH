@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        No network permission, ever (PROJET.md, § 1). Removed explicitly, in case a library adds one at
+        merge time: the CI reads the MERGED release manifest against a reviewed list, with a negative
+        control (tools/check-manifest-permissions.py).
+
+        Every other permission arrives WITH the component that uses it, in the same commit as its line in
+        tools/check-manifest-permissions.py and in PRIVACY.md (docs/ARCHITECTURE.md, D-007). The skeleton
+        uses none.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+
+    <!--
+        No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
+        on this phone (data_extraction_rules.xml for Android 12+, allowBackup for the older ones).
+    -->
+    <application
+        android:name=".CallHaltApplication"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CallHaltTech"
+        tools:targetApi="36">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,29 @@
+package com.filestech.callhalt.domain.model
+
+import java.time.Instant
+
+/** What the engine wants done. The app carries it out AFTER the state and the journal are committed. */
+sealed interface Decision {
+    /** The full-screen interruption: "You are on the phone. Your bank will never ask you to…" */
+    data class ShowStop(val trigger: SensitiveActionKind, val call: CallSession) : Decision
+
+    /** A notification, not an interruption: a risk worth telling, with no call to interrupt. */
+    data class ShowWarning(val reason: WarningReason) : Decision
+
+    /** A text to the trusted relative (PROJET.md, § 4.7), only when the user set one up. */
+    data class NotifyGuardian(val event: GuardianEvent) : Decision
+
+    /** Wake the engine with a [Tick] at [at], so that a reminder due during a quiet call fires on time. */
+    data class ScheduleTick(val at: Instant) : Decision
+}
+
+enum class WarningReason { REMOTE_CONTROL_INSTALLED, LONG_CALL_WITH_UNKNOWN }
+
+sealed interface GuardianEvent {
+    data class StopShown(val trigger: SensitiveActionKind) : GuardianEvent
+
+    /** "Continue" chosen despite the STOP screen. */
+    data class StopOverridden(val trigger: SensitiveActionKind) : GuardianEvent
+
+    data object LongCallWithUnknown : GuardianEvent
+}

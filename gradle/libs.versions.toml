@@ -1,0 +1,105 @@
+[versions]
+# The chain of Read Files Tech 3 and App Manager Tech, at the versions they run green with (2026-10-31).
+# No number here was chosen for this project: each one is read from a sibling app. Only what the code
+# uses today; each later step adds its own entries with the reason.
+
+# --- Kotlin ---
+# Capped below 2.4.20: CodeQL 2.27 refuses to compile from there (measured on Agenda Tech). The root
+# build.gradle.kts pins the Kotlin Gradle Plugin to this EXACT version with `strictly`.
+kotlin                  = "2.4.10"
+ksp                     = "2.3.12"
+
+# --- Android Gradle Plugin (Kotlin is built into AGP 9) ---
+agp                     = "9.4.1"
+
+# --- AndroidX ---
+androidxCore            = "1.19.1"
+androidxActivity        = "1.13.0"
+androidxLifecycle       = "2.11.0"
+androidxNavigation      = "2.10.2"
+composeBom              = "2026.09.00"
+
+# --- Persistence (docs/ARCHITECTURE.md, D-004): Room for the detector state and the journal, written in
+# one transaction; DataStore for the settings. Versions of App Manager Tech.
+room                    = "2.8.5"
+datastore               = "1.1.1"
+# Never declared as a dependency: a version CONSTRAINT only. room-testing 2.8 reads the exported schemas
+# with kotlinx-serialization 1.8.1, and instrumented tests run against the APP's library versions
+# (App Manager Tech, 2026-10-08: AbstractMethodError in every migration test). See app/build.gradle.kts.
+kotlinxSerialization    = "1.8.1"
+
+# --- Hilt ---
+hilt                    = "2.60.1"
+hiltNavigationCompose   = "1.4.0"
+
+# --- Coroutines ---
+coroutines              = "1.11.0"
+
+# --- Logging (DebugTree in debug builds only, nothing planted in release) ---
+timber                  = "5.0.1"
+
+# --- Tests ---
+# JUnit 6: platform and Jupiter share one number. The launcher is declared through the BOM, or Gradle 9
+# runs NO test and the task stays green (App Manager Tech #13).
+junit                   = "6.1.3"
+truth                   = "1.4.5"
+androidxTestCore        = "1.7.0"
+androidxTestRunner      = "1.7.0"
+androidxTestExtJunit    = "1.3.0"
+
+# --- Quality ---
+detekt                  = "1.23.8"
+
+[libraries]
+androidx-core-ktx                       = { group = "androidx.core",                   name = "core-ktx",                          version.ref = "androidxCore" }
+androidx-activity-compose               = { group = "androidx.activity",               name = "activity-compose",                  version.ref = "androidxActivity" }
+androidx-lifecycle-runtime-ktx          = { group = "androidx.lifecycle",              name = "lifecycle-runtime-ktx",             version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose      = { group = "androidx.lifecycle",              name = "lifecycle-runtime-compose",         version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel-compose    = { group = "androidx.lifecycle",              name = "lifecycle-viewmodel-compose",       version.ref = "androidxLifecycle" }
+androidx-navigation-compose             = { group = "androidx.navigation",             name = "navigation-compose",                version.ref = "androidxNavigation" }
+
+compose-bom                             = { group = "androidx.compose",                name = "compose-bom",                       version.ref = "composeBom" }
+compose-ui                              = { group = "androidx.compose.ui",             name = "ui" }
+compose-ui-graphics                     = { group = "androidx.compose.ui",             name = "ui-graphics" }
+compose-ui-tooling                      = { group = "androidx.compose.ui",             name = "ui-tooling" }
+compose-ui-tooling-preview              = { group = "androidx.compose.ui",             name = "ui-tooling-preview" }
+compose-material3                       = { group = "androidx.compose.material3",      name = "material3" }
+
+room-runtime                            = { group = "androidx.room",                   name = "room-runtime",                      version.ref = "room" }
+room-ktx                                = { group = "androidx.room",                   name = "room-ktx",                          version.ref = "room" }
+room-compiler                           = { group = "androidx.room",                   name = "room-compiler",                     version.ref = "room" }
+room-testing                            = { group = "androidx.room",                   name = "room-testing",                      version.ref = "room" }
+datastore-preferences                   = { group = "androidx.datastore",              name = "datastore-preferences",             version.ref = "datastore" }
+kotlinx-serialization-core              = { group = "org.jetbrains.kotlinx",           name = "kotlinx-serialization-core",        version.ref = "kotlinxSerialization" }
+
+hilt-android                            = { group = "com.google.dagger",               name = "hilt-android",                      version.ref = "hilt" }
+hilt-android-compiler                   = { group = "com.google.dagger",               name = "hilt-android-compiler",             version.ref = "hilt" }
+hilt-navigation-compose                 = { group = "androidx.hilt",                   name = "hilt-navigation-compose",           version.ref = "hiltNavigationCompose" }
+
+coroutines-android                      = { group = "org.jetbrains.kotlinx",           name = "kotlinx-coroutines-android",        version.ref = "coroutines" }
+coroutines-test                         = { group = "org.jetbrains.kotlinx",           name = "kotlinx-coroutines-test",           version.ref = "coroutines" }
+
+timber                                  = { group = "com.jakewharton.timber",          name = "timber",                            version.ref = "timber" }
+
+junit-bom                               = { group = "org.junit",                       name = "junit-bom",                         version.ref = "junit" }
+junit-jupiter-api                       = { group = "org.junit.jupiter",               name = "junit-jupiter-api" }
+junit-jupiter-engine                    = { group = "org.junit.jupiter",               name = "junit-jupiter-engine" }
+junit-jupiter-params                    = { group = "org.junit.jupiter",               name = "junit-jupiter-params" }
+junit-platform-launcher                 = { group = "org.junit.platform",              name = "junit-platform-launcher" }
+truth                                   = { group = "com.google.truth",                name = "truth",                             version.ref = "truth" }
+androidx-test-core                      = { group = "androidx.test",                   name = "core",                              version.ref = "androidxTestCore" }
+androidx-test-runner                    = { group = "androidx.test",                   name = "runner",                            version.ref = "androidxTestRunner" }
+androidx-test-ext-junit                 = { group = "androidx.test.ext",               name = "junit",                             version.ref = "androidxTestExtJunit" }
+
+detekt-formatting                       = { group = "io.gitlab.arturbosch.detekt",     name = "detekt-formatting",                 version.ref = "detekt" }
+
+[plugins]
+android-application    = { id = "com.android.application",                    version.ref = "agp" }
+# The `:domain` module is plain Kotlin/JVM (docs/ARCHITECTURE.md, D-001), held to the same compiler
+# version as AGP's built-in Kotlin by the `strictly` constraint of the root build.
+kotlin-jvm             = { id = "org.jetbrains.kotlin.jvm",                   version.ref = "kotlin" }
+kotlin-compose         = { id = "org.jetbrains.kotlin.plugin.compose",        version.ref = "kotlin" }
+hilt                   = { id = "com.google.dagger.hilt.android",             version.ref = "hilt" }
+ksp                    = { id = "com.google.devtools.ksp",                    version.ref = "ksp" }
+room                   = { id = "androidx.room",                              version.ref = "room" }
+detekt                 = { id = "io.gitlab.arturbosch.detekt",                version.ref = "detekt" }

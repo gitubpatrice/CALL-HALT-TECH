@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Forma di cortesia (Lei) in tutta l'app, come Pass Tech. -->
+<resources>
+    <!-- Home -->
+    <string name="home_title">Protezione dalle truffe telefoniche</string>
+    <string name="home_rule">La Sua banca non Le chiederà mai di confermare un pagamento o di comunicare un codice durante una telefonata.</string>
+    <string name="home_status_preview">Questa versione non La protegge ancora: mostra come sarà la protezione.</string>
+    <string name="home_try_stop">Provare la schermata STOP</string>
+
+    <!-- Schermata STOP -->
+    <string name="stop_title">STOP</string>
+    <string name="stop_on_call">Lei è al telefono.</string>
+    <string name="stop_rule">La Sua banca non Le chiederà MAI di confermare un pagamento o di comunicare un codice durante una chiamata.</string>
+    <string name="stop_advice">Riattacchi. Poi chiami direttamente la Sua banca, al numero scritto sulla Sua carta.</string>
+    <string name="stop_hang_up">Riattaccare</string>
+    <string name="stop_call_my_bank">Chiamare la mia banca</string>
+    <string name="stop_continue">Continuare</string>
+    <plurals name="stop_continue_in">
+        <item quantity="one">Continuare (tra %1$d secondo)</item>
+        <item quantity="many">Continuare (tra %1$d secondi)</item>
+        <item quantity="other">Continuare (tra %1$d secondi)</item>
+    </plurals>
+    <string name="stop_demo_banner">Dimostrazione — sul Suo telefono non è successo nulla.</string>
+</resources>

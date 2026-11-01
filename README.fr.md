@@ -1,0 +1,36 @@
+# Call Halt Tech
+
+[English](README.md)
+
+Une appli Android contre les **arnaques au téléphone** : faux conseiller bancaire, faux technicien, faux
+service des fraudes. Elle est pensée d'abord pour les personnes âgées et les proches qui veillent sur elles.
+
+**État : en développement. Cette version ne protège encore personne.** Elle contient la logique de
+détection, testée, et une démonstration de l'écran que l'appli affichera.
+
+## La méthode
+
+Ne jamais se fier au numéro de l'appelant : il s'usurpe en quelques secondes. S'appuyer plutôt sur ce que
+l'escroc ne peut pas éviter. Il faut que la victime **fasse quelque chose d'irréversible sur son téléphone,
+pendant l'appel ou juste après** : donner un code reçu par SMS, valider une opération dans l'appli de la
+banque, installer une appli de prise en main à distance. Si cela arrive pendant un appel, l'appli
+interrompt avec un écran STOP : *votre banque ne vous demandera jamais cela pendant un appel. Raccrochez,
+puis appelez vous-même votre banque.*
+
+Elle ne bloque rien. C'est une pause, au bon moment.
+
+## Promesses, vérifiées par le build
+
+- **Aucune permission Internet**, jamais : la CI lit le manifeste fusionné de la release et le compare à
+  une liste exacte (`tools/check-manifest-permissions.py`, avec son contrôle négatif).
+- Pas de compte, pas de serveur, pas de services Google Play. Rien ne sort du téléphone.
+- Anglais, français, allemand, italien, espagnol.
+
+## Construire
+
+JDK 17 et le SDK Android, puis `./gradlew :app:assembleDebug`. Le gate local complet, identique à la CI,
+est décrit dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) § 8.
+
+## Licence
+
+Apache License 2.0 : voir [LICENSE](LICENSE) et [NOTICE](NOTICE).

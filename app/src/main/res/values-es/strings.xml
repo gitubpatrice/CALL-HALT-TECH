@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tratamiento de usted en toda la app, como Pass Tech. -->
+<resources>
+    <!-- Inicio -->
+    <string name="home_title">Protección contra las estafas telefónicas</string>
+    <string name="home_rule">Su banco nunca le pedirá que confirme un pago ni que dé un código durante una llamada.</string>
+    <string name="home_status_preview">Esta versión todavía no le protege: muestra cómo será la protección.</string>
+    <string name="home_try_stop">Probar la pantalla STOP</string>
+
+    <!-- Pantalla STOP -->
+    <string name="stop_title">STOP</string>
+    <string name="stop_on_call">Está al teléfono.</string>
+    <string name="stop_rule">Su banco NUNCA le pedirá que confirme un pago ni que dé un código durante una llamada.</string>
+    <string name="stop_advice">Cuelgue. Después llame directamente a su banco, al número que figura en su tarjeta.</string>
+    <string name="stop_hang_up">Colgar</string>
+    <string name="stop_call_my_bank">Llamar a mi banco</string>
+    <string name="stop_continue">Continuar</string>
+    <plurals name="stop_continue_in">
+        <item quantity="one">Continuar (en %1$d segundo)</item>
+        <item quantity="many">Continuar (en %1$d segundos)</item>
+        <item quantity="other">Continuar (en %1$d segundos)</item>
+    </plurals>
+    <string name="stop_demo_banner">Demostración — no ha pasado nada en su teléfono.</string>
+</resources>

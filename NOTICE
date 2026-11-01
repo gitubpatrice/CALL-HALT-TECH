@@ -1,0 +1,8 @@
+Call Halt Tech
+Copyright 2026 Patrice Haltaya (Files Tech, https://www.files-tech.com)
+
+Call Halt Tech is licensed under the Apache License, Version 2.0: see LICENSE.
+
+The app includes, in its APK, the following libraries, all under the Apache License, Version 2.0:
+AndroidX (Core, Activity, Lifecycle, Navigation, Compose, Material 3, Room, DataStore), the Kotlin standard
+library and kotlinx.coroutines (JetBrains), Dagger and Hilt (Google), and Timber (Jake Wharton).

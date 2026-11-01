@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Startseite -->
+    <string name="home_title">Schutz vor Telefonbetrug</string>
+    <string name="home_rule">Ihre Bank wird Sie niemals bitten, während eines Telefonats eine Zahlung zu bestätigen oder einen Code zu nennen.</string>
+    <string name="home_status_preview">Diese Version schützt Sie noch nicht: Sie zeigt, wie der Schutz aussehen wird.</string>
+    <string name="home_try_stop">STOP-Bildschirm ausprobieren</string>
+
+    <!-- STOP-Bildschirm -->
+    <string name="stop_title">STOP</string>
+    <string name="stop_on_call">Sie telefonieren gerade.</string>
+    <string name="stop_rule">Ihre Bank wird Sie NIEMALS bitten, während eines Anrufs eine Zahlung zu bestätigen oder einen Code zu nennen.</string>
+    <string name="stop_advice">Legen Sie auf. Rufen Sie dann selbst Ihre Bank an, unter der Nummer auf Ihrer Karte.</string>
+    <string name="stop_hang_up">Auflegen</string>
+    <string name="stop_call_my_bank">Meine Bank anrufen</string>
+    <string name="stop_continue">Weiter</string>
+    <plurals name="stop_continue_in">
+        <item quantity="one">Weiter (in %1$d Sekunde)</item>
+        <item quantity="other">Weiter (in %1$d Sekunden)</item>
+    </plurals>
+    <string name="stop_demo_banner">Vorführung – auf Ihrem Telefon ist nichts passiert.</string>
+</resources>
