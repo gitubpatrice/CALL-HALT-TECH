@@ -51,6 +51,10 @@ vous demandera jamais cela pendant un appel. Raccrochez, puis rappelez-la vous-m
 9. **Publication sur F-Droid** (Patrice, 2026-11-01), comme Agenda Tech et SMS Tech : build reproductible,
    fiche fastlane en 5 langues, l'APK servi est le nôtre. La chaîne de build (AGP, Kotlin, Gradle) monte
    avec tout le portefeuille, jamais seule.
+   ⛔ **Mais rien n'est publié tant que l'appli n'est pas fiable, solide et sécurisée au mieux, avec un score
+   d'au moins 95 sur 100** (Patrice). La grille du score se fixe avant le premier audit de publication :
+   aucun constat critique ou élevé ouvert, mesures faites sur de vrais téléphones, relecture externe du
+   code qui décide (`docs/ARCHITECTURE.md`, D-016).
 
 ## La prochaine étape : le prototype de mesure
 
