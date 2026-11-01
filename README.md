@@ -13,8 +13,9 @@ demonstration of the screen the app will show.
 Never trust the caller's number: it is spoofed in seconds. Rely instead on what the scammer cannot avoid:
 the victim must **do something irreversible on the phone during the call or just after it** — give a code
 received by SMS, confirm an operation in the banking app, install a remote-control app. When that happens
-during a call, the app interrupts with a STOP screen: *your bank will never ask you to do this during a
-call — hang up, then call your bank yourself.*
+during a call or just after it, the app interrupts with a STOP screen: *your bank, the police, the tax
+office, your insurer: none of them will ever call you to ask for this. If you are told to ignore this
+screen, it is a scam. Hang up, then call them yourself, on a number you know.*
 
 It blocks nothing. It is a pause at the right moment.
 

@@ -4,7 +4,7 @@ import java.time.Instant
 
 /** What the engine wants done. The app carries it out AFTER the state and the journal are committed. */
 sealed interface Decision {
-    /** The full-screen interruption: "You are on the phone. Your bank will never ask you to…" */
+    /** The full-screen interruption. Its words follow [trigger], and whether [call] is still going on or just ended. */
     data class ShowStop(val trigger: SensitiveActionKind, val call: CallSession) : Decision
 
     /** A notification, not an interruption: a risk worth telling, with no call to interrupt. */

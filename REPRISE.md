@@ -8,8 +8,17 @@
 
 Une appli Android contre les arnaques au téléphone (faux conseiller bancaire…) : quand une action
 dangereuse arrive **pendant un appel ou juste après** (un code reçu par SMS, une validation dans l'appli
-de la banque, une appli de prise en main à distance), elle affiche un écran **STOP** : *« Votre banque ne
-vous demandera jamais cela pendant un appel. Raccrochez, puis rappelez-la vous-même. »*
+de la banque, une appli de prise en main à distance), elle affiche un écran **STOP** : *« Ni votre banque,
+ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
+dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
+
+## Reprendre ici (arrêt du 2026-11-01 au soir)
+
+1. **Branche `feat/stop-screen-wording`** (textes de l'écran STOP, D-017 ; relecture Claude intégrée,
+   `relectures/2026-11-01-claude-textes-stop.md`) : gate local vert, 89 tests. Ouvrir la PR, attendre les
+   3 vérifications de la CI, fusionner.
+2. Puis **le prototype de mesure** : il décide si le projet continue (décision 11).
+3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
 ## Où en est le projet (2026-11-01)
 
@@ -55,8 +64,17 @@ vous demandera jamais cela pendant un appel. Raccrochez, puis rappelez-la vous-m
    d'au moins 95 sur 100** (Patrice). La grille du score se fixe avant le premier audit de publication :
    aucun constat critique ou élevé ouvert, mesures faites sur de vrais téléphones, relecture externe du
    code qui décide (`docs/ARCHITECTURE.md`, D-016).
+10. **Les mots de l'écran STOP** (Patrice, 2026-11-01) : ils disent ce qui vient d'arriver, puis « si on
+    vous dit d'ignorer cet écran, c'est une arnaque », nomment qui ne vous appellera jamais pour cela
+    (banque, police, impôts, assurance), et préviennent que le numéro ou le nom affiché ne prouve rien.
+    Après l'appel, l'écran ne dit plus « vous êtes au téléphone » et ne propose plus de raccrocher ; pour
+    une prise en main à distance, il dit d'éteindre le téléphone (D-017).
+11. **La mesure décide de la suite** (Patrice, 2026-11-01) : si l'écran STOP ne passe pas par-dessus l'appli
+    bancaire (P-1), ou si ses demandes de validation sont illisibles (P-2), **le projet s'arrête** (D-018).
 
 ## La prochaine étape : le prototype de mesure
+
+⛔ **Elle décide si le projet continue** (décision 11 ci-dessus) : mesurer P-1 et P-2 avant tout le reste.
 
 Brancher les capteurs un par un, chacun avec sa permission, sa vérification et son test, dans cet ordre :
 
@@ -70,8 +88,7 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 
 ## Ce qui attend Patrice
 
-- **Renommer le dossier** `J:\applications\call_guard_tech` en `call_halt_tech`, VS Code fermé (impossible
-  depuis une session ouverte dedans). La mémoire du projet est déjà copiée sous le nouveau nom.
+- ~~Renommer le dossier~~ — **fait par Patrice le 2026-11-01** : `J:\applications\call_halt_tech`.
 - **Faire relire les phrases de sécurité** allemandes, italiennes et espagnoles par quelqu'un dont c'est la
   langue : une consigne mal traduite ferait faire l'inverse.
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid

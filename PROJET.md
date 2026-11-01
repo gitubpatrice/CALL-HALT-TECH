@@ -4,7 +4,9 @@
 > **2026-11-01 : squelette posé** (moteur de détection testé, stockage, écran STOP de démonstration, CI) —
 > il ne protège encore personne. Structure et décisions : `docs/ARCHITECTURE.md`. Revue de cette fiche
 > (vérifications, relecture GPT, idées) : § 9. **Nom retenu le 2026-11-01 : Call Halt Tech** (§ 9.4).
-> Prochaine étape : le prototype de mesure (§ 8, complété en § 9.5).
+> Prochaine étape : le prototype de mesure (§ 8, complété en § 9.5). **Il décide de la suite** (Patrice,
+> 2026-11-01) : si l'écran STOP ne passe pas par-dessus l'appli bancaire, ou si ses demandes de validation
+> sont illisibles, le projet s'arrête (`docs/ARCHITECTURE.md`, D-018).
 
 ## 1. Le but
 
@@ -47,10 +49,20 @@ Et une vraie banque ne demande jamais de valider une opération ou de donner un 
 > - l'appli bancaire affiche une demande de validation, ou s'ouvre ;
 > - une appli de prise en main à distance est installée ou ouverte.
 
-→ **Écran STOP** par-dessus tout : « Vous êtes au téléphone. Votre banque ne vous demandera JAMAIS de
-valider une opération ou de donner un code pendant un appel. Raccrochez. »
-Boutons : **Raccrocher** · **Rappeler ma banque** (numéro officiel saisi depuis la carte) · **Continuer**
-(actif après 10 s). En option : **SMS à un proche**.
+→ **Écran STOP** par-dessus tout (textes revus avec Patrice le 2026-11-01, `docs/ARCHITECTURE.md`, D-017) :
+« Vous êtes au téléphone. Vous venez de recevoir un code. **Si on vous dit d'ignorer cet écran, c'est une
+arnaque.** Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront JAMAIS pour
+vous demander un code ou de valider une opération. Le numéro ou le nom affiché ne prouve rien : un escroc
+peut afficher le vrai. Raccrochez. Puis appelez vous-même un numéro que vous connaissez : celui de votre
+carte ou d'un courrier, jamais celui qu'on vous donne. »
+Les phrases vont par ordre d'importance : ce qui ne tient pas à l'écran défile, et on ne fait pas défiler
+sous pression. La deuxième dit ce qui vient d'arriver (un texte par déclencheur). Pour une appli de prise
+en main, la règle parle de l'appli et le conseil devient « éteignez votre téléphone » (raccrocher ne coupe
+pas la prise de contrôle). Dans les minutes qui suivent l'appel : « Votre appel vient de se terminer » et
+« Ne faites pas ce qu'on vous a demandé ».
+Boutons : **Raccrocher** (appel téléphonique en cours seulement ; pas sur WhatsApp, qu'Android ne sait pas
+raccrocher) · **Raccrocher et appeler ma banque**, puis **Appeler ma banque** après l'appel (numéro officiel
+saisi depuis la carte) · **Continuer** (actif après 10 s). En option : **SMS à un proche**.
 
 Ça ne bloque rien : c'est une pause au bon moment, avec la seule vérification fiable au téléphone —
 raccrocher et rappeler soi-même.
@@ -65,7 +77,7 @@ raccrocher et rappeler soi-même.
    de la victime au portefeuille de l'escroc est une arnaque fréquente), puis les autres langues.
 4. Applis de prise en main à distance (AnyDesk, TeamViewer QuickSupport, RustDesk, AirDroid…) : alerte à
    l'installation même hors appel, STOP si ouverte pendant un appel.
-5. Numéro officiel de sa banque + bouton « Rappeler ma banque ».
+5. Numéro officiel de sa banque + bouton « Appeler ma banque ».
 
 **Le proche**
 6. Mode « proche protégé » : réglages et désactivation sous code — l'escroc dira « désactivez cette
@@ -131,6 +143,10 @@ minSdk probable : 29 (Android 10, rôle de filtrage).
 - ~~F-Droid ou GitHub seul.~~ **F-Droid : oui** (Patrice, 2026-11-01). Conséquences : `docs/ARCHITECTURE.md`,
   D-016. ⛔ **Rien n'est publié tant que l'appli n'est pas fiable, solide et sécurisée au mieux, avec un
   score d'au moins 95 sur 100** (Patrice, même jour).
+- ~~Continuer ou arrêter le projet (« il y a déjà plein d'applis qui le font »).~~ **Tranché le 2026-11-01** :
+  on continue jusqu'au prototype de mesure, qui décide (§ 8 ; `docs/ARCHITECTURE.md`, D-018). En France, rien
+  ne fait la même chose en français, sans Google ni Internet (§ 9.1) ; les vrais risques sont techniques
+  (§ 8) et la protection de Google, si elle arrive en France.
 - Revérifier, au lancement, la protection de Google en France.
 
 ## 8. Prochaine étape : un prototype de mesure (1 à 2 jours, S9 + émulateur)
@@ -142,6 +158,7 @@ Trois questions, avant tout cahier des charges :
 3. Comment guider simplement l'utilisateur à travers les « paramètres restreints » d'Android 13+ ?
 
 Si les trois passent, la méthode tient. Si l'une bloque, on le sait sans avoir investi des semaines.
+**Décidé le 2026-11-01 (Patrice)** : si la 1 ou la 2 échoue, le projet s'arrête (`docs/ARCHITECTURE.md`, D-018).
 
 ## 9. Revue du 2026-11-01 (Patrice : « vérifie bien le projet, ajoute d'autres idées, ou demande à GPT »)
 
@@ -187,7 +204,7 @@ rapports bruts et leurs consignes sont dans `relectures/`.
    d'activation est concerné.
 7. **Les appels WhatsApp, Signal et Telegram** échappaient à la méthode, or les escrocs s'en servent. Le
    mode audio du téléphone les trahit probablement, sans permission : à mesurer.
-8. **« Rappeler ma banque »** : seulement **après** la fin de l'appel, en composant le numéro sans le
+8. **« Appeler ma banque »** : seulement **après** la fin de l'appel, en composant le numéro sans le
    lancer. Appeler pendant l'appel mettrait l'escroc en attente au lieu de le couper (GPT).
 9. **Le code du proche ne protège que l'interface** (GPT) : les réglages d'Android permettent toujours
    d'arrêter l'appli ou de lui retirer ses accès. À écrire dans les limites (§ 6). Repli : voir § 9.2, idée 5.
