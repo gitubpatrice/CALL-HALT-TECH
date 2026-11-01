@@ -3,16 +3,29 @@
 <resources>
     <!-- Home -->
     <string name="home_title">Protezione dalle truffe telefoniche</string>
-    <string name="home_rule">La Sua banca non Le chiederà mai di confermare un pagamento o di comunicare un codice durante una telefonata.</string>
+    <string name="home_rule">La Sua banca, la polizia, il fisco o la Sua assicurazione non La chiameranno mai per chiederLe un codice o la conferma di un\'operazione.</string>
     <string name="home_status_preview">Questa versione non La protegge ancora: mostra come sarà la protezione.</string>
     <string name="home_try_stop">Provare la schermata STOP</string>
 
     <!-- Schermata STOP -->
     <string name="stop_title">STOP</string>
-    <string name="stop_on_call">Lei è al telefono.</string>
-    <string name="stop_rule">La Sua banca non Le chiederà MAI di confermare un pagamento o di comunicare un codice durante una chiamata.</string>
-    <string name="stop_advice">Riattacchi. Poi chiami direttamente la Sua banca, al numero scritto sulla Sua carta.</string>
+    <string name="stop_on_call">Sta telefonando.</string>
+    <string name="stop_call_ended">La Sua chiamata è appena terminata.</string>
+    <string name="stop_trigger_code">Ha appena ricevuto un codice.</string>
+    <string name="stop_trigger_bank_validation">L\'app della Sua banca Le chiede di confermare un\'operazione.</string>
+    <string name="stop_trigger_bank_app">L\'app della Sua banca si è appena aperta.</string>
+    <string name="stop_trigger_remote_opened">Si è appena aperta un\'app che permette a un\'altra persona di controllare il Suo telefono.</string>
+    <string name="stop_trigger_remote_installed">È appena stata installata un\'app che permette a un\'altra persona di controllare il Suo telefono.</string>
+    <string name="stop_rule_codes">La Sua banca, la polizia, il fisco o la Sua assicurazione non La chiameranno MAI per chiederLe un codice o la conferma di un\'operazione.</string>
+    <string name="stop_rule_remote">La Sua banca, la polizia, il fisco o la Sua assicurazione non Le chiederanno MAI di installare o aprire un\'app del genere.</string>
+    <string name="stop_spoofed_number">Il numero o il nome che compare non prova nulla: un truffatore può mostrare quelli veri.</string>
+    <string name="stop_ignore_warning">Se Le dicono di ignorare questa schermata, è una truffa.</string>
+    <string name="stop_advice_on_call">Riattacchi. Poi chiami direttamente un numero che conosce: quello sulla Sua carta o su una lettera, mai quello che Le danno.</string>
+    <string name="stop_advice_after_call">Non faccia ciò che Le hanno chiesto. Chiami direttamente un numero che conosce: quello sulla Sua carta o su una lettera, mai quello che Le hanno dato.</string>
+    <string name="stop_advice_remote_on_call">Riattacchi e spenga il telefono: qualcuno potrebbe controllarlo. Avvisi poi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
+    <string name="stop_advice_remote_after_call">Spenga il telefono: qualcuno potrebbe controllarlo. Avvisi poi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
     <string name="stop_hang_up">Riattaccare</string>
+    <string name="stop_hang_up_and_call_my_bank">Riattaccare e chiamare la mia banca</string>
     <string name="stop_call_my_bank">Chiamare la mia banca</string>
     <string name="stop_continue">Continuare</string>
     <plurals name="stop_continue_in">

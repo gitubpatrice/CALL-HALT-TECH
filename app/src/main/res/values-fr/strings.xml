@@ -2,16 +2,29 @@
 <resources>
     <!-- Accueil -->
     <string name="home_title">Protection contre les arnaques au téléphone</string>
-    <string name="home_rule">Votre banque ne vous demandera jamais de valider un paiement ou de donner un code pendant un appel.</string>
+    <string name="home_rule">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander un code ou de valider une opération.</string>
     <string name="home_status_preview">Cette version ne vous protège pas encore : elle montre à quoi ressemblera la protection.</string>
     <string name="home_try_stop">Essayer l\'écran STOP</string>
 
     <!-- Écran STOP -->
     <string name="stop_title">STOP</string>
     <string name="stop_on_call">Vous êtes au téléphone.</string>
-    <string name="stop_rule">Votre banque ne vous demandera JAMAIS de valider un paiement ou de donner un code pendant un appel.</string>
-    <string name="stop_advice">Raccrochez. Puis appelez vous-même votre banque, au numéro écrit sur votre carte.</string>
+    <string name="stop_call_ended">Votre appel vient de se terminer.</string>
+    <string name="stop_trigger_code">Vous venez de recevoir un code.</string>
+    <string name="stop_trigger_bank_validation">L\'appli de votre banque vous demande de valider une opération.</string>
+    <string name="stop_trigger_bank_app">L\'appli de votre banque vient de s\'ouvrir.</string>
+    <string name="stop_trigger_remote_opened">Une appli qui permet à quelqu\'un d\'autre de contrôler votre téléphone vient de s\'ouvrir.</string>
+    <string name="stop_trigger_remote_installed">Une appli qui permet à quelqu\'un d\'autre de contrôler votre téléphone vient d\'être installée.</string>
+    <string name="stop_rule_codes">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération.</string>
+    <string name="stop_rule_remote">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous demanderont JAMAIS d\'installer ou d\'ouvrir une telle appli.</string>
+    <string name="stop_spoofed_number">Le numéro ou le nom affiché ne prouve rien : un escroc peut afficher le vrai.</string>
+    <string name="stop_ignore_warning">Si on vous dit d\'ignorer cet écran, c\'est une arnaque.</string>
+    <string name="stop_advice_on_call">Raccrochez. Puis appelez vous-même un numéro que vous connaissez : celui de votre carte ou d\'un courrier, jamais celui qu\'on vous donne.</string>
+    <string name="stop_advice_after_call">Ne faites pas ce qu\'on vous a demandé. Appelez vous-même un numéro que vous connaissez : celui de votre carte ou d\'un courrier, jamais celui qu\'on vous a donné.</string>
+    <string name="stop_advice_remote_on_call">Raccrochez et éteignez votre téléphone : quelqu\'un le contrôle peut-être. Prévenez ensuite votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
+    <string name="stop_advice_remote_after_call">Éteignez votre téléphone : quelqu\'un le contrôle peut-être. Prévenez ensuite votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
     <string name="stop_hang_up">Raccrocher</string>
+    <string name="stop_hang_up_and_call_my_bank">Raccrocher et appeler ma banque</string>
     <string name="stop_call_my_bank">Appeler ma banque</string>
     <string name="stop_continue">Continuer</string>
     <plurals name="stop_continue_in">

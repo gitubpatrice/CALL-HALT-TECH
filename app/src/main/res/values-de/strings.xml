@@ -2,16 +2,29 @@
 <resources>
     <!-- Startseite -->
     <string name="home_title">Schutz vor Telefonbetrug</string>
-    <string name="home_rule">Ihre Bank wird Sie niemals bitten, während eines Telefonats eine Zahlung zu bestätigen oder einen Code zu nennen.</string>
-    <string name="home_status_preview">Diese Version schützt Sie noch nicht: Sie zeigt, wie der Schutz aussehen wird.</string>
+    <string name="home_rule">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie niemals anrufen, um nach einem Code zu fragen oder um die Freigabe eines Auftrags zu bitten.</string>
+    <string name="home_status_preview">Diese Version schützt Sie noch nicht – sie zeigt, wie der Schutz aussehen wird.</string>
     <string name="home_try_stop">STOP-Bildschirm ausprobieren</string>
 
     <!-- STOP-Bildschirm -->
     <string name="stop_title">STOP</string>
     <string name="stop_on_call">Sie telefonieren gerade.</string>
-    <string name="stop_rule">Ihre Bank wird Sie NIEMALS bitten, während eines Anrufs eine Zahlung zu bestätigen oder einen Code zu nennen.</string>
-    <string name="stop_advice">Legen Sie auf. Rufen Sie dann selbst Ihre Bank an, unter der Nummer auf Ihrer Karte.</string>
+    <string name="stop_call_ended">Ihr Anruf wurde gerade beendet.</string>
+    <string name="stop_trigger_code">Sie haben gerade einen Code erhalten.</string>
+    <string name="stop_trigger_bank_validation">Die App Ihrer Bank bittet Sie, einen Auftrag freizugeben.</string>
+    <string name="stop_trigger_bank_app">Die App Ihrer Bank wurde gerade geöffnet.</string>
+    <string name="stop_trigger_remote_opened">Eine App, mit der jemand anderes Ihr Telefon steuern kann, wurde gerade geöffnet.</string>
+    <string name="stop_trigger_remote_installed">Eine App, mit der jemand anderes Ihr Telefon steuern kann, wurde gerade installiert.</string>
+    <string name="stop_rule_codes">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie NIEMALS anrufen, um nach einem Code zu fragen oder um die Freigabe eines Auftrags zu bitten.</string>
+    <string name="stop_rule_remote">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie NIEMALS bitten, eine solche App zu installieren oder zu öffnen.</string>
+    <string name="stop_spoofed_number">Die angezeigte Nummer oder der angezeigte Name beweist nichts: Ein Betrüger kann die echten anzeigen.</string>
+    <string name="stop_ignore_warning">Wenn man Ihnen sagt, Sie sollen diesen Bildschirm ignorieren, ist das Betrug.</string>
+    <string name="stop_advice_on_call">Legen Sie auf. Rufen Sie dann selbst eine Nummer an, die Sie kennen: die auf Ihrer Karte oder in einem Brief, nie die, die man Ihnen gibt.</string>
+    <string name="stop_advice_after_call">Tun Sie nicht, worum man Sie gebeten hat. Rufen Sie selbst eine Nummer an, die Sie kennen: die auf Ihrer Karte oder in einem Brief, nie die, die man Ihnen gegeben hat.</string>
+    <string name="stop_advice_remote_on_call">Legen Sie auf und schalten Sie Ihr Telefon aus: Jemand steuert es vielleicht. Warnen Sie danach Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
+    <string name="stop_advice_remote_after_call">Schalten Sie Ihr Telefon aus: Jemand steuert es vielleicht. Warnen Sie danach Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
     <string name="stop_hang_up">Auflegen</string>
+    <string name="stop_hang_up_and_call_my_bank">Auflegen und meine Bank anrufen</string>
     <string name="stop_call_my_bank">Meine Bank anrufen</string>
     <string name="stop_continue">Weiter</string>
     <plurals name="stop_continue_in">
