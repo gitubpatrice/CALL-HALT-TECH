@@ -206,8 +206,9 @@ python3 tools/check-manifest-permissions-negative-control.py && python3 tools/ch
 ```
 
 Tests instrumentés : **jamais `connectedDebugAndroidTest` avec le S24 FE branché**. La tâche vise tous
-les appareils et efface les données de l'appli testée. Toujours épingler l'appareil :
-`ANDROID_SERIAL=22dbb7390a057ece ./gradlew :app:connectedDebugAndroidTest` (S9).
+les appareils et efface les données de l'appli testée. Toujours épingler l'appareil par son numéro de
+série (`adb devices` le donne) : `ANDROID_SERIAL=<numéro> ./gradlew :app:connectedDebugAndroidTest`.
+À la fin du passage, Gradle **désinstalle** l'appli testée : la réinstaller pour la voir sur le téléphone.
 
 **Ajouter une règle** : dans `DetectionEngine`, en interrogeant `CallWindow` (jamais une seconde définition
 de « pendant l'appel »), avec ses tests dans `DetectionEngineTest`, y compris le cas où elle doit se taire.
@@ -220,5 +221,5 @@ PRIVACY, **dans le même commit** (D-007).
 de parité refuse un texte manquant.
 
 **Changer le schéma Room** : tant qu'aucun APK n'est publié, la version 1 peut changer. Ensuite, migration
-additive, schéma exporté committé, test de migration, et `room-testing` avec la contrainte
-`kotlinx-serialization` d'App Manager Tech.
+additive, schéma exporté committé, test de migration, et `room-testing` à ajouter au catalogue avec la
+contrainte `kotlinx-serialization` d'App Manager Tech (voir l'en-tête de `gradle/libs.versions.toml`).
