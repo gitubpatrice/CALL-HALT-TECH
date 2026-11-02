@@ -130,7 +130,8 @@ app/src/main/java/com/filestech/callhalt/
   src/debug/   platform/debug/ — versions de test seulement, réservées au shell d'adb (DUMP) : DebugSignalReceiver
                (action sensible injectée, pour mesurer l'écran STOP avant les capteurs), StandInBankRequestReceiver
                (une demande bancaire factice sur le canal reconnu, pour mesurer tout le chemin sur émulateur),
-               MeasureNotificationListener (la mesure P-2 : ce qu'une notification bancaire laisse lire)
+               MeasureNotificationListener (ce qu'une notification laisse lire : la banque mesurée, P-2, et
+               l'appli SMS par défaut, P-20)
   (à venir)    platform/<capteur>/ pour sms, usage, packages, accessibility
 ```
 
@@ -170,7 +171,7 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
 | Appel téléphonique : début, fin, numéro | récepteur **déclaré au manifeste** `PHONE_STATE` (exception aux broadcasts implicites, sans condition de targetSdk) | `READ_PHONE_STATE` ; numéro : + `READ_CALL_LOG` (broadcast reçu deux fois) | non | **branché le 2026-11-02** (début et fin, sans le numéro) ; **mesuré sur émulateur, Android 11, 16 et 17** (vrai service téléphonique, `adb emu gsm`), d'abord non exporté : le récepteur reçoit la diffusion du système ; processus tué (Android 16) : réveillé, mémoire intacte ; **appli en cache (Android 17) : livrée en 0,15 à 0,6 s**, aucun report. Une appli « arrêtée » (`force-stop`) ne reçoit plus rien jusqu'à sa réouverture : comportement d'Android, à dire dans l'aide. Juste après le démarrage, rien tant que la SIM n'est pas prête (normal). **Exporté** (pour qu'un téléphone qui l'émettrait depuis son processus téléphonique soit entendu) : PHONE_STATE est une diffusion protégée, **mesuré sur le S9 (Samsung, Android 10) et l'émulateur Android 17** : même le shell d'adb est refusé, que la diffusion vise le récepteur ou non. Toute autre action est ignorée. Pas de permission exigée de l'expéditeur : elle risquerait de couper la livraison par le système (relecture de sécurité). **Vrai réseau, mesuré sur le S24 FE (Samsung, Android 16, SFR) le 2026-11-02** : appel sortant, appel reçu décroché (entrant), appel reçu refusé (aucun appel) ; traités 0,05 à 0,07 s après réception ; la base garde l'appel entrant, sans numéro, et l'appel refusé n'y change rien. Le premier appel après l'installation a un sens inconnu (aucun état connu avant lui). Le S24 envoie une seule diffusion par changement d'état, **sans indice de SIM** (le S9 n'a pas de SIM). **Double SIM, à mesurer** (relecture du 2026-11-02, M2) : si un téléphone envoie un IDLE par SIM, celui d'une SIM au repos fermerait l'appel en cours sur l'autre ; la trace de débogage note la SIM de chaque diffusion. Parade possible, à ne poser qu'après mesure : interroger l'état en direct à l'IDLE (P-7), sans risquer un appel qui ne se ferme jamais |
 | Appel VoIP (WhatsApp, Signal…) | `AudioManager.getMode()` global sans permission (`MODE_IN_COMMUNICATION`), `addOnModeChangedListener` (API 31) ; ou notification `CATEGORY_CALL` | aucune / accès aux notifications | — | code confirmé, **comportement des applis à mesurer (P-4)** |
 | SMS de code | récepteur `SMS_RECEIVED` | `RECEIVE_SMS` | oui | confirmé, **sous réserve de D-008** |
-| SMS de code, repli Android 15+ | la notification de l'appli SMS par défaut arrive **masquée** (« Sensitive notification content hidden ») : le masquage lui-même signale un code | accès aux notifications | oui | probable, à mesurer |
+| SMS de code, repli Android 15+ | la notification de l'appli SMS par défaut arrive **masquée** (« Sensitive notification content hidden ») : le masquage lui-même signale un code | accès aux notifications | oui | **MESURÉ le 2026-11-02, émulateurs Android 16 et 17 (détecteur de codes de Google), écouteur de mesure** : un code **en anglais** (« Your verification code is … ») est masqué — titre vide, texte et conversation remplacés par « Sensitive notification content hidden » (« Le contenu sensible de la notification a été masqué » en français) — avec Google Messages **et** avec SMS Tech comme appli SMS ; canal et catégorie gardés. **Un code en français n'est PAS masqué** (« Votre code de validation est … », « Code de confirmation : … »), même téléphone réglé en français : l'écouteur reçoit le texte entier. ⇒ **Le masquage n'est pas un signal fiable en France** avec ce détecteur ; reconnaître un code français demande de lire le texte du SMS (réception des SMS, ou texte de la notification de l'appli SMS) : la promesse de confidentialité change (P-20, à trancher avec Patrice). Même résultat sur Android 17 (SMS Tech comme appli SMS). Reste à mesurer : Samsung (S24 FE, vrai SMS de banque) |
 | Demande de validation bancaire | `NotificationListenerService` — sur AOSP, le masquage des codes ne vise que l'appli SMS par défaut ; assistants Samsung et Pixel inconnus | accès aux notifications | oui | **MESURÉ le 2026-11-02 sur le S24 FE (P-2)** : la demande Sécur'Pass du Crédit Coopératif est lue en clair — canal **`securpass_id`**, titre « Vous allez enregistrer un compte externe », texte vide, aucun bouton ; l'appui dessus la retire avec `REASON_CLICK` (1). **Capteur branché le 2026-11-02** (`platform/notification`, D-019), **mesuré de bout en bout sur émulateur, Android 16 et 17**, avec une demande factice sur le canal reconnu (version de test, `StandInBankRequestReceiver`) : hors appel, reconnue mais rien d'affiché ni de gardé ; pendant un appel, STOP devant tout ; juste après, STOP « l'appel vient de se terminer », « Appeler ma banque » en premier. **Une seule notification arrive DEUX fois** à l'écouteur, à 0,26-0,3 s d'écart (sans doute l'assistant de notifications de Google qui l'ajuste) : le moteur en fait un seul STOP (`NotificationSignalTest`). Mise à jour de la même notification après l'écran quitté : nouveau STOP, comme voulu (D-017). **Processus tué** (`kill`, pas `force-stop`) : le système relance l'écouteur en 1 s et le tient au rang de service lié (`BFGS`). **Android 10 (S9)** : lié, demande reconnue, rien hors appel (pas de SIM : pas d'appel). Reste la vraie demande Sécur'Pass sur le S24 FE |
 | Appli bancaire ou de prise en main au premier plan | `UsageStatsManager.queryEvents` (**aucun rappel : interrogation**, pendant l'appel seulement) | `PACKAGE_USAGE_STATS` | oui | confirmé ; tenir le processus : P-5 |
 | Installation d'une appli | `getChangedPackages` (au réveil) + `PACKAGE_ADDED` dynamique ; **filtrés par la visibilité des paquets** | `QUERY_ALL_PACKAGES` (`normal`) | non | confirmé |
@@ -219,8 +220,8 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   étant alors au rang de service lié) : relecture GPT du 2026-11-02, n° 1. Parade possible, non construite :
   relire à la connexion les notifications actives et récentes ; elle rejouerait aussi une demande déjà traitée,
   donc un STOP de trop. **L'écouteur de mesure** (`MeasureNotificationListener`, version de test seulement) est
-  le seul code qui lise le titre et le texte d'une notification (chiffres masqués, une appli mesurée) : à retirer
-  une fois les autres banques mesurées.
+  le seul code qui lise le titre et le texte d'une notification (chiffres masqués ; l'appli bancaire mesurée et
+  l'appli SMS par défaut) : à retirer une fois les autres banques et les SMS de code mesurés.
 - **P-3** — Paramètres restreints : parcours guidé pas à pas ; une installation par F-Droid (installateur
   par session) y échappe-t-elle ? Non vérifié.
 - **P-4** — VoIP : `getMode()` voit-il WhatsApp, Signal, Telegram en appel ?
@@ -313,6 +314,21 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   notification plein écran ; elle n'est pas construite. Aujourd'hui un STOP bloqué est journalisé « non
   affiché » et son déclencheur réarmé. À construire avant publication (permissions `POST_NOTIFICATIONS`,
   `USE_FULL_SCREEN_INTENT`, restreinte depuis Android 14).
+- **P-20** — **Reconnaître un SMS de code en France** (mesure du 2026-11-02, § 6) : le masquage d'Android 15+ ne voit
+  pas les codes français (détecteur de Google, émulateurs Android 16 et 17 réglés en français). Il faut donc lire le texte,
+  et la promesse de confidentialité change : **décision de Patrice**, après la mesure sur le S24 (Samsung a son
+  propre détecteur). Trois voies :
+  - **(a) la notification de l'appli SMS par défaut**, par l'accès déjà demandé : aucune permission de plus. Le texte
+    est lu en mémoire pour cette seule appli, comparé à des formes de code, puis oublié ; un message masqué par
+    Android compte lui-même comme un code. Limites : une appli SMS qui cache le contenu de ses notifications, ou ne
+    notifie pas (conversation ouverte) ;
+  - **(b) la réception des SMS** (`RECEIVE_SMS`) : tout SMS, quelle que soit l'appli, même sans notification ; une
+    permission de plus, restreinte, et lourde à faire accepter (targetSdk 36 obligatoire, D-008) ;
+  - **(c) les deux**, (a) d'abord.
+
+  **Recommandation de Claude : (a)**. Il n'ajoute aucune permission, et ne lit que ce qu'il faut. La règle des
+  formes de code passera par l'agent des faux positifs (« code promo », « code postal », « code d'accès à
+  l'immeuble » ne sont pas des codes de validation).
 
 ## 8. Travailler dans ce dépôt
 
