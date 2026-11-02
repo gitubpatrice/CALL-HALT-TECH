@@ -26,9 +26,15 @@ Special accesses are not permissions
 ------------------------------------
 Notification access, accessibility, device administration, an input method: the user grants them in the
 phone's settings, and the app asks for none of them with a `<uses-permission>`. It declares a COMPONENT the
-system binds, guarded by an `android.permission.BIND_*` permission that only the system holds. These accesses
-are at least as wide as any permission, so the same rule holds: an exact list (ALLOWED_BINDINGS), each one
-with its component and its line in PRIVACY.md, and a few that must never appear (FORBIDDEN_BINDINGS).
+system binds, guarded by an `android.permission.BIND_*` permission that only the system holds. Most of these
+accesses are at least as wide as any permission, so the same rule holds: an exact list (ALLOWED_BINDINGS), each
+one with its component and its line in PRIVACY.md, and a few that must never appear (FORBIDDEN_BINDINGS). The
+few that grant nothing (a job service, if WorkManager ever comes) are listed all the same: reviewed, not unseen.
+
+The permission checked is the one ANDROID applies, not only the attribute on the component: a component without
+one takes the application's (`<application android:permission>`), an empty one cancels it, and an alias without
+one takes its target's. A permission given by reference (`@string/…`) cannot be reviewed from the manifest: it
+fails (independent review of 2026-11-02, which slipped an accessibility service past the first version).
 
 Usage
 -----
@@ -130,15 +136,37 @@ def parse(manifest_path: str) -> tuple[ET.Element, set[str]]:
     return root, names
 
 
-def bindings(root: ET.Element) -> set[tuple[str, str]]:
-    """Every (component, BIND_* permission) of the application: what the system binds with a special access."""
-    found = set()
+def bindings(root: ET.Element) -> tuple[set[tuple[str, str]], list[str]]:
+    """Every (component, BIND_* permission) the system binds, with the permission Android applies to it; and every
+    component whose permission is a reference, which the manifest alone cannot say."""
     application = root.find("application")
-    for element in application.iter():
-        permission = element.get(f"{{{ANDROID_NS}}}permission") or ""
-        if element.tag in COMPONENTS and permission.startswith(BIND_PREFIX):
-            found.add((full_name(element.get(f"{{{ANDROID_NS}}}name") or ""), permission))
-    return found
+    inherited = permission_of(application, None)
+    components = [element for element in application if element.tag in COMPONENTS]
+    # An alias without a permission of its own takes its target's, which takes the application's.
+    targets = {name_of(element): permission_of(element, inherited) for element in components if element.tag == "activity"}
+    found, references = set(), []
+    for element in components:
+        default = inherited
+        if element.tag == "activity-alias":
+            default = targets.get(full_name(element.get(f"{{{ANDROID_NS}}}targetActivity") or ""), inherited)
+        permission = permission_of(element, default)
+        if permission and permission.startswith("@"):
+            references.append(f"{name_of(element)} ({permission})")
+        elif permission and permission.startswith(BIND_PREFIX):
+            found.add((name_of(element), permission))
+    return found, references
+
+
+def permission_of(element: ET.Element, inherited: str | None) -> str | None:
+    """The permission Android applies to [element]: its own; none when written empty; else [inherited]."""
+    own = element.get(f"{{{ANDROID_NS}}}permission")
+    if own is None:
+        return inherited
+    return own or None
+
+
+def name_of(element: ET.Element) -> str:
+    return full_name(element.get(f"{{{ANDROID_NS}}}name") or "")
 
 
 def full_name(name: str) -> str:
@@ -192,7 +220,7 @@ def main(argv: list[str]) -> int:
         ])
         return 1
 
-    bound = bindings(root)
+    bound, references = bindings(root)
 
     print(f"Manifest: {manifest_path}")
     print(f"applicationId: {package}")
@@ -235,6 +263,11 @@ def main(argv: list[str]) -> int:
         )
 
     problems += binding_problems(bound)
+
+    if references:
+        problems.append("Component permission given by reference, which the manifest alone cannot review:")
+        problems += [f"  {reference}" for reference in references]
+        problems.append("Write the permission's name in full, so that this check sees what Android will apply.")
 
     if problems:
         print()

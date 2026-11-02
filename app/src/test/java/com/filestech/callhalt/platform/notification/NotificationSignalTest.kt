@@ -11,6 +11,8 @@ import com.filestech.callhalt.domain.model.JournalEntry
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopAnswered
+import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
@@ -26,7 +28,7 @@ import java.time.Instant
 
 /**
  * What a notification is to the engine — and, through the REAL engine, what the listener relies on it for: a request
- * stops the user during a call only, and the same request posted again is one STOP, not two.
+ * stops the user during a call only; a repeat is one STOP while that screen is unanswered, and a new one after.
  */
 class NotificationSignalTest {
 
@@ -58,24 +60,47 @@ class NotificationSignalTest {
         assertThat(notificationSignal(CREDIT_COOP, channelId, at(0))).isNull()
     }
 
+    /** The system delivers one notification twice, 0.3 s apart (measured on Android 16 and 17). */
     @Test
-    fun `during a call, a request shows a STOP, and the same request posted again shows no second one`() = runTest {
-        processSignal(CallStarted(at(0), CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable))
+    fun `during a call, a request shows a STOP, and a repeat while it is unanswered shows no second one`() = runTest {
+        startCall()
         post(at(30))
-        post(at(31)) // the bank app updated its notification: posted again, a second later
+        post(at(31))
         assertThat(shown.map { it.trigger }).containsExactly(SensitiveActionKind.BANK_VALIDATION_REQUEST)
         assertThat(store.journal).containsExactly(
             JournalEntry.Stop(at(30), SensitiveActionKind.BANK_VALIDATION_REQUEST, CREDIT_COOP, Counterpart.Unreadable),
         )
     }
 
+    /** The protective side, chosen: the listener cannot tell a repeat from a new request posted in its place. */
+    @Test
+    fun `once the STOP is answered, a repeat shows a new one`() = runTest {
+        startCall()
+        post(at(30))
+        processSignal(StopAnswered(at(40), SensitiveActionKind.BANK_VALIDATION_REQUEST, StopChoice.CONTINUE))
+        post(at(41))
+        assertThat(shown).hasSize(2)
+    }
+
+    @Test
+    fun `an unanswered STOP absorbs repeats for a minute, not longer`() = runTest {
+        startCall()
+        post(at(30))
+        post(at(30 + DetectionEngine.UNANSWERED_STOP_HOLD.seconds))
+        assertThat(shown).hasSize(2)
+    }
+
     @Test
     fun `outside a call, a request is the user's own, and nothing happens`() = runTest {
-        processSignal(CallStarted(at(0), CallChannel.CELLULAR, CallDirection.OUTGOING, Counterpart.Unreadable))
+        startCall()
         processSignal(CallEnded(at(60), CallChannel.CELLULAR))
         post(at(60 + AFTER_CALL_WINDOW_SECONDS + 1))
         assertThat(shown).isEmpty()
         assertThat(store.journal).isEmpty()
+    }
+
+    private suspend fun startCall() {
+        processSignal(CallStarted(at(0), CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable))
     }
 
     private suspend fun post(at: Instant) {

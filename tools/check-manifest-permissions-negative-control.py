@@ -42,11 +42,12 @@ def permission(name: str) -> str:
     return f'    <uses-permission android:name="{name}" />\n'
 
 
-def bound(component: str, guard: str, tag: str = "service") -> str:
-    """A component the system binds, written across lines as the merger writes it."""
+def bound(component: str, guard: str | None, tag: str = "service", extra: str = "") -> str:
+    """A component the system binds, written across lines as the merger writes it; no permission when [guard] is None."""
+    permission = "" if guard is None else f'\n            android:permission="{guard}"'
     return (
-        f'        <{tag}\n            android:name="{component}"\n            android:exported="true"\n'
-        f'            android:permission="{guard}" />\n'
+        f'        <{tag}\n            android:name="{component}"\n            android:exported="true"{extra}'
+        f'{permission} />\n'
     )
 
 
@@ -82,6 +83,29 @@ DEVICE_ADMIN = manifest(HEALTHY).replace(
     bound(f"{PACKAGE}.Admin", "android.permission.BIND_DEVICE_ADMIN", tag="receiver") + "    </application>",
 )
 
+
+def with_components(components: str, application_permission: str | None = None) -> str:
+    """The healthy manifest plus [components], under an `<application android:permission>` when one is given."""
+    healthy = manifest(HEALTHY)
+    if application_permission is not None:
+        healthy = healthy.replace('<application android:label="x">', f'<application android:label="x" android:permission="{application_permission}">')
+    return healthy.replace("    </application>", components + "    </application>")
+
+
+ACCESSIBILITY_GUARD = "android.permission.BIND_ACCESSIBILITY_SERVICE"
+# The review of 2026-11-02 slipped an accessibility service past the first version: the component carries no
+# permission, the application does, and Android applies it to every component that has none of its own.
+INHERITED = with_components(bound(f"{PACKAGE}.Reader", None), application_permission=ACCESSIBILITY_GUARD)
+# The other way round: a component's EMPTY permission cancels the application's, so nothing is bound with it.
+CANCELLED = with_components(bound(f"{PACKAGE}.Reader", ""), application_permission=ACCESSIBILITY_GUARD)
+# A reference resolves at install time, to whatever the string says: the manifest alone cannot be reviewed.
+REFERENCE = with_components(bound(f"{PACKAGE}.Reader", "@string/reader_permission"))
+# An alias without a permission of its own takes its target's: two components bound, not one.
+ALIAS = with_components(
+    bound(f"{PACKAGE}.Keyboard", "android.permission.BIND_INPUT_METHOD", tag="activity")
+    + bound(f"{PACKAGE}.KeyboardAlias", None, tag="activity-alias", extra=f'\n            android:targetActivity="{PACKAGE}.Keyboard"'),
+)
+
 # The merger writes a permission across several lines, under its API-23 spelling too: a grep would miss it.
 NETWORK_MULTILINE = manifest(HEALTHY).replace(
     "<application",
@@ -105,6 +129,10 @@ CASES = [
     ("an accessibility service", manifest(HEALTHY, bindings=ACCESSIBILITY), 1, "must NEVER be in the app"),
     ("a special access outside the list", manifest(HEALTHY, bindings=INPUT_METHOD), 1, "Special access(es) outside"),
     ("a special access on a receiver", DEVICE_ADMIN, 1, "Special access(es) outside"),
+    ("accessibility inherited from <application>", INHERITED, 1, "must NEVER be in the app"),
+    ("witness: an empty permission cancels the inherited one", CANCELLED, 0, "OK: no network"),
+    ("a component permission given by reference", REFERENCE, 1, "given by reference"),
+    ("an alias inherits its target's special access", ALIAS, 1, f"{PACKAGE}.KeyboardAlias (android.permission.BIND_INPUT_METHOD)"),
 ]
 
 

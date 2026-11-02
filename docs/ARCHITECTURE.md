@@ -9,7 +9,9 @@
 
 ## 1. Ce que fait le squelette aujourd'hui
 
-**Rien ne protège encore**, et l'appli le dit sur son écran d'accueil. Le squelette contient :
+**Elle ne protège encore personne en pratique**, et le dit sur son écran d'accueil : aucun écran ne demande ses
+accès. Qui les accorderait un par un dans les réglages du téléphone (téléphone, affichage par-dessus, accès aux
+notifications) aurait déjà un STOP sur une demande Sécur'Pass pendant un appel. Le squelette contient :
 
 - le **moteur de détection** complet et testé (module `:domain`), c'est-à-dire la méthode de la fiche,
   § 3 : appel en cours ou terminé depuis moins de N minutes, **et** action sensible → STOP ;
@@ -26,8 +28,8 @@ capteurs sont la suite (§ 6).
 
 **L'écran STOP réel, le même jour** (`platform/stop/`, permissions `SYSTEM_ALERT_WINDOW` et
 `ANSWER_PHONE_CALLS`) : **mesure P-1 passée sur le S24 FE** — pendant un vrai appel, il passe devant l'appli
-bancaire, et « Raccrocher » coupe l'appel. Faute de capteur d'action sensible, seul un signal injecté par adb
-(version de test) le déclenche : la version publiée ne montre encore aucun STOP.
+bancaire, et « Raccrocher » coupe l'appel. Il est déclenché par le premier capteur d'action sensible (la demande
+de validation bancaire, `platform/notification`, D-019), ou par un signal injecté par adb (version de test).
 
 ## 2. Les modules
 
@@ -150,7 +152,10 @@ app/src/main/java/com/filestech/callhalt/
 | D-016 | **Publication sur F-Droid : oui — mais rien n'est publié tant que l'appli n'est pas fiable, solide et sécurisée au mieux, avec un score d'au moins 95 sur 100** (Patrice, 2026-11-01) | **Condition de publication** : la grille qui donne ce score se fixe AVANT le premier audit de publication, sur trois éléments. **(1)** Aucun constat critique ou élevé ouvert : audit en 3 axes, audit de sécurité avec panel adverse, faux positifs des règles de détection, motifs de défaut. **(2)** Mesures P-1 à P-3 faites sur de vrais téléphones. **(3)** Une relecture externe du code qui décide. Un score sous 95, ou un critère non tenu : pas de publication. Comme Agenda Tech et SMS Tech. **Build reproductible** : déjà préparé (pas de foojay, bloc de dépendances de Play exclu). **Métadonnées fastlane** dans les 5 langues, changelog ≤ 500 caractères. **APK servi = notre APK**, signé de notre clé (`Binaries` + `AllowedAPKSigningKeys`) ; mises à jour par tag. **Toute montée de la chaîne de build** (AGP, Kotlin, Gradle) se vérifie côté F-Droid : elle se fait avec tout le portefeuille (Dependabot n° 3, AGP 9.5.0, fermée le 2026-11-01 pour cette raison). À mesurer : une installation par le client F-Droid échappe-t-elle aux paramètres restreints (P-3) ? |
 | D-017 | **Les mots de l'écran STOP** (Patrice, 2026-11-01), par ordre d'importance : où l'on est (« au téléphone » / « l'appel vient de se terminer »), ce qui vient d'arriver (un texte par déclencheur), « **si on vous dit d'ignorer cet écran, c'est une arnaque** », la règle (« ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération »), « le numéro ou le nom affiché ne prouve rien », que faire. Choisis par `ui/stop/StopText.kt` selon le déclencheur, l'appel (en cours ou fini, téléphone ou VoIP) et la permission de raccrocher, vérifiés par `StopTextTest` | Les escrocs ne jouent pas que la banque : police, impôts, URSSAF, mutuelle, assurance, crédit (Patrice). La règle **nomme qui ne demande jamais** au lieu de dire « personne » : le service client d'un opérateur peut faire relire un code qu'il vient d'envoyer, un proche peut aider par une appli de prise en main. Elle dit « **vous appelleront** » et non « vous demanderont au téléphone » : qui appelle lui-même sa vraie banque peut avoir à valider ce qu'il a demandé (relecture Claude, H2). Une règle qu'on sait fausse rendrait tout l'écran douteux. **Pas de question** « connaissez-vous votre interlocuteur ? » : la victime croit le connaître (numéro usurpé, son nom, ses opérations) et répondrait oui ; l'écran affirme. L'escroc est encore en ligne quand l'écran s'affiche (« c'est normal, appuyez sur Continuer ») : « ignorer cet écran » le désarme d'avance, et reste catégorique — si c'était la vraie banque, l'erreur ne coûte qu'un rappel. **Ordre mesuré sur le S9** (police normale puis 1,3) : ce qui suit la règle sortait de l'écran ; on ne fait pas défiler sous pression. **Prise en main à distance** : raccrocher ne coupe pas la session, le conseil est d'éteindre le téléphone. **Boutons** : « Raccrocher » seulement si l'appli peut le faire (appel téléphonique en cours, permission accordée : `endCall` ne raccroche pas la VoIP) ; pendant l'appel, « Raccrocher et appeler ma banque » (D-011 : raccrocher AVANT de composer) ; après, « Appeler ma banque » en premier ; **pendant un appel que l'appli ne peut pas couper, aucun bouton d'appel** (le conseil dit de raccrocher). Si « Raccrocher » échoue, l'écran reste, sans ses boutons d'appel. Ils restent en bas, visibles ; les textes défilent au-dessus. **L'écran quitté sans réponse** (accueil, autre appli ; pas la mise en veille) se ferme et libère ses déclencheurs (`StopChoice.LEFT`, journalisé, sans SMS au proche) : une nouvelle tentative montre un nouvel écran. |
 | D-018 | **La mesure décide de la suite** (Patrice, 2026-11-01, sur recommandation de Claude) : si l'écran STOP ne s'affiche pas par-dessus l'appli bancaire (P-1), ou si ses demandes de validation sont illisibles (P-2), **le projet s'arrête** | La concurrence n'est pas la raison : en France, rien ne fait la même chose en français, sans Google ni Internet (fiche, § 9.1). Les vrais risques sont techniques (P-1 à P-3 ; Android resserre ces accès à chaque version : codes masqués dans les notifications depuis Android 15, SMS de code retardés par Android 17) et stratégiques (Google ou Samsung, s'ils couvrent un jour la France, la rendraient inutile au plus grand nombre). La journée déjà investie ne pèse pas : seuls les vrais téléphones tranchent. **P-1 et P-2 passées le 2026-11-02** (S24 FE, Android 16) : **le projet continue.** |
-| D-019 | **Une demande bancaire se reconnaît à son CANAL de notification, de n'importe quelle appli** (`platform/notification/NotificationSignal.kt`, liste `BANK_REQUEST_CHANNELS` : `securpass_id` aujourd'hui) ; l'écouteur ne lit que l'appli et le canal de chaque notification | Le canal est un identifiant du code de l'appli : le même dans toutes les langues et toutes les versions de ses textes, et le lire ne lit rien de ce que dit la notification (PRIVACY). **Pas de liste de paquets** : Sécur'Pass est commun aux banques du groupe BPCE, et un nom de paquet que personne n'a mesuré ferait manquer leurs demandes ; un canal qu'aucune autre appli n'emploie ne coûte rien là où il n'apparaît pas. Une appli qui l'imiterait ne provoquerait qu'un STOP de trop, du côté protecteur. **Correspondance exacte** (ni casse, ni sous-chaîne : `NotificationSignalTest`). Le paquet va au journal (de quelle appli venait la demande). **L'accès aux notifications est un accès spécial, pas une permission** : la garde CI (`tools/check-manifest-permissions.py`) tient désormais aussi la liste exacte des composants que le système lie par une permission `BIND_*` (contrôle négatif : 15 cas), et refuse toujours un service d'accessibilité (D-010) ou un VPN. |
+| D-019 | **Une demande bancaire se reconnaît à son CANAL de notification, de n'importe quelle appli** (`platform/notification/NotificationSignal.kt`, liste `BANK_REQUEST_CHANNELS` : `securpass_id` aujourd'hui) ; l'écouteur ne lit que l'appli et le canal de chaque notification | Le canal est un identifiant du code de l'appli : le même dans toutes les langues et toutes les versions de ses textes, et le lire ne lit rien de ce que dit la notification (PRIVACY). **Pas de liste de paquets** : Sécur'Pass est commun aux banques du groupe BPCE, et un nom de paquet que personne n'a mesuré ferait manquer leurs demandes ; un canal qu'aucune autre appli n'emploie ne coûte rien là où il n'apparaît pas. Une appli qui l'imiterait ne provoquerait qu'un STOP de trop, du côté protecteur. Postée juste AVANT la vraie
+demande, pendant un appel, elle la ferait absorber par le STOP déjà affiché (règle des 60 s du moteur) : sans
+perte, puisque ce STOP est devant la victime, et l'écran quitté libère son déclencheur (`LEFT`). Seul un écran tué
+sans réponse laisserait passer la vraie demande pendant 60 s (relecture de sécurité du 2026-11-02, faible). **Correspondance exacte** (ni casse, ni sous-chaîne : `NotificationSignalTest`). Le paquet va au journal (de quelle appli venait la demande). **L'accès aux notifications est un accès spécial, pas une permission** : la garde CI (`tools/check-manifest-permissions.py`) tient désormais aussi la liste exacte des composants que le système lie par une permission `BIND_*`, et refuse toujours un service d'accessibilité (D-010) ou un VPN. Elle lit la permission **qu'Android applique** : celle du composant, sinon celle de `<application>` (une valeur vide l'annule), celle de sa cible pour un alias ; une permission donnée par référence (`@string/…`) échoue. La relecture indépendante du 2026-11-02 avait fait passer un service d'accessibilité par l'héritage de `<application>` dans la première version (contrôle négatif : 19 cas, dont celui-là, vérifié rouge sur l'ancienne garde). |
 
 ## 6. Les capteurs à brancher — ce qu'Android permet (vérifié le 2026-11-01)
 
@@ -204,9 +209,14 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   avec le capteur branché (D-019), sur le S24 FE** : la vraie demande en entier (arrivée pendant un appel, STOP
   devant l'appli bancaire) ; si Sécur'Pass ou l'assistant de Samsung la publient plusieurs fois, et quand
   (après la réponse au STOP, une nouvelle publication montre un nouvel écran : du côté protecteur, mais à
-  connaître) ; si une notification de confirmation suit, sur le même canal. Une demande publiée pendant que
-  l'écouteur n'est pas lié (accès tout juste accordé, relance après la mort du processus : 1 s mesurée) n'est
-  pas vue.
+  connaître) ; si une notification de confirmation suit, sur le même canal. Si elles se répètent, les
+  distinguer (par la clé de la notification) devient nécessaire **avant le SMS au proche** (D-015) : chaque
+  nouveau STOP le préviendrait à nouveau. Une demande publiée pendant que l'écouteur n'est pas lié (accès tout
+  juste accordé, relance après la mort du processus : 1 s mesurée) n'est pas vue. **Ni une demande reçue mais
+  pas encore traitée** quand le processus meurt (la file est en mémoire ; quelques millisecondes, le processus
+  étant alors au rang de service lié) : relecture GPT du 2026-11-02, n° 1. Parade possible, non construite :
+  relire à la connexion les notifications actives et récentes ; elle rejouerait aussi une demande déjà traitée,
+  donc un STOP de trop.
 - **P-3** — Paramètres restreints : parcours guidé pas à pas ; une installation par F-Droid (installateur
   par session) y échappe-t-elle ? Non vérifié.
 - **P-4** — VoIP : `getMode()` voit-il WhatsApp, Signal, Telegram en appel ?
@@ -247,7 +257,11 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   sans usage (Android 11+), hibernation (Android 12+) ; `PackageManagerCompat.getUnusedAppRestrictionsStatus`
   dit les deux derniers.
 - **P-11** — Élaguer le journal (durée de conservation) ; dédoublonner l'avertissement « appli de prise en
-  main installée » hors appel, qu'une diffusion répétée ferait écrire plusieurs fois (D8).
+  main installée » hors appel, qu'une diffusion répétée ferait écrire plusieurs fois (D8). **Atteignable depuis
+  le capteur des notifications** (relecture de sécurité du 2026-11-02, faible) : une appli qui imite le canal
+  `securpass_id` pendant un appel ajoute deux lignes par STOP auquel on répond, sans fin (le débit est borné par
+  Android, quelques notifications par seconde). À poser avant publication : une durée ou un nombre de lignes, dans
+  la même transaction ; la politique de confidentialité dira combien de temps le journal est gardé.
 - ~~**P-12** — **Contrat des capteurs : une file unique, dans l'ordre de réception.**~~ **Fait le 2026-11-02** :
   `platform/SensorQueue`, un seul consommateur, premier arrivé premier traité (`SensorQueueTest`). Le
   `Mutex` du magasin sérialisait les signaux sans les garder dans l'ordre : une action estampillée une

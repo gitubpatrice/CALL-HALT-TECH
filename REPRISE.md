@@ -24,12 +24,12 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 4. La mesure **P-2** (PR #10) — la demande Sécur'Pass est lisible : canal `securpass_id`, titre qui nomme
    l'opération, `REASON_CLICK` quand on appuie dessus.
 
-5. **Le capteur des notifications** (PR #12) — une demande de validation bancaire, reconnue à son canal
+5. **Le capteur des notifications** (PR #13) — une demande de validation bancaire, reconnue à son canal
    (`securpass_id`, D-019), affiche le STOP pendant l'appel ou juste après. Mesuré de bout en bout sur émulateur
    (Android 16 et 17) avec une demande factice, et sur le S9 (Android 10, sans appel). L'écouteur ne lit que
    l'appli et le canal de chaque notification.
 
-**Prochaine étape : un appel ne survit pas à un redémarrage** (P-7, mesuré pendant la PR #12). Un téléphone
+**Prochaine étape : un appel ne survit pas à un redémarrage** (P-7, mesuré pendant la PR #13). Un téléphone
 éteint en plein appel garde l'appel « en cours » jusqu'à 8 h, et la demande bancaire de l'utilisateur lui-même
 montre alors un faux STOP.
 
@@ -69,9 +69,10 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
 - Ce qui manque pour protéger quelqu'un : les autres **capteurs d'actions sensibles** (SMS de code, applis de
-  prise en main) et l'**écran d'activation** (l'accès aux notifications ne s'accorde aujourd'hui que par adb).
-  C'est la suite.
-- Vérifications : 144 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+  prise en main) et l'**écran d'activation** : aujourd'hui, aucun écran ne demande les accès ; il faut les
+  accorder un par un dans les réglages du téléphone (Android 13+ : « Autoriser les paramètres restreints » pour
+  l'accès aux notifications d'une appli installée depuis un fichier). C'est la suite.
+- Vérifications : 146 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -130,7 +131,7 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
    qui cherche les faux positifs).
 4. **Les notifications de la banque** — mesure **P-2** : ✅ **lisibles, mesuré le 2026-11-02 sur le S24 FE**
-   (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #12). Restent la vraie demande
+   (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #13). Restent la vraie demande
    pendant un vrai appel sur le S24 FE, puis d'autres banques.
 5. **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3**.
 
