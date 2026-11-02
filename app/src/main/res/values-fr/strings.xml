@@ -3,8 +3,48 @@
     <!-- Accueil -->
     <string name="home_title">Protection contre les arnaques au téléphone</string>
     <string name="home_rule">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander un code ou de valider une opération.</string>
-    <string name="home_status_preview">Cette version ne vous protège pas encore : elle montre à quoi ressemblera la protection.</string>
+    <string name="home_on">La protection est en marche.</string>
+    <plurals name="home_on_detail">
+        <item quantity="one">Pendant un appel et %1$d minute après, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou quand l\'appli de votre banque vous demande de valider une opération.</item>
+        <item quantity="many">Pendant un appel et %1$d minutes après, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou quand l\'appli de votre banque vous demande de valider une opération.</item>
+        <item quantity="other">Pendant un appel et %1$d minutes après, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou quand l\'appli de votre banque vous demande de valider une opération.</item>
+    </plurals>
+    <string name="home_on_detail_call_only">Pendant un appel, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou quand l\'appli de votre banque vous demande de valider une opération.</string>
+    <string name="home_off">La protection ne fonctionne pas.</string>
+    <plurals name="home_missing">
+        <item quantity="one">Il manque %1$d autorisation.</item>
+        <item quantity="many">Il manque %1$d autorisations.</item>
+        <item quantity="other">Il manque %1$d autorisations.</item>
+    </plurals>
+    <string name="home_activate">Activer la protection</string>
     <string name="home_try_stop">Essayer l\'écran STOP</string>
+
+    <!-- Les accès -->
+    <string name="access_calls_title">Savoir quand vous êtes au téléphone</string>
+    <string name="access_screen_title">Afficher l\'écran STOP devant les autres applis</string>
+    <string name="access_notifications_title">Voir les demandes de votre banque et les codes reçus</string>
+    <string name="access_granted">Autorisé</string>
+    <string name="access_missing">Non autorisé</string>
+
+    <!-- Activation -->
+    <string name="activation_step">Étape %1$d sur %2$d</string>
+    <string name="access_calls_why">L\'écran STOP ne s\'affiche que pendant un appel ou juste après. L\'appli voit quand un appel commence et se termine : ni le numéro, ni ce qui se dit.</string>
+    <string name="access_calls_how">Le téléphone va vous demander d\'autoriser l\'appli «\u00A0à passer et gérer des appels téléphoniques\u00A0» : c\'est ce qui lui permet de voir vos appels, et de raccrocher quand vous appuyez sur «\u00A0Raccrocher\u00A0» dans l\'écran STOP. Elle n\'appelle jamais personne d\'elle-même.</string>
+    <string name="access_calls_refused">Le téléphone ne pose plus la question. Ouvrez les réglages, puis «\u00A0Autorisations\u00A0», «\u00A0Téléphone\u00A0», et choisissez «\u00A0Autoriser\u00A0».</string>
+    <string name="access_screen_why">Pour que l\'écran STOP passe devant l\'appli de votre banque, au bon moment.</string>
+    <string name="access_screen_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'autorisation, puis revenez ici.</string>
+    <string name="access_notifications_why">Pour que l\'appli voie quand votre banque vous demande de valider une opération, et quand un code arrive par SMS. De chaque notification, elle lit l\'appli qui l\'envoie ; de celles de votre appli SMS, aussi le dernier message, sans le garder ni l\'envoyer.</string>
+    <string name="access_notifications_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'accès, confirmez, puis revenez ici.</string>
+    <string name="access_allow">Autoriser</string>
+    <string name="access_open_settings">Ouvrir les réglages</string>
+    <string name="access_later">Plus tard</string>
+
+    <!-- Paramètres restreints -->
+    <string name="restricted_title">Si le téléphone refuse</string>
+    <string name="restricted_why">Android bloque cet accès pour les applis installées depuis un fichier. Vous ne le débloquez qu\'une fois.</string>
+    <string name="restricted_steps">1. Fermez le message du téléphone.\n2. Touchez «\u00A0Ouvrir les infos de l\'appli\u00A0», ci-dessous.\n3. Touchez les trois points en haut à droite, puis «\u00A0Autoriser les paramètres restreints\u00A0». Le téléphone peut demander le code qui le déverrouille.\n4. Revenez ici, et touchez à nouveau «\u00A0Ouvrir les réglages\u00A0».</string>
+    <string name="restricted_warning">Ne le faites que pour Call Halt Tech : ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous demanderont jamais de le faire pour une autre appli.</string>
+    <string name="restricted_open_app_info">Ouvrir les infos de l\'appli</string>
 
     <!-- Écran STOP -->
     <string name="stop_title">STOP</string>

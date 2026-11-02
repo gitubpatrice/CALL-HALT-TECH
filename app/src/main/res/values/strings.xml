@@ -12,11 +12,54 @@
 <resources>
     <string name="app_name" translatable="false">Call Halt Tech</string>
 
-    <!-- Home -->
+    <!-- Home: the state of the protection, read from the phone each time the app comes to the front (D-022). -->
     <string name="home_title">Protection against phone scams</string>
     <string name="home_rule">Your bank, the police, the tax office, your insurer: none of them will ever call you to ask for a code or to approve a transaction.</string>
-    <string name="home_status_preview">This version does not protect you yet: it shows what the protection will look like.</string>
+    <string name="home_on">The protection is on.</string>
+    <!-- What the protection watches today, no more: a protection app that claims more than it does is worse than none. -->
+    <plurals name="home_on_detail">
+        <item quantity="one">During a call and for %1$d minute after it, the STOP screen shows when you receive a code by text message, or when your bank\'s app asks you to approve a transaction.</item>
+        <item quantity="other">During a call and for %1$d minutes after it, the STOP screen shows when you receive a code by text message, or when your bank\'s app asks you to approve a transaction.</item>
+    </plurals>
+    <string name="home_on_detail_call_only">During a call, the STOP screen shows when you receive a code by text message, or when your bank\'s app asks you to approve a transaction.</string>
+    <string name="home_off">The protection is not working.</string>
+    <plurals name="home_missing">
+        <item quantity="one">%1$d permission is missing.</item>
+        <item quantity="other">%1$d permissions are missing.</item>
+    </plurals>
+    <string name="home_activate">Turn on the protection</string>
     <string name="home_try_stop">Try the STOP screen</string>
+
+    <!-- Each access, on the home screen and in the activation (platform/access/Access.kt). -->
+    <string name="access_calls_title">Know when you are on the phone</string>
+    <string name="access_screen_title">Show the STOP screen in front of other apps</string>
+    <string name="access_notifications_title">See your bank\'s requests and the codes you receive</string>
+    <string name="access_granted">Allowed</string>
+    <string name="access_missing">Not allowed</string>
+
+    <!-- Activation: one access per step. The words in quotes are the phone's own, read in Android 16's resources in
+         each language (2026-11-02): the user must recognise them on the screen. The switches are not quoted: their
+         words change from one maker to the next, and each page has one. -->
+    <string name="activation_step">Step %1$d of %2$d</string>
+    <string name="access_calls_why">The STOP screen only shows during a call or just after it. The app sees when a call starts and ends: not the number, nor what is said.</string>
+    <string name="access_calls_how">The phone will ask whether to allow the app “to make and manage phone calls”: that is what lets it see your calls, and hang up when you press “Hang up” on the STOP screen. It never calls anyone by itself.</string>
+    <string name="access_calls_refused">The phone no longer asks. Open the settings, then “Permissions”, “Phone”, and choose “Allow”.</string>
+    <string name="access_screen_why">So that the STOP screen shows in front of your bank\'s app, at the right moment.</string>
+    <string name="access_screen_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the permission on, then come back here.</string>
+    <string name="access_notifications_why">So that the app sees when your bank asks you to approve a transaction, and when a code arrives by text message. Of each notification, it reads which app sent it; of your text-message app\'s, the last message as well, without keeping or sending it.</string>
+    <string name="access_notifications_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the access on, confirm, then come back here.</string>
+    <string name="access_allow">Allow</string>
+    <string name="access_open_settings">Open the settings</string>
+    <string name="access_later">Later</string>
+
+    <!-- Android 13+ blocks some accesses for an app installed from a file, until "Allow restricted settings" in the app
+         info — a menu that shows only once the phone has refused once (measured, P-3). Scammers have their victims
+         do the same for THEIR app: the warning says who never asks for it. -->
+    <string name="restricted_title">If the phone refuses</string>
+    <string name="restricted_why">Android blocks this access for apps installed from a file. You only unblock it once.</string>
+    <string name="restricted_steps">1. Close the phone\'s message.\n2. Touch “Open the app info”, below.\n3. Touch the three dots at the top right, then “Allow restricted settings”. The phone may ask for the code that unlocks it.\n4. Come back here, and touch “Open the settings” again.</string>
+    <string name="restricted_warning">Do this only for Call Halt Tech: your bank, the police, the tax office, your insurer will never ask you to do it for another app.</string>
+    <string name="restricted_open_app_info">Open the app info</string>
 
     <!-- STOP screen. The screen also shows in the minutes after a call: each text that depends on it has an
          "on call" and an "after call" form, chosen by ui/stop/StopText.kt. -->
