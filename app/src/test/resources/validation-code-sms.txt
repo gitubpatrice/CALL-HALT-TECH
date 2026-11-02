@@ -1,0 +1,140 @@
+# The validation-code rule's corpus, read by ValidationCodeTest. Built on 2026-11-02 by the false-positive auditor
+# (regles-faux-positifs-auditor), word by word as real senders write; then decided line by line.
+#
+# Format: id|C or L|text. C: the rule must take it for a validation code; L: it must not. {NBSP} and {NNBSP} stand for
+# the French non-breaking spaces. A STOP shows only during a call or just after it: a false C costs a STOP then (and
+# a text to the relative, D-015); a missed C, a code read out to a scammer. Every change of the rule adds its lines.
+#
+# Decided AGAINST the corpus's first verdict, on purpose:
+# - C, though not one-time codes: O01 (RIO), O02 (PIN, PUK), O04 (voicemail) are tools of the scam itself (porting the
+#   number, swapping the SIM, reading the voicemail); H02, R03: a withdrawal code — the bank's card-free withdrawal code
+#   is a real one; B09, B10: a friend's "le code c'est 4821", which only the sender would tell apart; K11: an operation
+#   code next to "virement", where the payment word wins, on the protective side.
+# - L, known misses, rare: M04 ("48 29 13", in pairs), M05 (letters and digits), M10 ("482.913"), M27 (a code, then a
+#   promo code in the same SMS: the promo vetoes the bare "code").
+T01|C|Votre code de validation est 482913. Ne le communiquez a personne.
+T02|C|Code de confirmation : 271846
+T03|C|Your verification code is 731052.
+T04|C|482913 est votre code de vérification.
+T05|C|Votre code WhatsApp : 482-913
+T06|C|G-482913 is your Google verification code.
+T07|C|Code de sécurité 3D Secure : 48291374
+T08|C|Ne communiquez jamais ce code : 4829
+T09|C|Votre mot de passe à usage unique est 482913
+T10|C|OTP: 482913
+T11|C|CODE 482 913
+T12|C|Votre code de validation est 482913. Code promo : PRINTEMPS
+T13|L|Code promo : 2024 pour -20 % sur tout le magasin
+T14|L|Votre code postal 75011 est incomplet
+T15|L|Code porte : 4821B, 3e étage
+T16|L|Code de suivi 482913 : votre colis est en route
+T17|L|Votre code d'accès à l'immeuble est 4821
+T18|L|Rendez-vous le 12/11/2026 à 14:30 au cabinet.
+T19|L|Votre colis 4829137 sera livré demain.
+T20|L|Votre facture de 1234,56 € est disponible.
+T21|L|Rappelez le 0612345678.
+T22|L|Votre code a expiré.
+T23|L|Crédit Coopératif : Virements - Ajout d'un bénéficiaire le 02/11/2026 sur internet.
+P01|L|KIABI : -30% sur tout le magasin ce week-end avec le code KIABI30 ! Stop SMS au 36111
+P02|L|SEPHORA : jusqu'à -50% sur une sélection, en ligne avec le code BEAUTY. STOP 36105
+P03|L|Profitez de -20% avec le code promo NOEL20 ! Code valable jusqu'au 24/12. STOP au 36173
+P04|L|Décathlon : 10 € offerts dès 50 € d'achat avec le code DECAT10, jusqu'au 30 novembre 2026.
+P05|L|Code -15% : BIENVENUE15 sur votre première commande. Stop au 36179
+P06|L|Votre code avantage fidélité : VIP2026. Valable en magasin.
+P07|L|Code réduction : NOEL. Livraison offerte jusqu'au 24 décembre 2026.
+P08|L|Votre code-promo : NOEL20. STOP 36111
+P09|L|Use promo code SAVE20 at checkout. Offer ends 30 November 2026.
+P10|L|Your discount code WELCOME10 expires soon. Reply STOP to 61234
+P11|L|Code parrain : JULIE2026 - 10 € offerts pour vous deux !
+D01|L|Chronopost : votre colis sera livré aujourd'hui entre 10h et 13h. Code de livraison à communiquer au livreur : 4821
+D02|L|Colissimo : votre colis 6A12345678901 vous sera remis contre le code 4821. Communiquez-le au facteur.
+D03|L|Amazon : votre code de livraison est 482913. Communiquez-le au livreur uniquement lors de la remise du colis.
+D04|L|InPost : votre colis est disponible dans le Locker Carrefour Market. Code de retrait : 482913. Valable 72h.
+D05|L|Mondial Relay : votre colis n°12345678 est disponible au Point Relais. Présentez le QR code ou une pièce d'identité.
+D06|L|Code de suivi 482913 : votre colis est en route. Présentez ce code au point relais.
+D07|L|DPD : votre colis arrive aujourd'hui entre 9h30 et 10h30. Votre code secret de livraison : 4821.
+D08|L|Votre commande n°4829137 est prête. Présentez le code-barres en magasin.
+D09|L|Your Amazon Locker pickup code is 482913. Your package will be held for 3 days.
+B01|L|Le code du portail c'est 1234
+B02|L|Code : 4821B, 3e étage gauche
+B03|L|Salut, le code de la boîte à clés est 1985. Bon séjour !
+B04|L|Code 4821A puis interphone Martin
+B05|L|Votre code d'accès à l'immeuble est 4821. Ce code change chaque mois.
+B06|L|Le mot de passe du wifi c'est 48291374
+B07|L|Code du garage : 2580
+B08|L|Le code c'est 4821, 2e étage porte gauche
+B09|C|Le code c'est 4821
+B10|C|RDV au 12 rue des Lilas 75011 Paris, le code c'est 4821B
+H01|L|Votre examen du code de la route est confirmé le jeudi 14 novembre 2026 à 10h00 au centre La Poste.
+H02|C|Pharmacie du Centre : votre commande est prête. Code de retrait 4821 au distributeur 24h/24.
+H03|L|Rappel : RDV le 02/11/2026 à 14h30 chez Dr Martin, 3 rue des Lilas, 75011 Paris. Code porte 4821.
+H04|L|Rappel : RDV le 03/11 à 9h15 chez Dr Martin. Code 4821 puis 2e étage.
+H05|L|Ornikar : plus que 3 jours avant ton examen du code ! Révise sur l'appli. STOP 36105
+H06|L|Code de la route : examen le 2026-11-14 à 10:00
+K01|L|Votre code confidentiel a été bloqué suite à 3 saisies erronées. Pour le débloquer, contactez le 3639.
+K02|L|Paiement refusé avec votre carte se terminant par 4821 : code confidentiel erroné.
+K03|L|Votre nouveau code confidentiel vous a été envoyé par courrier le 2 novembre 2026.
+K04|L|Crédit Agricole : votre mot de passe a été modifié le 02/11/2026 à 14:30. Si vous n'êtes pas à l'origine de ce changement, appelez le 09 69 39 92 91.
+K05|L|Si vous n'êtes pas à l'origine de cette demande de code, appelez le 0 800 123 456.
+K06|L|Virement de 2500 euros vers M. DUPONT effectué. Votre conseiller ne vous demandera jamais de code par téléphone.
+K07|L|Voici mon RIB : FR76 3000 4012 3400 0101 2345 678, code banque 30004
+O01|C|Free Mobile : votre code RIO est 13 P 482913 7AB.
+O02|C|SFR : votre nouvelle carte SIM est activée. Code PIN : 1234, code PUK : 48291374.
+O03|L|Orange : votre mot de passe a été réinitialisé. Si vous n'êtes pas à l'origine de cette demande, appelez le 3900.
+O04|C|Orange : votre code de messagerie vocale est 1234. Pour consulter vos messages, composez le 888.
+R01|L|Votre réservation est confirmée pour 4 personnes le 02/11 à 20h. Code de réservation : 4821
+R02|L|SNCF Connect : votre e-billet pour le TGV INOUI n°6123 du 02/11 est prêt. Présentez le QR code au contrôleur.
+R03|C|Pathé : votre code de retrait est 48291374. Présentez-le à la borne.
+R04|L|Votre place de parking est réservée. Code de sortie : 482913
+Y01|L|Paiement de 1234{NBSP}€ accepté. Ne communiquez jamais votre code.
+Y02|L|Paiement de 1234 € accepté. Ne communiquez jamais votre code.
+Y03|L|Code{NBSP}promo : 2024 pour -20 % sur tout le magasin
+M01|C|Code:482913
+M02|C|Votre code:482913. Ne le communiquez à personne.
+M03|C|Saisissez 482913 pour valider votre paiement de 49,90 EUR chez AMAZON.
+M04|L|Votre code est le 48 29 13
+M05|L|Votre code de vérification : A4B9C2
+M06|C|Code d'accès à usage unique : 482913. Ne le communiquez à personne.
+M07|C|Votre code d’accès temporaire à votre espace client est 482913. Il expire dans 10 minutes.
+M08|C|La Banque Postale : Certicode 482913 pour le paiement de 49,90 EUR chez FNAC.
+M09|C|Your PIN is 4821
+M10|L|482.913 est votre code
+M11|C|Votre code WhatsApp : 482{NBSP}913
+M12|C|Votre code de retrait d'espèces sans carte est 482913. Valable 24h.
+M13|C|Your access code is 482913
+M14|C|Code de confirmation de l'ajout du bénéficiaire M. DUPONT JEAN : 482913
+M15|C|Pour valider le paiement de 49,90 EUR chez AMAZON EU le 02/11/2026 sur votre carte ****1234, saisissez le code 482913
+M16|C|Code 3DS : 48291374
+M17|C|Vos codes de connexion : 482913
+M18|C|Code de signature électronique de votre offre de prêt : 482913
+M19|C|Lydia : 4829 est votre code de vérification. Ne le partagez avec personne.
+M20|C|Votre code Paylib pour recharger votre porte-monnaie : 482913
+M21|C|Pour ajouter votre carte à Apple Pay, saisissez le code 482913
+M22|C|Code d'activation de votre carte dans Google Pay : 482913. Ne le communiquez jamais.
+M23|C|OTP:482913
+M24|C|Votre code de paiement est 482913. Ni votre banque ni un livreur ne vous demandera ce code.
+M25|C|Your verification code is 482913. Don't share it with anyone, including delivery drivers.
+M26|C|482913 est votre code Amazon. Ne le partagez pas.
+M27|L|Votre code : 482913. Code promo du mois : BIENVENUE
+M28|C|Code de sécurité : 482913 (paiement de 1500 EUR)
+D10|L|Chronopost : pour valider la livraison, communiquez le code 4821 au livreur. Ne le communiquez qu'à votre livreur.
+D11|L|Amazon : votre code de livraison est 482913. Ne partagez ce code qu'avec le livreur, au moment de la remise.
+K08|L|Votre carte se terminant par 4821 a été ajoutée à Apple Pay. Si vous n'êtes pas à l'origine de cet ajout, appelez le 09 69 32 00 00.
+M29|C|CIC : code 482913 pour le paiement de 49,90 EUR chez PARKING INDIGO
+M30|C|Code 482913 pour valider votre achat chez COLIS PRIVE
+M31|C|Votre code de connexion à votre espace client : 482913
+M32|C|Code : 482913 (valable 10 min). Si vous n'êtes pas à l'origine de cette demande, appelez le 3639.
+M33|C|Saisissez le code 482913 pour finaliser l'ajout de votre carte dans votre portefeuille Apple Pay
+M34|C|SFR : votre code de confirmation de portabilité est 482913
+K09|L|Virement reçu de M. DUPONT JEAN : 250,00 EUR, référence 48291374.
+K10|L|Paiement de 49,90 EUR accepté chez FNAC le 02/11. Commande n°4829137.
+K11|C|Vous avez reçu 250,00 EUR de Julie par virement instantané. Code opération 4829137.
+M35|C|Votre code : 482913. Il ne doit jamais être communiqué, même à un livreur.
+M36|C|Code 482913. Ne le donnez à personne, pas même au livreur.
+K12|L|Code BIC : BNPAFRPP, IBAN : FR76 3000 4012 3400 0101 2345 678
+P12|L|Bonne année 2026 ! Profitez de -20% avec le code NEWYEAR
+A01|L|France Travail : votre mot de passe a été réinitialisé. Votre identifiant : 4829137A
+A02|L|CAF : votre code confidentiel provisoire vous a été envoyé par courrier. Numéro allocataire : 4829137.
+A03|L|Collège Jean Moulin : sortie au musée le jeudi 14 novembre 2026, code vestimentaire : tenue correcte.
+A04|L|Votre code a expiré. Pour en recevoir un nouveau, appelez le 3646.
+A05|L|Ta commande Vinted est arrivée au point relais Tabac Le Balto, 75011 Paris. Présente le QR code dans l'appli.

@@ -50,7 +50,7 @@ class NotificationSignalTest {
     @ParameterizedTest
     @ValueSource(strings = [CREDIT_COOP, "fr.banquepopulaire.cyberplus", "com.example.other"])
     fun `a request on the Sécur'Pass channel asks to approve an operation, from whichever app`(packageName: String) {
-        assertThat(notificationSignal(packageName, "securpass_id", at(0)))
+        assertThat(notificationSignal(packageName, "securpass_id", sms = null, at(0)))
             .isEqualTo(SensitiveAction(at(0), SensitiveActionKind.BANK_VALIDATION_REQUEST, source = packageName))
     }
 
@@ -59,7 +59,41 @@ class NotificationSignalTest {
     @NullSource
     @ValueSource(strings = ["miscellaneous", "", "SECURPASS_ID", "securpass", "securpass_id ", "securpass_id_2"])
     fun `any other channel is nothing to the engine`(channelId: String?) {
-        assertThat(notificationSignal(CREDIT_COOP, channelId, at(0))).isNull()
+        assertThat(notificationSignal(CREDIT_COOP, channelId, sms = null, at(0))).isNull()
+    }
+
+    /** The texts measured on 2026-11-02 (emulators and S24 FE), digits of the measurement put back. */
+    @Test
+    fun `from the SMS app, a code is a code message, from the SMS app`() {
+        val code = SmsMessage.Text("Votre code de validation est 482913. Ne le communiquez a personne.")
+        assertThat(notificationSignal(SMS_APP, "incoming_messages", code, at(0)))
+            .isEqualTo(SensitiveAction(at(0), SensitiveActionKind.CODE_MESSAGE, source = SMS_APP))
+    }
+
+    /** Android hides a code it recognised (English, measured): its placeholder has no digit, the masking is the sign. */
+    @Test
+    fun `a message Android masked is a code message`() {
+        assertThat(notificationSignal(SMS_APP, "incoming_messages", SmsMessage.Masked, at(0))?.kind)
+            .isEqualTo(SensitiveActionKind.CODE_MESSAGE)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "Rendez-vous demain a 14 h au cabinet.",
+            "Crédit Coopératif : Virements - Ajout d'un bénéficiaire le 02/11/2026 sur internet. " +
+                "Si vous n'avez pas initié cette opération, contactez votre agence.",
+        ],
+    )
+    fun `any other message is nothing to the engine`(text: String) {
+        assertThat(notificationSignal(SMS_APP, "incoming_messages", SmsMessage.Text(text), at(0))).isNull()
+    }
+
+    @Test
+    fun `during a call, a code by SMS shows a STOP`() = runTest {
+        startCall()
+        processSignal(checkNotNull(notificationSignal(SMS_APP, "msg", SmsMessage.Text("Code de confirmation : 271846"), at(20))))
+        assertThat(shown.map { it.trigger }).containsExactly(SensitiveActionKind.CODE_MESSAGE)
     }
 
     /** The system delivers one notification twice, 0.3 s apart (measured on Android 16 and 17). */
@@ -106,13 +140,14 @@ class NotificationSignalTest {
     }
 
     private suspend fun post(at: Instant) {
-        processSignal(checkNotNull(notificationSignal(CREDIT_COOP, "securpass_id", at)))
+        processSignal(checkNotNull(notificationSignal(CREDIT_COOP, "securpass_id", sms = null, at)))
     }
 
     private fun at(seconds: Long): Instant = T0.plusSeconds(seconds)
 
     private companion object {
         const val CREDIT_COOP = "com.credit_coop.android.mobilebanking"
+        const val SMS_APP = "com.filestech.sms"
         val AFTER_CALL_WINDOW_SECONDS = ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.seconds
         val T0: Instant = Instant.parse("2026-11-02T09:00:00Z")
     }

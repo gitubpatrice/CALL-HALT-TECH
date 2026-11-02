@@ -80,10 +80,12 @@
         </receiver>
 
         <!--
-            A banking app's request to approve an operation, seen in its notification. Not a permission: an access the
-            user grants in the phone's settings ("notification access", a restricted setting for an app installed from
-            a file). Bound by the system alone (BIND_NOTIFICATION_LISTENER_SERVICE); it reads the app and the channel of
-            each notification, nothing else. Checked by tools/check-manifest-permissions.py, with PRIVACY.md (D-007).
+            A banking app's request to approve an operation, and a validation code arriving by SMS, seen in their
+            notifications. Not a permission: an access the user grants in the phone's settings ("notification access", a
+            restricted setting for an app installed from a file). Bound by the system alone
+            (BIND_NOTIFICATION_LISTENER_SERVICE); it reads the app and the channel of each notification, and the latest
+            message of the default SMS app's, in memory (D-021). Checked by tools/check-manifest-permissions.py, with
+            PRIVACY.md (D-007).
         -->
         <service
             android:name=".platform.notification.NotificationListener"
