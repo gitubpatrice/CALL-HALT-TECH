@@ -15,9 +15,10 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 ## Reprendre ici (2026-11-02)
 
 1. Textes de l'écran STOP (D-017) : **fusionnés** (PR #7).
-2. **Prototype de mesure, étape 1 faite** : le capteur de l'état de l'appel (branche `feat/call-state-sensor`),
-   mesuré sur l'émulateur Android 16. Reste : un vrai appel sur le S9. Puis **l'étape 2, l'écran STOP réel**
-   (P-1) : elle décide, avec P-2, si le projet continue (décision 11).
+2. **Prototype de mesure, étape 1 faite** : le capteur de l'état de l'appel (PR #8), mesuré sur émulateurs
+   et sur le S24 FE avec de vrais appels. Suite : **l'étape 2, l'écran STOP réel** (P-1) : elle décide, avec
+   P-2, si le projet continue (décision 11). Le S9 n'a pas de SIM : les mesures de vrais appels et de SMS se
+   font sur le S24 FE.
 3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
@@ -81,8 +82,8 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 Brancher les capteurs un par un, chacun avec sa permission, sa vérification et son test, dans cet ordre :
 
 1. ✅ **L'état de l'appel** (début, fin) — récepteur `PHONE_STATE`, permission « téléphone » ; **fait le
-   2026-11-02**, mesuré sur l'émulateur Android 16. Le numéro (`READ_CALL_LOG`) viendra avec le rappel
-   d'appel long. Reste : un vrai appel sur le S9.
+   2026-11-02**, mesuré sur émulateurs (Android 11, 16, 17) et **sur le S24 FE avec de vrais appels** (sortant,
+   reçu décroché, reçu refusé). Le numéro (`READ_CALL_LOG`) viendra avec le rappel d'appel long.
 2. **L'écran STOP réel** et l'exécution des décisions — c'est la mesure **P-1** : s'affiche-t-il par-dessus
    l'appli bancaire, sur le S9 et le S24 ?
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
