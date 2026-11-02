@@ -1,11 +1,6 @@
 package com.filestech.callhalt.platform
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import com.filestech.callhalt.platform.telephony.InMemoryPreferences
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -47,15 +42,9 @@ class RestartsTest {
     /** Staying silent would leave the cut call "in progress", and absorb the next real call into it. */
     @Test
     fun `a memory that fails reports the boot, and recording it does not throw`() = runTest {
-        val restart = checkNotNull(BootCountRestarts(FailingStore(IOException("disk unavailable"))) { boot }.unreported())
+        val restart = checkNotNull(BootCountRestarts(FailingPreferences(IOException("disk unavailable"))) { boot }.unreported())
         assertThat(restart.at).isEqualTo(BOOTED)
         restart.record()
-    }
-
-    private class FailingStore(private val failure: Exception) : DataStore<Preferences> {
-        override val data: Flow<Preferences> = flow { throw failure }
-
-        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences = throw failure
     }
 
     private companion object {

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     DEBUG BUILDS ONLY: merged into the debug manifest, never into the release one (the source set of the debug
-    build type). Checked by reading the merged release manifest: nothing below is there, the permission included.
+    build type). Read by hand in the merged release manifest (2026-11-02): nothing below is there. The CI guard
+    would see the permission and the measuring listener (a special access) reach it, not the two receivers.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 

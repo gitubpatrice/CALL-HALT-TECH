@@ -10,6 +10,7 @@ import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
+import com.filestech.callhalt.platform.InMemoryPreferences
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi

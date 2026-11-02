@@ -15,8 +15,9 @@ import javax.inject.Provider
 
 /**
  * DEBUG BUILDS ONLY (src/debug): a sensitive action injected from adb, to measure the STOP screen on a real phone
- * before the sensor that will observe it exists (P-1: does it show over the banking app?). It goes through the same
- * queue and the same engine as a real signal: the STOP shows only during a call or just after it.
+ * for an action no sensor observes yet (a code SMS, a remote-control app) — it served P-1: does it show over the
+ * banking app? It goes through the same queue and the same engine as a real signal: the STOP shows only during a call
+ * or just after it.
  *
  *     adb shell am broadcast -a com.filestech.callhalt.debug.SIGNAL --es kind CODE_MESSAGE \
  *         -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.DebugSignalReceiver

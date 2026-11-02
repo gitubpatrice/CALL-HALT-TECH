@@ -1,4 +1,4 @@
-package com.filestech.callhalt.platform.telephony
+package com.filestech.callhalt.platform
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
