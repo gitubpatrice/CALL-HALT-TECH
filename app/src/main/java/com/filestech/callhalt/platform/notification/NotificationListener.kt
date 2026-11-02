@@ -19,9 +19,11 @@ import javax.inject.Provider
  * Bound by the system, which keeps the process alive while it is: no `goAsync()`, the queue's work runs in the
  * application's scope. The callbacks come on the main thread, where only that comparison runs.
  *
- * A notification UPDATED by its app is posted again: while the STOP it caused is unanswered, the engine takes the
- * repeat for the same request (NotificationSignalTest). Whether Sécur'Pass updates its own, once answered, is to
- * measure (docs/ARCHITECTURE.md, P-2).
+ * A notification can arrive more than once: the system delivers one twice, 0.3 s apart (measured on Android 16 and
+ * 17), and an app may update its own. The listener does not tell them apart: the engine absorbs a repeat only
+ * while the STOP it caused is unanswered, for 60 s at most. After an answer, or past that, a repeat shows a new
+ * STOP — the protective side, the rule of every repeat (NotificationSignalTest). Whether Sécur'Pass posts its
+ * request again, or a confirmation on the same channel, is to measure (docs/ARCHITECTURE.md, P-2).
  */
 @AndroidEntryPoint
 class NotificationListener : NotificationListenerService() {
