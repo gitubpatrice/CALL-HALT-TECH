@@ -231,6 +231,21 @@ class DetectionEngineTest {
                 .containsExactly(JournalEntry.Answer(at(1, 30), SensitiveActionKind.CODE_MESSAGE, StopChoice.HANG_UP))
             assertThat(steps.last().state.pendingStops).isEmpty()
         }
+
+        /** "Press Home and validate again": the repeat must show a NEW screen, not be absorbed by one nobody sees. */
+        @Test
+        fun `a screen left without an answer frees its trigger, and the repeat is stopped again`() {
+            val steps = run(
+                callStarted(),
+                action(SensitiveActionKind.BANK_VALIDATION_REQUEST, minutes = 1),
+                StopAnswered(at(1, 5), SensitiveActionKind.BANK_VALIDATION_REQUEST, StopChoice.LEFT),
+                action(SensitiveActionKind.BANK_VALIDATION_REQUEST, minutes = 1, seconds = 25),
+            )
+
+            assertThat(steps[2].journal)
+                .containsExactly(JournalEntry.Answer(at(1, 5), SensitiveActionKind.BANK_VALIDATION_REQUEST, StopChoice.LEFT))
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
+        }
     }
 
     @Nested
@@ -261,6 +276,8 @@ class DetectionEngineTest {
                 .containsExactly(Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE)))
             assertThat(answer(StopChoice.HANG_UP)).isEmpty()
             assertThat(answer(StopChoice.CALL_MY_BANK)).isEmpty()
+            // Leaving the screen to hang up from the call screen is ordinary: no false alarm to the relative.
+            assertThat(answer(StopChoice.LEFT)).isEmpty()
         }
     }
 

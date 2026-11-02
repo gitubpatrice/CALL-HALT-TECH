@@ -3,7 +3,6 @@ package com.filestech.callhalt.ui.stop
 import androidx.annotation.StringRes
 import com.filestech.callhalt.R
 import com.filestech.callhalt.domain.model.CallChannel
-import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 
 /**
@@ -11,23 +10,29 @@ import com.filestech.callhalt.domain.model.SensitiveActionKind
  * and the buttons that can honestly be offered (docs/ARCHITECTURE.md, D-017).
  *
  * The screen also shows in the minutes AFTER a call (PROJET.md, § 3): it must then neither say "you are on the
- * phone" nor offer to hang up a call that is over. Nor can it hang up a VOIP call (`TelecomManager.endCall`
- * ends cellular calls only): a "Hang up" button there would lie.
+ * phone" nor offer to hang up a call that is over. Nor can it offer to hang up what the app cannot end: a VOIP
+ * call (`TelecomManager.endCall` ends cellular calls only), or any call without the permission to answer calls.
  */
 internal data class StopText(
     @StringRes val situation: Int,
     @StringRes val happened: Int,
     @StringRes val rule: Int,
     @StringRes val advice: Int,
-    /** The app can end this call itself: "Hang up" comes first, and "call my bank" hangs up before dialling (D-011). */
+    /** The app can end this call itself: "Hang up" comes first. */
     val offerHangUp: Boolean,
-    @StringRes val callMyBank: Int,
+    /**
+     * Null while a call goes on that the app cannot end: dialling then would put the scammer on hold instead of
+     * cutting him off (D-011) — the advice says to hang up. Otherwise it hangs up first when it can.
+     */
+    @StringRes val callMyBank: Int?,
 )
 
-/** [trigger] and [call] are those of the decision ([com.filestech.callhalt.domain.model.Decision.ShowStop]). */
-internal fun stopText(trigger: SensitiveActionKind, call: CallSession): StopText {
-    val onCall = call.isActive
-    val canHangUp = onCall && call.channel == CallChannel.CELLULAR
+/**
+ * [onCall] and [channel] are those of the decision's call ([com.filestech.callhalt.domain.model.Decision.ShowStop]);
+ * [canEndCall] says whether the app holds the permission to end a call.
+ */
+internal fun stopText(trigger: SensitiveActionKind, onCall: Boolean, channel: CallChannel, canEndCall: Boolean): StopText {
+    val canHangUp = onCall && channel == CallChannel.CELLULAR && canEndCall
     // Hanging up does not end a remote-control session: the advice for those triggers is to switch the phone off.
     val remote = trigger == SensitiveActionKind.REMOTE_CONTROL_OPENED || trigger == SensitiveActionKind.REMOTE_CONTROL_INSTALLED
     return StopText(
@@ -41,7 +46,11 @@ internal fun stopText(trigger: SensitiveActionKind, call: CallSession): StopText
             else -> R.string.stop_advice_after_call
         },
         offerHangUp = canHangUp,
-        callMyBank = if (canHangUp) R.string.stop_hang_up_and_call_my_bank else R.string.stop_call_my_bank,
+        callMyBank = when {
+            canHangUp -> R.string.stop_hang_up_and_call_my_bank
+            onCall -> null
+            else -> R.string.stop_call_my_bank
+        },
     )
 }
 

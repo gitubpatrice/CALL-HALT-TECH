@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DEBUG BUILDS ONLY: merged into the debug manifest, never into the release one (the source set of the debug
+    build type). Checked by reading the merged release manifest: no DebugSignalReceiver there.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- A sensitive action injected from adb, to measure the STOP screen (P-1). DUMP: the shell alone. -->
+        <receiver
+            android:name="com.filestech.callhalt.platform.debug.DebugSignalReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="com.filestech.callhalt.debug.SIGNAL" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

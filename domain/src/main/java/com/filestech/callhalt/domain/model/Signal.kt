@@ -68,4 +68,15 @@ enum class SensitiveActionKind {
     REMOTE_CONTROL_INSTALLED,
 }
 
-enum class StopChoice { HANG_UP, CALL_MY_BANK, CONTINUE }
+enum class StopChoice {
+    HANG_UP,
+    CALL_MY_BANK,
+    CONTINUE,
+
+    /**
+     * The screen was left without an answer (Home, another app in front) — not a button. It frees the trigger: a
+     * repeat ("press Home and validate again") must show a NEW screen, not be absorbed by one nobody sees. No text
+     * to the relative: leaving to hang up from the call screen is an ordinary gesture.
+     */
+    LEFT,
+}
