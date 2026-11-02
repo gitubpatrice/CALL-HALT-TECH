@@ -12,18 +12,42 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-02)
+## Reprendre ici (fin du 2026-11-02)
 
-1. Textes de l'écran STOP (D-017) : **fusionnés** (PR #7).
-2. **Prototype de mesure, étapes 1 et 2 faites** : le capteur de l'état de l'appel (PR #8), puis l'écran STOP
-   réel (branche `feat/stop-activity`). **P-1 passée sur le S24 FE** (Android 16) : pendant un vrai appel,
-   le STOP passe devant l'appli Crédit Coopératif, et « Raccrocher » coupe l'appel. Confirmée sur l'émulateur
-   Android 11, écran verrouillé par PIN compris. **P-2 passée aussi** : la demande Sécur'Pass du Crédit
-   Coopératif est lisible (canal `securpass_id`). **Les deux mesures qui décidaient sont passées : le projet
-   continue** (décision 11). Suite : les capteurs d'actions sensibles — les notifications de la banque
-   (étape 4, conçue d'après P-2), les SMS de code (étape 3) — puis l'activation (étape 5, P-3). Le S9 n'a pas
-   de SIM : vrais appels et SMS sur le S24 FE.
-3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, quatre
+PR fusionnées, chacune relue par un ou deux agents Claude (`relectures/`) :
+
+1. Les textes de l'écran STOP (PR #7).
+2. Le capteur de l'état de l'appel (PR #8) — vrais appels sur le S24 FE, émulateurs Android 11, 16, 17.
+3. L'écran STOP réel (PR #9) — **P-1** : pendant un vrai appel, il passe devant l'appli Crédit Coopératif,
+   « Raccrocher » coupe l'appel ; écran verrouillé compris (émulateur Android 11).
+4. La mesure **P-2** (PR #10) — la demande Sécur'Pass est lisible : canal `securpass_id`, titre qui nomme
+   l'opération, `REASON_CLICK` quand on appuie dessus.
+
+**Prochaine étape : le capteur des notifications**, en version publiée (aujourd'hui l'écouteur n'existe qu'en
+version de test, pour la mesure). Il couvrira :
+- les demandes de validation bancaires, en commençant par le canal `securpass_id`, à vérifier sur une autre
+  banque du groupe BPCE ;
+- probablement les SMS de code, par la notification de l'appli SMS : depuis Android 15, un code y arrive
+  masqué, et ce masquage est lui-même un signal (à mesurer). Si c'est confirmé, la permission SMS devient
+  inutile.
+
+Deux mesures avec Patrice sur le S24 : une nouvelle demande Sécur'Pass (ajout d'un bénéficiaire depuis le
+site, sans argent engagé), et un vrai SMS de code. Puis l'écran d'activation (P-3) et l'écran d'état de la
+protection (P-10).
+
+**Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), les deux SIM, la
+relecture des traductions par des natifs, les audits (95/100, D-016).
+
+Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
+
+**Mesurer sur un téléphone** (version de test seulement) : appli `com.filestech.callhalt.debug`, permissions
+par adb (`pm grant … READ_PHONE_STATE`, `… ANSWER_PHONE_CALLS`, `appops set … SYSTEM_ALERT_WINDOW allow`) ;
+une action sensible injectée : `adb shell am broadcast -a com.filestech.callhalt.debug.SIGNAL --es kind
+CODE_MESSAGE -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.DebugSignalReceiver` ;
+l'écouteur de mesure : `adb shell cmd notification allow_listener com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.MeasureNotificationListener`
+(et `disallow_listener` après). Sur émulateur : `adb emu gsm call|accept|cancel <numéro>`, une fois la SIM
+« LOADED ». Le S9 n'a pas de SIM : vrais appels et SMS sur le S24 FE.
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
 
@@ -33,8 +57,10 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
   portefeuille (damier bleu et rouge), **5 langues**.
 - **Premier capteur branché (2026-11-02)** : l'appli sait quand un appel commence et se termine, même
   tuée entre deux appels, par une file unique où passeront tous les capteurs.
-- Ce qui manque : les autres **capteurs** (lire un SMS de code, voir la notification de la banque…) et
-  l'**écran STOP réel**. C'est la suite.
+- **L'écran STOP réel (2026-11-02)** : lancé depuis l'arrière-plan, devant l'appli bancaire, verrou compris ;
+  « Raccrocher » coupe l'appel. Seul un signal injecté par adb (version de test) le déclenche encore.
+- Ce qui manque pour protéger quelqu'un : les **capteurs d'actions sensibles** (notifications de la banque,
+  SMS de code, applis de prise en main) et l'**écran d'activation**. C'est la suite.
 - Vérifications : 83 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
