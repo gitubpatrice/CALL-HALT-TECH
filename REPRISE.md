@@ -14,7 +14,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, sept
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, huit
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
@@ -32,11 +32,18 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 7. **Un appel ne survit pas à un redémarrage** (PR #14, D-020) — un téléphone éteint en plein appel gardait
    l'appel « en cours » jusqu'à 8 h, et la demande bancaire de l'utilisateur lui-même montrait un faux STOP.
    Mesuré sur émulateur (Android 16), appel coupé net puis redémarrage à froid.
+8. **La mesure des SMS de code** (PR #15, P-20) — sur Android 16 et 17 (détecteur de Google), un code **en
+   anglais** est masqué dans la notification de l'appli SMS, **un code en français ne l'est pas**, même téléphone
+   réglé en français. Le masquage ne suffit donc pas en France : reconnaître un code demande de lire le texte.
 
-**Prochaine étape : deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel (ajout d'un
-bénéficiaire depuis le site, sans argent engagé), et un vrai SMS de code — depuis Android 15, un code arrive
-masqué dans la notification de l'appli SMS, et ce masquage est lui-même un signal (à mesurer ; si c'est
-confirmé, la permission SMS devient inutile). Puis l'écran d'activation (P-3) et l'écran d'état de la
+**Ce qui attend Patrice : trancher P-20** (`docs/ARCHITECTURE.md` § 7) — lire le texte de la notification de
+l'appli SMS (aucune permission de plus ; recommandation de Claude) ou demander la réception des SMS. La promesse
+de confidentialité change dans les deux cas. Après la mesure sur le S24 (Samsung a son propre détecteur).
+
+**Prochaine étape : deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel
+(ajout d'un bénéficiaire depuis le site, sans argent engagé), et un vrai SMS de code de la banque (masqué ou non
+par Samsung ?). Installer d'abord la version de test à jour, et accorder l'accès aux notifications du vrai capteur
+et de l'écouteur de mesure (puis les retirer). Puis l'écran d'activation (P-3) et l'écran d'état de la
 protection (P-10).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
