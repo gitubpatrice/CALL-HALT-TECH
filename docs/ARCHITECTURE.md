@@ -19,7 +19,10 @@
 - la chaîne de build, detekt, lint, la CI et ses gardes (zéro réseau, parité des traductions), chacune
   avec son contrôle négatif.
 
-Aucun capteur Android n'est branché, et aucune permission n'est demandée. Les capteurs sont la suite (§ 6).
+**Premier capteur branché le 2026-11-02 : l'état de l'appel** (`platform/telephony/`, permission
+`READ_PHONE_STATE`, qui n'est pas encore demandée à l'écran). Mesuré sur l'émulateur Android 16 avec le vrai
+service téléphonique : appel entrant décroché, appel sortant, processus tué entre deux appels. Les autres
+capteurs sont la suite (§ 6).
 
 ## 2. Les modules
 
@@ -39,7 +42,7 @@ rien tant que l'appli tient dans un `:app` lisible.
 ## 3. Le flux d'un signal
 
 ```
- capteur Android (à venir)        :domain                                  :app
+ capteur Android                 :domain                                  :app
  ─────────────────────────        ───────                                  ────
  PHONE_STATE, SMS, notif.   ──►   Signal (horodaté par le capteur)
                                     │
@@ -56,8 +59,11 @@ rien tant que l'appli tient dans un `:app` lisible.
                                                                           SMS au proche, réveil
 ```
 
-- **Un seul point d'entrée** : tout capteur appelle `ProcessSignalUseCase(signal)`. Aucun ne parle au
-  moteur directement.
+- **Un seul point d'entrée, par une seule file** : tout signal finit dans `ProcessSignalUseCase(signal)`,
+  mais aucun capteur ne l'appelle en direct. Chacun dépose ce qu'il observe dans `platform/SensorQueue`
+  (P-12), traité un élément à la fois, dans l'ordre d'arrivée. Un récepteur garde sa diffusion (`goAsync()`)
+  jusqu'à ce que son tour soit passé, 8 s au plus ; un élément qui échoue, ou s'annule de lui-même,
+  n'arrête pas les suivants.
 - **Le moteur est une fonction pure** : `(état, signal, réglages) → (nouvel état, journal, décisions)`.
   Il ne lit aucune horloge. L'heure est celle du signal (D-014).
 - **L'état survit au processus** (D-004). Android tue l'appli entre le début de l'appel et l'arrivée du
@@ -70,7 +76,8 @@ rien tant que l'appli tient dans un `:app` lisible.
   `aClosedDatabaseStillYieldsTheDecisions`, `aWriteThatFailsAfterTheReadKeepsTheDecision`,
   `theStateStorageFailedToKeepIsTheTruthUntilWrittenBack`.
   ⚠️ **Limite** : un processus démarré *après* la panne ne connaît aucun appel, et le STOP est manqué. Un
-  test l'écrit noir sur blanc (`…theKnownLimit`) ; ce qui la fermera, c'est le capteur téléphonique (P-7).
+  test l'écrit noir sur blanc (`…theKnownLimit`). Ce qui la fermera : une interrogation en direct de l'état
+  de l'appel (P-7). Le capteur téléphonique branché le 2026-11-02 ne la fait pas encore.
 - **Un STOP non affiché ne passe pas pour affiché** : si l'exécuteur échoue à montrer l'écran, le cas
   d'usage le rend au moteur (`StopNotShown`). Le déclencheur est réarmé tout de suite, et le journal note
   « non affiché ». Sans cela, la relance de l'escroc dans la minute était absorbée sans aucun écran.
@@ -101,9 +108,12 @@ app/src/main/java/com/filestech/callhalt/
   di/          ApplicationScope, StorageModule (Room, DataStore), DetectionModule (ports → implémentations)
   data/settings/  SettingsRepository + SettingsMapping (valeur hors bornes → défaut protecteur)
   data/store/     CallHaltDatabase, entités, DetectorDao, DetectorMapping (pur), RoomDetectorStore
-  ui/          AppRoot, Routes, home/, stop/, theme/ (palettes du portefeuille, Damier)
-  (à venir)    platform/<capteur>/ — un sous-paquet par source : telephony, sms, notifications, usage,
-               packages, accessibility ; platform/stop/ — l'Activity STOP et l'exécution des décisions
+  ui/          AppRoot, Routes, home/, stop/ (StopScreen, StopText), theme/ (palettes du portefeuille, Damier)
+  platform/    SensorQueue (la file unique, P-12), AndroidDecisionExecutor (exécute les décisions, au fil
+               des étapes) ; telephony/ — CallStateReceiver (manifeste, non exporté), CallStateSensor,
+               PhoneState (+ callSignal, pur), PhoneStateMemory (DataStore à part)
+  (à venir)    platform/<capteur>/ pour sms, notifications, usage, packages, accessibility ;
+               platform/stop/ — l'Activity STOP
 ```
 
 ## 5. Décisions
@@ -137,7 +147,7 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
 
 | Signal | Moyen | Permission | Restreint | Statut |
 |---|---|---|---|---|
-| Appel téléphonique : début, fin, numéro | récepteur **déclaré au manifeste** `PHONE_STATE` (exception aux broadcasts implicites, sans condition de targetSdk) | `READ_PHONE_STATE` ; numéro : + `READ_CALL_LOG` (broadcast reçu deux fois) | non | confirmé |
+| Appel téléphonique : début, fin, numéro | récepteur **déclaré au manifeste** `PHONE_STATE` (exception aux broadcasts implicites, sans condition de targetSdk) | `READ_PHONE_STATE` ; numéro : + `READ_CALL_LOG` (broadcast reçu deux fois) | non | **branché le 2026-11-02** (début et fin, sans le numéro) ; **mesuré sur émulateur, Android 11, 16 et 17** (vrai service téléphonique, `adb emu gsm`) : le récepteur NON exporté reçoit la diffusion du système ; processus tué (Android 16) : réveillé, mémoire intacte ; **appli en cache (Android 17) : livrée en 0,15 à 0,6 s**, aucun report. Une appli « arrêtée » (`force-stop`) ne reçoit plus rien jusqu'à sa réouverture : comportement d'Android, à dire dans l'aide. Juste après le démarrage, rien tant que la SIM n'est pas prête (normal). **Exporté** : PHONE_STATE est une diffusion protégée, mesuré sur le S9 (Samsung, Android 10) : même le shell d'adb est refusé. Vrai réseau : S24 FE (le S9 n'a pas de SIM). **Double SIM, à mesurer** (relecture du 2026-11-02, M2) : si un téléphone envoie un IDLE par SIM, celui d'une SIM au repos fermerait l'appel en cours sur l'autre ; la trace de débogage note la SIM de chaque diffusion. Parade possible, à ne poser qu'après mesure : interroger l'état en direct à l'IDLE (P-7), sans risquer un appel qui ne se ferme jamais |
 | Appel VoIP (WhatsApp, Signal…) | `AudioManager.getMode()` global sans permission (`MODE_IN_COMMUNICATION`), `addOnModeChangedListener` (API 31) ; ou notification `CATEGORY_CALL` | aucune / accès aux notifications | — | code confirmé, **comportement des applis à mesurer (P-4)** |
 | SMS de code | récepteur `SMS_RECEIVED` | `RECEIVE_SMS` | oui | confirmé, **sous réserve de D-008** |
 | SMS de code, repli Android 15+ | la notification de l'appli SMS par défaut arrive **masquée** (« Sensitive notification content hidden ») : le masquage lui-même signale un code | accès aux notifications | oui | probable, à mesurer |
@@ -180,17 +190,27 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   part jamais pour l'appel en cours (D6).
 - **P-10** — Une panne durable du stockage (migration manquante, base corrompue) est aujourd'hui
   silencieuse. Le magasin décide en mémoire, le journal ne s'écrit plus, et aucun journal système n'existe
-  en release. L'écran « état de la protection » (fiche, § 9.2, idée 5) doit l'afficher (D3).
+  en release. L'écran « état de la protection » (fiche, § 9.2, idée 5) doit l'afficher (D3). Il doit aussi
+  dire les **arrêts silencieux d'Android** (relecture du 2026-11-02, L4) : appli installée mais jamais ouverte
+  (état « arrêté » : aucune diffusion, même avec la permission accordée), permissions retirées après des mois
+  sans usage (Android 11+), hibernation (Android 12+) ; `PackageManagerCompat.getUnusedAppRestrictionsStatus`
+  dit les deux derniers.
 - **P-11** — Élaguer le journal (durée de conservation) ; dédoublonner l'avertissement « appli de prise en
   main installée » hors appel, qu'une diffusion répétée ferait écrire plusieurs fois (D8).
-- **P-12** — **Contrat des capteurs : une file unique, dans l'ordre de réception.** Le `Mutex` du magasin
-  sérialise les signaux, mais pas dans l'ordre de leur heure. Une action estampillée une milliseconde
-  avant le début d'un nouvel appel, et traitée après lui, perd la fenêtre de l'appel précédent (GPT, 4).
-  Les capteurs passeront tous par un seul consommateur, premier arrivé premier traité.
+- ~~**P-12** — **Contrat des capteurs : une file unique, dans l'ordre de réception.**~~ **Fait le 2026-11-02** :
+  `platform/SensorQueue`, un seul consommateur, premier arrivé premier traité (`SensorQueueTest`). Le
+  `Mutex` du magasin sérialisait les signaux sans les garder dans l'ordre : une action estampillée une
+  milliseconde avant le début d'un nouvel appel, et traitée après lui, perdait la fenêtre de l'appel
+  précédent (GPT, 4).
 - **P-13** — **Horloge monotone.** L'heure civile peut reculer, par la main de l'utilisateur ou par une
   correction du réseau. Un appel en cours « disparaît » alors (GPT, 5), et un nouvel appel estampillé avant
   la fin du précédent est pris pour une répétition (règle de GPT, 6). Les capteurs fourniront aussi un temps
   monotone depuis le démarrage (`elapsedRealtime`) ; un redémarrage termine de toute façon les appels.
+  **Atteignable depuis le capteur téléphonique** (relecture du 2026-11-02, M1) : l'horloge recule entre deux
+  appels, le début du second, estampillé avant la fin du premier, est absorbé. Le STOP n'est manqué qu'au-delà
+  des 15 premières minutes du second appel. Écrit dans `CallStateSensorTest` (« the known limit »). Avec le
+  capteur, la règle de GPT 6 ne protège plus que d'un capteur qui violerait le contrat (heure de réception,
+  ordre d'arrivée) : à revoir avec ce point, **avant toute publication**.
 - **P-14** — **Identifiant de génération du STOP**, porté par `ShowStop`, `StopAnswered` et `StopNotShown`.
   Aujourd'hui, la réponse ou l'échec tardif d'un ancien STOP efface le STOP plus récent du même
   déclencheur (GPT, 8). L'erreur va du côté protecteur : un STOP de plus, jamais un de moins.
@@ -205,7 +225,9 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   appelle lui-même sa vraie banque et valide une opération qu'il a demandée reçoit un STOP. Le texte reste
   vrai (« ne vous appelleront jamais », D-017), mais l'interruption est inutile. Piste : pas de STOP, ou un
   texte propre, pour un appel SORTANT composé vers ce numéro (un appel sortant ne s'usurpe pas ; un renvoi
-  d'appel ou un numéro enregistré par l'escroc, si). À peser avant d'écrire la règle.
+  d'appel ou un numéro enregistré par l'escroc, si). À peser avant d'écrire la règle. ⚠️ Le capteur ne
+  **déduit** le sens qu'à partir de l'état précédent : une sonnerie perdue fait lire un appel entrant comme
+  sortant (relecture du 2026-11-02, L3). Le sens ne peut pas décider seul de taire un STOP.
 
 ## 8. Travailler dans ce dépôt
 
@@ -227,9 +249,12 @@ série (`adb devices` le donne) : `ANDROID_SERIAL=<numéro> ./gradlew :app:conne
 **Ajouter une règle** : dans `DetectionEngine`, en interrogeant `CallWindow` (jamais une seconde définition
 de « pendant l'appel »), avec ses tests dans `DetectionEngineTest`, y compris le cas où elle doit se taire.
 
-**Ajouter un capteur** : un sous-paquet `platform/<source>/`. Il traduit un événement Android en `Signal`
-horodaté et appelle `ProcessSignalUseCase`. Sa permission va dans le manifeste, dans la garde et dans
-PRIVACY, **dans le même commit** (D-007).
+**Ajouter un capteur** : un sous-paquet `platform/<source>/`, sur le modèle de `telephony/`. Il traduit un
+événement Android en `Signal` horodaté à la réception, et le confie à `SensorQueue` (jamais à
+`ProcessSignalUseCase` en direct). Un récepteur prend `goAsync()` par `queueAsync`, et reçoit ce qui touche la
+base par un `Provider`, résolu dans la file (leçon F2 d'Agenda Tech). Sa permission va dans le manifeste,
+dans la garde et dans PRIVACY, **dans le même commit** (D-007). La traduction est une fonction pure, testée
+sur la JVM ; le capteur se mesure sur l'émulateur puis sur un vrai téléphone.
 
 **Ajouter un texte** : en anglais dans `values/strings.xml` et dans les quatre autres langues ; le contrôle
 de parité refuse un texte manquant.

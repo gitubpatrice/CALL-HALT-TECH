@@ -66,12 +66,14 @@ FORBIDDEN = {
 
 # Every permission the reviewed APK carries — no more, no less.
 #
-# The skeleton: only the one androidx.core generates for its own non-exported receivers (signature level,
-# named after the applicationId). The next ones, each with its component (docs/ARCHITECTURE.md, § 5):
-# READ_PHONE_STATE, READ_CALL_LOG, RECEIVE_SMS, SYSTEM_ALERT_WINDOW, ANSWER_PHONE_CALLS,
-# PACKAGE_USAGE_STATS, QUERY_ALL_PACKAGES, POST_NOTIFICATIONS, SEND_SMS (guardian, if kept).
+# The one androidx.core generates for its own non-exported receivers (signature level, named after the
+# applicationId), then each permission with its component. The next ones, each with its own (docs/ARCHITECTURE.md,
+# § 6): READ_CALL_LOG, RECEIVE_SMS, SYSTEM_ALERT_WINDOW, ANSWER_PHONE_CALLS, PACKAGE_USAGE_STATS,
+# QUERY_ALL_PACKAGES, POST_NOTIFICATIONS, SEND_SMS (the relative, D-015).
 ALLOWED = {
     f"{PACKAGE}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+    # When a call starts and ends (platform/telephony/CallStateReceiver). Not the number: that is READ_CALL_LOG.
+    "android.permission.READ_PHONE_STATE",
 }
 
 IN_CI = os.environ.get("GITHUB_ACTIONS") == "true"

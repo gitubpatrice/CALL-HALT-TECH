@@ -1,0 +1,110 @@
+package com.filestech.callhalt.platform.telephony
+
+import com.filestech.callhalt.domain.detection.DetectionEngine
+import com.filestech.callhalt.domain.detection.DetectorState
+import com.filestech.callhalt.domain.detection.Evaluation
+import com.filestech.callhalt.domain.model.CallChannel
+import com.filestech.callhalt.domain.model.CallDirection
+import com.filestech.callhalt.domain.model.CallSession
+import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Decision
+import com.filestech.callhalt.domain.model.ProtectionSettings
+import com.filestech.callhalt.domain.port.DetectorStore
+import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
+import com.filestech.callhalt.platform.AndroidDecisionExecutor
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
+import java.time.Instant
+
+/**
+ * Sequences of PHONE_STATE broadcasts, through the sensor's memory, its translation and the REAL engine: what
+ * `callSignal` relies on the engine for ("it absorbs a repeat", "a waiting call changes nothing") is proven here,
+ * not taken from a comment.
+ */
+class CallStateSensorTest {
+
+    private val store = InMemoryDetectorStore()
+    private val sensor = CallStateSensor(
+        PhoneStateMemory(InMemoryPreferences()),
+        ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, AndroidDecisionExecutor()),
+    )
+
+    @Test
+    fun `a call with a second one waiting, and every broadcast twice, is one incoming call`() = runTest {
+        feed(
+            PhoneState.IDLE,
+            PhoneState.RINGING,
+            PhoneState.OFFHOOK, // answered: the call starts (2 s)
+            PhoneState.OFFHOOK, // the same broadcast, twice
+            PhoneState.RINGING, // a second call, waiting
+            PhoneState.OFFHOOK,
+            PhoneState.IDLE, // the call ends (6 s)
+            PhoneState.IDLE,
+        )
+        assertThat(store.state.calls).containsExactly(
+            CallChannel.CELLULAR,
+            CallSession(CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable, startedAt = at(2), endedAt = at(6)),
+        )
+    }
+
+    @Test
+    fun `a dialled call is outgoing`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.OFFHOOK, PhoneState.IDLE)
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR))
+            .isEqualTo(CallSession(CallChannel.CELLULAR, CallDirection.OUTGOING, Counterpart.Unreadable, at(1), at(2)))
+    }
+
+    @Test
+    fun `a call missed or declined is no call`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.RINGING, PhoneState.IDLE)
+        assertThat(store.state.calls).isEmpty()
+    }
+
+    /** A second call rang during the first, was not answered, and the first ended meanwhile: the end is not lost. */
+    @Test
+    fun `the end of a call is not lost behind a waiting call nobody answered`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.RINGING, PhoneState.OFFHOOK, PhoneState.RINGING, PhoneState.IDLE)
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(at(4))
+    }
+
+    /** The phone restarted mid-call: no IDLE ever came for that call, and the memory still says OFFHOOK. */
+    @Test
+    fun `after a restart mid-call, the next call is tracked and its end closes it`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.OFFHOOK)
+        feed(PhoneState.RINGING, PhoneState.OFFHOOK, PhoneState.IDLE, from = 10_000)
+        // Within the 8-hour cap, the engine takes it for the same conversation and keeps the first start: the call
+        // is tracked all the same, and its end closes it — nothing left open, no STOP lost.
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR).isActive).isFalse()
+    }
+
+    /**
+     * The known limit, written down (review of 2026-11-02, M1; fixed by P-13, a monotonic clock): the wall clock
+     * steps back between two calls, and the second call's start, stamped before the first one's end, is taken for
+     * a repeat of the first. The after-call window of the first still covers the second's first 15 minutes.
+     */
+    @Test
+    fun `a clock stepped back between two calls loses the second, the known limit`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.OFFHOOK, PhoneState.IDLE) // call 1 ends at 2 s
+        sensor.onPhoneState(PhoneState.OFFHOOK, at(1)) // call 2, stamped 1 s by a clock set back
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR).isActive).isFalse()
+    }
+
+    /** Feeds [states] one second apart, from [from] seconds after T0. */
+    private suspend fun feed(vararg states: PhoneState, from: Long = 0) {
+        states.forEachIndexed { index, state -> sensor.onPhoneState(state, at(from + index)) }
+    }
+
+    private fun at(seconds: Long): Instant = T0.plusSeconds(seconds)
+
+    private class InMemoryDetectorStore : DetectorStore {
+        var state = DetectorState()
+
+        override suspend fun apply(step: (DetectorState) -> Evaluation): List<Decision> =
+            step(state).also { state = it.state }.decisions
+    }
+
+    private companion object {
+        val T0: Instant = Instant.parse("2026-11-02T09:00:00Z")
+    }
+}

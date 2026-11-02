@@ -48,11 +48,24 @@ object StorageModule {
     fun settingsDataStore(
         @ApplicationContext context: Context,
         @ApplicationScope scope: CoroutineScope,
-    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
-        scope = scope,
-        produceFile = { context.preferencesDataStoreFile(SETTINGS_FILE) },
-    )
+    ): DataStore<Preferences> = preferencesStore(context, scope, SETTINGS_FILE)
+
+    /** A corrupted file reads as "nothing recorded": the next call is still reported, its direction unknown. */
+    @Provides
+    @Singleton
+    @PhoneStateStore
+    fun phoneStateDataStore(
+        @ApplicationContext context: Context,
+        @ApplicationScope scope: CoroutineScope,
+    ): DataStore<Preferences> = preferencesStore(context, scope, PHONE_STATE_FILE)
+
+    private fun preferencesStore(context: Context, scope: CoroutineScope, name: String): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            scope = scope,
+            produceFile = { context.preferencesDataStoreFile(name) },
+        )
 
     private const val SETTINGS_FILE = "settings"
+    private const val PHONE_STATE_FILE = "phone_state"
 }
