@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -46,13 +47,35 @@ object AccessSettings {
      */
     fun open(context: Context, pages: List<Intent>) {
         for (page in pages) {
-            try {
-                context.startActivity(page)
-                return
-            } catch (missing: ActivityNotFoundException) {
-                Timber.w(missing, "No settings page for %s", page.action)
-            }
+            val system = systemSettings(context, page) ?: continue
+            if (start(context, system)) return
         }
+        // No system page found (a phone this was not measured on): the first page as it is, rather than a button that
+        // does nothing.
+        Timber.w("No system settings page: %s left to the phone", pages.first().action)
+        start(context, pages.first())
+    }
+
+    /**
+     * [page] as the phone's OWN settings serve it. Any app can declare the same action: the phone would then offer it
+     * beside them, and it could imitate them and give its own instructions (security review of 2026-11-02, S2). Seen
+     * through the manifest's `<queries>`. Null when no system app serves the page.
+     */
+    @Suppress("DEPRECATION") // The Int flags: ResolveInfoFlags only exists from Android 13; they mean the same.
+    private fun systemSettings(context: Context, page: Intent): Intent? =
+        context.packageManager.queryIntentActivities(page, PackageManager.MATCH_SYSTEM_ONLY).firstOrNull()
+            ?.let { settings -> Intent(page).setPackage(settings.activityInfo.packageName) }
+
+    private fun start(context: Context, page: Intent): Boolean = try {
+        context.startActivity(page)
+        true
+    } catch (missing: ActivityNotFoundException) {
+        Timber.w(missing, "No settings page for %s", page.action)
+        false
+    } catch (refused: SecurityException) {
+        // A page some maker does not export (general review of 2026-11-02, 7): the next one, not a crash.
+        Timber.w(refused, "Settings page refused: %s", page.action)
+        false
     }
 
     private fun fallbacks(context: Context): List<Intent> =

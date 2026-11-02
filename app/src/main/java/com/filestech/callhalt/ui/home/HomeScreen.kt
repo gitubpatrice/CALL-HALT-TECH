@@ -72,7 +72,7 @@ fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: Protect
 
 @Composable
 private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
-    val on = state.missing.isEmpty()
+    val on = state.phoneCanProtect && state.missing.isEmpty()
     val colors = if (on) {
         CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -94,6 +94,10 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
             )
             if (on) {
                 Text(text = watched(state.afterCallMinutes), style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
+            } else if (!state.phoneCanProtect) {
+                // No button: it would lead to a settings page with no switch.
+                Text(text = stringResource(R.string.home_unsupported), style = MaterialTheme.typography.bodyLarge)
             } else {
                 Text(
                     text = pluralStringResource(R.plurals.home_missing, state.missing.size, state.missing.size),
