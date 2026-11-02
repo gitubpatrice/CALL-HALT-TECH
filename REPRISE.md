@@ -18,9 +18,11 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 2. **Prototype de mesure, étapes 1 et 2 faites** : le capteur de l'état de l'appel (PR #8), puis l'écran STOP
    réel (branche `feat/stop-activity`). **P-1 passée sur le S24 FE** (Android 16) : pendant un vrai appel,
    le STOP passe devant l'appli Crédit Coopératif, et « Raccrocher » coupe l'appel. Confirmée sur l'émulateur
-   Android 11, écran verrouillé par PIN compris. **Suite : P-2**, la seconde mesure qui décide
-   (décision 11) — les demandes de validation de la banque sont-elles lisibles ? Il faudra une vraie opération
-   à valider dans l'appli bancaire du S24. Le S9 n'a pas de SIM : vrais appels et SMS sur le S24 FE.
+   Android 11, écran verrouillé par PIN compris. **P-2 passée aussi** : la demande Sécur'Pass du Crédit
+   Coopératif est lisible (canal `securpass_id`). **Les deux mesures qui décidaient sont passées : le projet
+   continue** (décision 11). Suite : les capteurs d'actions sensibles — les notifications de la banque
+   (étape 4, conçue d'après P-2), les SMS de code (étape 3) — puis l'activation (étape 5, P-3). Le S9 n'a pas
+   de SIM : vrais appels et SMS sur le S24 FE.
 3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
@@ -91,7 +93,8 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
    verrouillé compris. Reste Android 10 lui-même, sur un téléphone avec SIM.
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
    qui cherche les faux positifs).
-4. **Les notifications de la banque** — mesure **P-2** : sont-elles lisibles ? D'abord sur le S9 (non rooté).
+4. **Les notifications de la banque** — mesure **P-2** : ✅ **lisibles, mesuré le 2026-11-02 sur le S24 FE**
+   (Sécur'Pass, canal `securpass_id`). Reste à construire le vrai capteur, puis à mesurer d'autres banques.
 5. **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3**.
 
 ## Ce qui attend Patrice

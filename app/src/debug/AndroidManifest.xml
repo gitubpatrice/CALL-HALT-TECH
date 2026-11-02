@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     DEBUG BUILDS ONLY: merged into the debug manifest, never into the release one (the source set of the debug
-    build type). Checked by reading the merged release manifest: no DebugSignalReceiver there.
+    build type). Checked by reading the merged release manifest: neither component below is there.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -15,5 +15,19 @@
                 <action android:name="com.filestech.callhalt.debug.SIGNAL" />
             </intent-filter>
         </receiver>
+
+        <!--
+            The P-2 measurement: what a banking app's notification lets a listener read. Bound by the system alone
+            (BIND_NOTIFICATION_LISTENER_SERVICE), and only once enabled from adb.
+        -->
+        <service
+            android:name="com.filestech.callhalt.platform.debug.MeasureNotificationListener"
+            android:exported="true"
+            android:label="Call Halt Tech (mesure P-2)"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>
