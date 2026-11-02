@@ -19,6 +19,12 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   « Raccrocher », ou « Raccrocher et appeler ma banque », dans l'écran STOP. Sans elle, aucun de ces deux
   boutons n'apparaît pendant un appel. L'appli ne décroche et ne passe jamais d'appel d'elle-même : « appeler
   ma banque » ouvre le clavier du téléphone, et c'est vous qui appelez.
+- **Accès aux notifications** (accordé dans les réglages du téléphone ; ce n'est pas une permission) : voir
+  l'appli de votre banque vous demander de valider une opération. De chaque notification du téléphone, l'appli
+  ne lit que l'appli qui l'a envoyée et son canal (l'identifiant que cette appli donne à un type de
+  notification) — jamais son titre, son texte ni rien d'autre. Elle reconnaît une demande à ce seul canal :
+  aujourd'hui, les demandes Sécur'Pass (banques du groupe BPCE). Toutes les autres notifications restent telles
+  qu'elles sont arrivées. Cette version ne le demande pas encore à l'écran.
 
 Le manifeste porte aussi une ligne ajoutée par une bibliothèque d'Android pour l'usage interne de l'appli
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`) ; elle ne donne accès à rien.
@@ -30,8 +36,9 @@ Sur ce téléphone seulement, dans l'espace privé de l'appli :
 - ses réglages ;
 - la mémoire de son détecteur : pour le dernier appel seulement, quand il a commencé et fini, et s'il était
   entrant ou sortant — jamais le numéro ; et le dernier état d'appel signalé par le téléphone ;
-- un journal des alertes affichées (quand, pourquoi, ce qui a été choisi). Dans cette version, aucun capteur
-  ne déclenche encore d'alerte : il reste vide.
+- un journal des alertes affichées : quand, pourquoi, de quelle appli venait la demande (son nom de paquet,
+  comme `com.credit_coop.android.mobilebanking`), et ce qui a été choisi. Une demande hors appel, ou au-delà des
+  minutes qui en suivent un, n'est pas gardée.
 
 La sauvegarde Android et le transfert vers un autre téléphone sont **désactivés** pour cette appli : rien
 de tout cela ne quitte le téléphone.

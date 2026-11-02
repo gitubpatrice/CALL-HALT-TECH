@@ -8,7 +8,8 @@
         control (tools/check-manifest-permissions.py).
 
         Every other permission arrives WITH the component that uses it, in the same commit as its line in
-        tools/check-manifest-permissions.py and in PRIVACY.md (docs/ARCHITECTURE.md, D-007).
+        tools/check-manifest-permissions.py and in PRIVACY.md (docs/ARCHITECTURE.md, D-007). So does every service
+        the system binds with a special access (notification access below).
     -->
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
@@ -77,5 +78,21 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
+        <!--
+            A banking app's request to approve an operation, seen in its notification. Not a permission: an access the
+            user grants in the phone's settings ("notification access", a restricted setting for an app installed from
+            a file). Bound by the system alone (BIND_NOTIFICATION_LISTENER_SERVICE); it reads the app and the channel of
+            each notification, nothing else. Checked by tools/check-manifest-permissions.py, with PRIVACY.md (D-007).
+        -->
+        <service
+            android:name=".platform.notification.NotificationListener"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

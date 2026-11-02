@@ -118,10 +118,14 @@ app/src/main/java/com/filestech/callhalt/
                fil des étapes) ; telephony/ — CallStateReceiver (manifeste, exporté : diffusion protégée),
                CallStateSensor, PhoneState (+ callSignal, pur), PhoneStateMemory (DataStore à part), CallEvents
                (fin d'appel, pour l'écran STOP) ; stop/ — StopActivity, StopRequest, StopDisplay (l'écran
-               confirme qu'il est devant), StopLauncher, CallControl (raccrocher), StopAnswers (réponse → moteur)
-  src/debug/   platform/debug/DebugSignalReceiver — action sensible injectée par adb (DUMP), version de test
-               seulement, pour mesurer l'écran STOP avant les capteurs
-  (à venir)    platform/<capteur>/ pour sms, notifications, usage, packages, accessibility
+               confirme qu'il est devant), StopLauncher, CallControl (raccrocher), StopAnswers (réponse → moteur) ;
+               notification/ — NotificationListener (lié par le système, accès aux notifications : l'appli et le
+               canal de chaque notification, rien d'autre), NotificationSignal (+ notificationSignal, pur, D-019)
+  src/debug/   platform/debug/ — versions de test seulement, réservées au shell d'adb (DUMP) : DebugSignalReceiver
+               (action sensible injectée, pour mesurer l'écran STOP avant les capteurs), StandInBankRequestReceiver
+               (une demande bancaire factice sur le canal reconnu, pour mesurer tout le chemin sur émulateur),
+               MeasureNotificationListener (la mesure P-2 : ce qu'une notification bancaire laisse lire)
+  (à venir)    platform/<capteur>/ pour sms, usage, packages, accessibility
 ```
 
 ## 5. Décisions
@@ -146,6 +150,7 @@ app/src/main/java/com/filestech/callhalt/
 | D-016 | **Publication sur F-Droid : oui — mais rien n'est publié tant que l'appli n'est pas fiable, solide et sécurisée au mieux, avec un score d'au moins 95 sur 100** (Patrice, 2026-11-01) | **Condition de publication** : la grille qui donne ce score se fixe AVANT le premier audit de publication, sur trois éléments. **(1)** Aucun constat critique ou élevé ouvert : audit en 3 axes, audit de sécurité avec panel adverse, faux positifs des règles de détection, motifs de défaut. **(2)** Mesures P-1 à P-3 faites sur de vrais téléphones. **(3)** Une relecture externe du code qui décide. Un score sous 95, ou un critère non tenu : pas de publication. Comme Agenda Tech et SMS Tech. **Build reproductible** : déjà préparé (pas de foojay, bloc de dépendances de Play exclu). **Métadonnées fastlane** dans les 5 langues, changelog ≤ 500 caractères. **APK servi = notre APK**, signé de notre clé (`Binaries` + `AllowedAPKSigningKeys`) ; mises à jour par tag. **Toute montée de la chaîne de build** (AGP, Kotlin, Gradle) se vérifie côté F-Droid : elle se fait avec tout le portefeuille (Dependabot n° 3, AGP 9.5.0, fermée le 2026-11-01 pour cette raison). À mesurer : une installation par le client F-Droid échappe-t-elle aux paramètres restreints (P-3) ? |
 | D-017 | **Les mots de l'écran STOP** (Patrice, 2026-11-01), par ordre d'importance : où l'on est (« au téléphone » / « l'appel vient de se terminer »), ce qui vient d'arriver (un texte par déclencheur), « **si on vous dit d'ignorer cet écran, c'est une arnaque** », la règle (« ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération »), « le numéro ou le nom affiché ne prouve rien », que faire. Choisis par `ui/stop/StopText.kt` selon le déclencheur, l'appel (en cours ou fini, téléphone ou VoIP) et la permission de raccrocher, vérifiés par `StopTextTest` | Les escrocs ne jouent pas que la banque : police, impôts, URSSAF, mutuelle, assurance, crédit (Patrice). La règle **nomme qui ne demande jamais** au lieu de dire « personne » : le service client d'un opérateur peut faire relire un code qu'il vient d'envoyer, un proche peut aider par une appli de prise en main. Elle dit « **vous appelleront** » et non « vous demanderont au téléphone » : qui appelle lui-même sa vraie banque peut avoir à valider ce qu'il a demandé (relecture Claude, H2). Une règle qu'on sait fausse rendrait tout l'écran douteux. **Pas de question** « connaissez-vous votre interlocuteur ? » : la victime croit le connaître (numéro usurpé, son nom, ses opérations) et répondrait oui ; l'écran affirme. L'escroc est encore en ligne quand l'écran s'affiche (« c'est normal, appuyez sur Continuer ») : « ignorer cet écran » le désarme d'avance, et reste catégorique — si c'était la vraie banque, l'erreur ne coûte qu'un rappel. **Ordre mesuré sur le S9** (police normale puis 1,3) : ce qui suit la règle sortait de l'écran ; on ne fait pas défiler sous pression. **Prise en main à distance** : raccrocher ne coupe pas la session, le conseil est d'éteindre le téléphone. **Boutons** : « Raccrocher » seulement si l'appli peut le faire (appel téléphonique en cours, permission accordée : `endCall` ne raccroche pas la VoIP) ; pendant l'appel, « Raccrocher et appeler ma banque » (D-011 : raccrocher AVANT de composer) ; après, « Appeler ma banque » en premier ; **pendant un appel que l'appli ne peut pas couper, aucun bouton d'appel** (le conseil dit de raccrocher). Si « Raccrocher » échoue, l'écran reste, sans ses boutons d'appel. Ils restent en bas, visibles ; les textes défilent au-dessus. **L'écran quitté sans réponse** (accueil, autre appli ; pas la mise en veille) se ferme et libère ses déclencheurs (`StopChoice.LEFT`, journalisé, sans SMS au proche) : une nouvelle tentative montre un nouvel écran. |
 | D-018 | **La mesure décide de la suite** (Patrice, 2026-11-01, sur recommandation de Claude) : si l'écran STOP ne s'affiche pas par-dessus l'appli bancaire (P-1), ou si ses demandes de validation sont illisibles (P-2), **le projet s'arrête** | La concurrence n'est pas la raison : en France, rien ne fait la même chose en français, sans Google ni Internet (fiche, § 9.1). Les vrais risques sont techniques (P-1 à P-3 ; Android resserre ces accès à chaque version : codes masqués dans les notifications depuis Android 15, SMS de code retardés par Android 17) et stratégiques (Google ou Samsung, s'ils couvrent un jour la France, la rendraient inutile au plus grand nombre). La journée déjà investie ne pèse pas : seuls les vrais téléphones tranchent. **P-1 et P-2 passées le 2026-11-02** (S24 FE, Android 16) : **le projet continue.** |
+| D-019 | **Une demande bancaire se reconnaît à son CANAL de notification, de n'importe quelle appli** (`platform/notification/NotificationSignal.kt`, liste `BANK_REQUEST_CHANNELS` : `securpass_id` aujourd'hui) ; l'écouteur ne lit que l'appli et le canal de chaque notification | Le canal est un identifiant du code de l'appli : le même dans toutes les langues et toutes les versions de ses textes, et le lire ne lit rien de ce que dit la notification (PRIVACY). **Pas de liste de paquets** : Sécur'Pass est commun aux banques du groupe BPCE, et un nom de paquet que personne n'a mesuré ferait manquer leurs demandes ; un canal qu'aucune autre appli n'emploie ne coûte rien là où il n'apparaît pas. Une appli qui l'imiterait ne provoquerait qu'un STOP de trop, du côté protecteur. **Correspondance exacte** (ni casse, ni sous-chaîne : `NotificationSignalTest`). Le paquet va au journal (de quelle appli venait la demande). **L'accès aux notifications est un accès spécial, pas une permission** : la garde CI (`tools/check-manifest-permissions.py`) tient désormais aussi la liste exacte des composants que le système lie par une permission `BIND_*` (contrôle négatif : 15 cas), et refuse toujours un service d'accessibilité (D-010) ou un VPN. |
 
 ## 6. Les capteurs à brancher — ce qu'Android permet (vérifié le 2026-11-01)
 
@@ -159,7 +164,7 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
 | Appel VoIP (WhatsApp, Signal…) | `AudioManager.getMode()` global sans permission (`MODE_IN_COMMUNICATION`), `addOnModeChangedListener` (API 31) ; ou notification `CATEGORY_CALL` | aucune / accès aux notifications | — | code confirmé, **comportement des applis à mesurer (P-4)** |
 | SMS de code | récepteur `SMS_RECEIVED` | `RECEIVE_SMS` | oui | confirmé, **sous réserve de D-008** |
 | SMS de code, repli Android 15+ | la notification de l'appli SMS par défaut arrive **masquée** (« Sensitive notification content hidden ») : le masquage lui-même signale un code | accès aux notifications | oui | probable, à mesurer |
-| Demande de validation bancaire | `NotificationListenerService` — sur AOSP, le masquage des codes ne vise que l'appli SMS par défaut ; assistants Samsung et Pixel inconnus | accès aux notifications | oui | **MESURÉ le 2026-11-02 sur le S24 FE (P-2)** : la demande Sécur'Pass du Crédit Coopératif est lue en clair — canal **`securpass_id`**, titre « Vous allez enregistrer un compte externe », texte vide, aucun bouton ; l'appui dessus la retire avec `REASON_CLICK` (1) |
+| Demande de validation bancaire | `NotificationListenerService` — sur AOSP, le masquage des codes ne vise que l'appli SMS par défaut ; assistants Samsung et Pixel inconnus | accès aux notifications | oui | **MESURÉ le 2026-11-02 sur le S24 FE (P-2)** : la demande Sécur'Pass du Crédit Coopératif est lue en clair — canal **`securpass_id`**, titre « Vous allez enregistrer un compte externe », texte vide, aucun bouton ; l'appui dessus la retire avec `REASON_CLICK` (1). **Capteur branché le 2026-11-02** (`platform/notification`, D-019), **mesuré de bout en bout sur émulateur, Android 16 et 17**, avec une demande factice sur le canal reconnu (version de test, `StandInBankRequestReceiver`) : hors appel, reconnue mais rien d'affiché ni de gardé ; pendant un appel, STOP devant tout ; juste après, STOP « l'appel vient de se terminer », « Appeler ma banque » en premier. **Une seule notification arrive DEUX fois** à l'écouteur, à 0,26-0,3 s d'écart (sans doute l'assistant de notifications de Google qui l'ajuste) : le moteur en fait un seul STOP (`NotificationSignalTest`). Mise à jour de la même notification après l'écran quitté : nouveau STOP, comme voulu (D-017). **Processus tué** (`kill`, pas `force-stop`) : le système relance l'écouteur en 1 s et le tient au rang de service lié (`BFGS`). **Android 10 (S9)** : lié, demande reconnue, rien hors appel (pas de SIM : pas d'appel). Reste la vraie demande Sécur'Pass sur le S24 FE |
 | Appli bancaire ou de prise en main au premier plan | `UsageStatsManager.queryEvents` (**aucun rappel : interrogation**, pendant l'appel seulement) | `PACKAGE_USAGE_STATS` | oui | confirmé ; tenir le processus : P-5 |
 | Installation d'une appli | `getChangedPackages` (au réveil) + `PACKAGE_ADDED` dynamique ; **filtrés par la visibilité des paquets** | `QUERY_ALL_PACKAGES` (`normal`) | non | confirmé |
 | Renvoi d'appel inconditionnel activé | `CallForwardingIndicatorListener` / `LISTEN_CALL_FORWARDING_INDICATOR` (pas les renvois conditionnels) | `READ_PHONE_STATE` | non | confirmé |
@@ -195,19 +200,37 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   (idée 15 de la fiche). Après l'appui, l'appli bancaire demande elle-même « êtes-vous au téléphone ? » :
   elle compte sur la réponse de la victime, que l'escroc dicte ; Call Halt, lui, sait l'appel en cours et
   intervient dès l'arrivée de la notification. **Restent** : les autres banques (chaque appli à mesurer), et
-  le masquage éventuel d'un code dans le texte sur Android 15+ (ici, aucun code dans la notification).
+  le masquage éventuel d'un code dans le texte sur Android 15+ (ici, aucun code dans la notification). **Et,
+  avec le capteur branché (D-019), sur le S24 FE** : la vraie demande en entier (arrivée pendant un appel, STOP
+  devant l'appli bancaire) ; si Sécur'Pass ou l'assistant de Samsung la publient plusieurs fois, et quand
+  (après la réponse au STOP, une nouvelle publication montre un nouvel écran : du côté protecteur, mais à
+  connaître) ; si une notification de confirmation suit, sur le même canal. Une demande publiée pendant que
+  l'écouteur n'est pas lié (accès tout juste accordé, relance après la mort du processus : 1 s mesurée) n'est
+  pas vue.
 - **P-3** — Paramètres restreints : parcours guidé pas à pas ; une installation par F-Droid (installateur
   par session) y échappe-t-elle ? Non vérifié.
 - **P-4** — VoIP : `getMode()` voit-il WhatsApp, Signal, Telegram en appel ?
 - **P-5** — Pendant l'appel, qu'est-ce qui garde le processus en vie pour interroger UsageStats ? Un
   service de premier plan lancé depuis l'arrière-plan est restreint (targetSdk ≥ 35 : `SYSTEM_ALERT_WINDOW`
   **et** une superposition visible). Piste : l'écouteur de notifications, lié par le système, tient le processus.
+  **Confirmé sur émulateur (Android 16), le 2026-11-02** : écouteur lié, le processus est au rang de service lié
+  (`BFGS`), et relancé en 1 s s'il est tué. Reste à mesurer sur le S24 FE, que Samsung gère plus durement.
 - **P-6** — Un code reçu pendant la sonnerie ou juste avant l'appel (l'escroc déclenche l'opération puis
-  appelle) n'est pas « pendant l'appel » pour le moteur. Faut-il une fenêtre *avant* ?
+  appelle) n'est pas « pendant l'appel » pour le moteur. Faut-il une fenêtre *avant* ? **Pour une demande
+  bancaire, l'appui sur la notification est une piste plus précise** (idée 15 de la fiche ; observable, P-2) :
+  posée avant l'appel, appuyée pendant (« appuyez sur la notification de votre banque »). Pas branché le
+  2026-11-02, et pas comme un déclencheur de plus : l'appui ouvre aussi l'écran où l'on **refuse**
+  l'opération. Après un STOP, un second écran gênerait la victime au moment où elle se défend. À trancher avec
+  ce point : n'arrêter que l'appui d'une demande arrivée **avant** le début de l'appel en cours.
 - **P-7** — L'état réel de l'appel, interrogé en direct par le capteur téléphonique, contre l'état mémorisé.
   Trois défauts qu'il fermera, aujourd'hui écrits et non corrigés :
   - le processus démarré après une panne de stockage ne voit pas l'appel (relecture du 2026-11-01, D2) ;
-  - une fin d'appel manquée n'est bornée que par le plafond de 8 h ;
+  - une fin d'appel manquée n'est bornée que par le plafond de 8 h. **Mesuré le 2026-11-02 (émulateur
+    Android 16)** : un appareil éteint en plein appel ne reçoit aucun état d'appel au redémarrage. L'appel reste
+    « en cours » dans la mémoire, et une demande bancaire de l'utilisateur lui-même, sans appel, a montré un
+    STOP. Avec le capteur des notifications, c'est **un faux STOP réel** : une batterie vide en plein appel
+    suffit. **À corriger en premier** : un appel ne survit pas à un redémarrage (compteur de démarrages
+    d'Android, `Settings.Global.BOOT_COUNT`, lisible sans permission) ;
   - un nouvel appel arrivé pendant cet appel « fantôme » est pris pour un double appel. Il hérite alors du
     début et de l'interlocuteur de l'ancien, et le rappel d'appel long à l'inconnu se perd (D5). Le STOP,
     lui, n'est pas touché.

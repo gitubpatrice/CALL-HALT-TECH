@@ -18,6 +18,12 @@ change that adds it to the app, and the build checks the app asks for nothing el
 - **Answer phone calls** (`ANSWER_PHONE_CALLS`): only to end the call when you press "Hang up", or "Hang up
   and call my bank", on the STOP screen. Without it, neither button is shown during a call. The app never
   answers or places a call by itself: "call my bank" opens the phone's dialler, and you press call.
+- **Notification access** (granted in the phone's settings; not a permission): to see your banking app ask you
+  to approve an operation. Of each notification on the phone, the app reads only which app posted it and on
+  which channel (the identifier the posting app gives a kind of notification) — never its title, its text or
+  anything else. It recognises a request by that channel alone: today, the requests of Sécur'Pass (banks of
+  the BPCE group). Every other notification is left as it came. This version does not ask for it on screen
+  yet.
 
 The manifest also carries a line Android's own library adds for the app's internal use
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`); it gives no access to anything.
@@ -29,8 +35,9 @@ On this phone only, in the app's private storage:
 - its settings;
 - the memory of its detector: for the latest call only, when it started and ended, and whether it was
   incoming or outgoing — never the number; and the last call state the phone reported;
-- a journal of the alerts it shows (when, why, what was chosen). In this version, no sensor triggers an alert
-  yet: it stays empty.
+- a journal of the alerts it shows: when, why, which app the request came from (its package name, such as
+  `com.credit_coop.android.mobilebanking`), and what was chosen. A request outside a call, or after the minutes
+  that follow one, is not kept.
 
 Android backup and device-to-device transfer are **disabled** for this app: none of it leaves the phone.
 

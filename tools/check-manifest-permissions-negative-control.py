@@ -42,10 +42,28 @@ def permission(name: str) -> str:
     return f'    <uses-permission android:name="{name}" />\n'
 
 
-def manifest(permissions: list[str], package: str = PACKAGE, application: bool = True) -> str:
+def bound(component: str, guard: str, tag: str = "service") -> str:
+    """A component the system binds, written across lines as the merger writes it."""
+    return (
+        f'        <{tag}\n            android:name="{component}"\n            android:exported="true"\n'
+        f'            android:permission="{guard}" />\n'
+    )
+
+
+HEALTHY = sorted(GUARD_MODULE.ALLOWED)
+HEALTHY_BINDINGS = sorted(GUARD_MODULE.ALLOWED_BINDINGS)
+
+
+def manifest(
+    permissions: list[str],
+    package: str = PACKAGE,
+    application: bool = True,
+    bindings: list[tuple[str, str]] = HEALTHY_BINDINGS,
+) -> str:
     body = "".join(permission(name) for name in permissions)
     if application:
-        body += '    <application android:label="x" />\n'
+        components = "".join(bound(component, guard) for component, guard in bindings)
+        body += f'    <application android:label="x">\n{components}    </application>\n'
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n'
@@ -53,7 +71,16 @@ def manifest(permissions: list[str], package: str = PACKAGE, application: bool =
     )
 
 
-HEALTHY = sorted(GUARD_MODULE.ALLOWED)
+LISTENER, LISTENER_GUARD = HEALTHY_BINDINGS[0]
+# The same listener under the relative name a hand-written manifest uses: the same access, not another one.
+RELATIVE_LISTENER = [(LISTENER.removeprefix(PACKAGE), LISTENER_GUARD)]
+ACCESSIBILITY = HEALTHY_BINDINGS + [(f"{PACKAGE}.Reader", "android.permission.BIND_ACCESSIBILITY_SERVICE")]
+INPUT_METHOD = HEALTHY_BINDINGS + [(f"{PACKAGE}.Keyboard", "android.permission.BIND_INPUT_METHOD")]
+# Device administration is a RECEIVER the system binds: every kind of component counts, not only services.
+DEVICE_ADMIN = manifest(HEALTHY).replace(
+    "    </application>",
+    bound(f"{PACKAGE}.Admin", "android.permission.BIND_DEVICE_ADMIN", tag="receiver") + "    </application>",
+)
 
 # The merger writes a permission across several lines, under its API-23 spelling too: a grep would miss it.
 NETWORK_MULTILINE = manifest(HEALTHY).replace(
@@ -73,6 +100,11 @@ CASES = [
     ("not an application manifest", manifest(HEALTHY, application=False), 1, "is not an application manifest"),
     ("unreadable XML", "<manifest", 1, "unreadable"),
     ("no manifest built", None, 1, "merged manifest not found"),
+    ("witness: the listener under its relative name", manifest(HEALTHY, bindings=RELATIVE_LISTENER), 0, "OK: no network"),
+    ("the reviewed special access gone", manifest(HEALTHY, bindings=[]), 1, "Special access(es) in the reviewed list"),
+    ("an accessibility service", manifest(HEALTHY, bindings=ACCESSIBILITY), 1, "must NEVER be in the app"),
+    ("a special access outside the list", manifest(HEALTHY, bindings=INPUT_METHOD), 1, "Special access(es) outside"),
+    ("a special access on a receiver", DEVICE_ADMIN, 1, "Special access(es) outside"),
 ]
 
 
