@@ -1,10 +1,8 @@
 package com.filestech.callhalt.platform.telephony
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import com.filestech.callhalt.platform.FailingPreferences
+import com.filestech.callhalt.platform.InMemoryPreferences
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -26,14 +24,8 @@ class PhoneStateMemoryTest {
     /** A memory that cannot be read must not cost the call: it is still reported, its direction unknown. */
     @Test
     fun `a storage failure of any kind answers unknown instead of throwing`() = runTest {
-        assertThat(PhoneStateMemory(FailingStore(IOException("disk unavailable"))).swap(PhoneState.OFFHOOK)).isNull()
-        assertThat(PhoneStateMemory(FailingStore(IllegalStateException("two stores on one file"))).swap(PhoneState.OFFHOOK))
+        assertThat(PhoneStateMemory(FailingPreferences(IOException("disk unavailable"))).swap(PhoneState.OFFHOOK)).isNull()
+        assertThat(PhoneStateMemory(FailingPreferences(IllegalStateException("two stores on one file"))).swap(PhoneState.OFFHOOK))
             .isNull()
-    }
-
-    private class FailingStore(private val failure: Exception) : DataStore<Preferences> {
-        override val data: Flow<Preferences> = flow { throw failure }
-
-        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences = throw failure
     }
 }

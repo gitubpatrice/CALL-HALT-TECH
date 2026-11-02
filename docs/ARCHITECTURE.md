@@ -113,12 +113,14 @@ domain/src/main/java/com/filestech/callhalt/domain/
 
 app/src/main/java/com/filestech/callhalt/
   CallHaltApplication, MainActivity
-  di/          ApplicationScope, StorageModule (Room, DataStore), DetectionModule (ports → implémentations)
+  di/          ApplicationScope, StorageModule (Room, DataStore ; PhoneStateStore, le DataStore des faits du
+               téléphone), DetectionModule (ports → implémentations), PlatformModule (ce que la plate-forme
+               atteint par une interface, pour tester la logique autour sur la JVM)
   data/settings/  SettingsRepository + SettingsMapping (valeur hors bornes → défaut protecteur)
   data/store/     CallHaltDatabase, entités, DetectorDao, DetectorMapping (pur), RoomDetectorStore
   ui/          AppRoot, Routes, home/, stop/ (StopScreen, StopText), theme/ (palettes du portefeuille, Damier)
-  platform/    SensorQueue (la file unique, P-12), Restarts (BootCountRestarts : les redémarrages du téléphone,
-               D-020), AndroidDecisionExecutor (le STOP d'abord ; le reste au
+  platform/    SensorQueue (la file unique, P-12), Restarts (les redémarrages du téléphone, D-020 : Boot,
+               BootReader + AndroidBootReader, BootCountRestarts), AndroidDecisionExecutor (le STOP d'abord ; le reste au
                fil des étapes) ; telephony/ — CallStateReceiver (manifeste, exporté : diffusion protégée),
                CallStateSensor, PhoneState (+ callSignal, pur), PhoneStateMemory (DataStore à part), CallEvents
                (fin d'appel, pour l'écran STOP) ; stop/ — StopActivity, StopRequest, StopDisplay (l'écran
@@ -216,7 +218,9 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   pas encore traitée** quand le processus meurt (la file est en mémoire ; quelques millisecondes, le processus
   étant alors au rang de service lié) : relecture GPT du 2026-11-02, n° 1. Parade possible, non construite :
   relire à la connexion les notifications actives et récentes ; elle rejouerait aussi une demande déjà traitée,
-  donc un STOP de trop.
+  donc un STOP de trop. **L'écouteur de mesure** (`MeasureNotificationListener`, version de test seulement) est
+  le seul code qui lise le titre et le texte d'une notification (chiffres masqués, une appli mesurée) : à retirer
+  une fois les autres banques mesurées.
 - **P-3** — Paramètres restreints : parcours guidé pas à pas ; une installation par F-Droid (installateur
   par session) y échappe-t-elle ? Non vérifié.
 - **P-4** — VoIP : `getMode()` voit-il WhatsApp, Signal, Telegram en appel ?
