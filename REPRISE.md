@@ -14,7 +14,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, huit
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, neuf
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
@@ -35,18 +35,18 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 8. **La mesure des SMS de code** (PR #15, P-20) — sur Android 16 et 17 (détecteur de Google), un code **en
    anglais** est masqué dans la notification de l'appli SMS, **un code en français ne l'est pas**, même téléphone
    réglé en français. Le masquage ne suffit donc pas en France : reconnaître un code demande de lire le texte.
+9. **Les mesures sur le S24 FE, avec Patrice** (PR #17) — **de bout en bout, vrai appel, vraie demande
+   Sécur'Pass** : STOP 0,12 s après la notification, devant tout ; « Raccrocher » ; journal juste ; ni republication
+   ni confirmation sur le canal. **Samsung ne masque aucun code SMS**, ni français ni anglais. La banque de Patrice
+   confirme l'opération par SMS, 20 s après l'appel.
 
 **Ce qui attend Patrice : trancher P-20** (`docs/ARCHITECTURE.md` § 7) — lire le texte de la notification de
 l'appli SMS (aucune permission de plus ; recommandation de Claude) ou demander la réception des SMS. La promesse
-de confidentialité change dans les deux cas. Après la mesure sur le S24 (Samsung a son propre détecteur).
+de confidentialité change dans les deux cas. Le SMS de confirmation de la banque, juste après un appel, en est une
+piste de plus.
 
-**Prochaine étape : deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel
-(ajout d'un bénéficiaire depuis le site, sans argent engagé) ; et le détecteur de codes de Samsung, avec deux SMS que
-Patrice s'envoie à lui-même : « Votre code de validation est 482913 », puis « Your verification code is 482913 »
-(sa banque n'envoie aucun SMS de code, elle valide par Sécur'Pass ; le masquage dépend du texte, pas de
-l'expéditeur : mesuré sur émulateur). Installer d'abord la version de test à jour, et accorder l'accès aux
-notifications du vrai capteur et de l'écouteur de mesure (puis les retirer). Puis l'écran d'activation (P-3) et l'écran d'état de la
-protection (P-10).
+**Prochaine étape** : selon P-20, le capteur des SMS de code ; puis l'écran d'activation (P-3, qui demande les
+accès un par un) et l'écran d'état de la protection (P-10).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
 les deux SIM, la relecture des traductions par des natifs, les audits (95/100, D-016).
