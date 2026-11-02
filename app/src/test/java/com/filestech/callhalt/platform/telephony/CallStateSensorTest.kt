@@ -1,18 +1,20 @@
 package com.filestech.callhalt.platform.telephony
 
 import com.filestech.callhalt.domain.detection.DetectionEngine
-import com.filestech.callhalt.domain.detection.DetectorState
-import com.filestech.callhalt.domain.detection.Evaluation
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
-import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.ProtectionSettings
-import com.filestech.callhalt.domain.port.DetectorStore
+import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
+import com.filestech.callhalt.platform.InMemoryDetectorStore
+import com.filestech.callhalt.platform.stop.StopLauncher
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -22,13 +24,35 @@ import java.time.Instant
  * `callSignal` relies on the engine for ("it absorbs a repeat", "a waiting call changes nothing") is proven here,
  * not taken from a comment.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class CallStateSensorTest {
 
     private val store = InMemoryDetectorStore()
+
+    /** Call states alone never decide a STOP: a launcher asked for one fails the test. */
+    private val noStop = StopLauncher { error("no STOP expected") }
+    private val settings = SettingsSource { ProtectionSettings() }
+    private val events = CallEvents()
     private val sensor = CallStateSensor(
         PhoneStateMemory(InMemoryPreferences()),
-        ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, AndroidDecisionExecutor()),
+        ProcessSignalUseCase(DetectionEngine(), store, settings, AndroidDecisionExecutor(noStop)),
+        events,
     )
+
+    /** What the STOP screen listens to, to stop offering "Hang up" once its call is over. */
+    @Test
+    fun `an idle phone is told once the engine has it, a ringing or answered one is not`() = runTest {
+        // What the engine held at the moment each end was told: the order, not only the outcome.
+        val callActiveWhenTold = mutableListOf<Boolean>()
+        val listening = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            events.endedCalls.collect { channel -> callActiveWhenTold += store.state.calls.getValue(channel).isActive }
+        }
+        feed(PhoneState.RINGING, PhoneState.OFFHOOK)
+        assertThat(callActiveWhenTold).isEmpty()
+        feed(PhoneState.IDLE, from = 10)
+        assertThat(callActiveWhenTold).containsExactly(false)
+        listening.cancel()
+    }
 
     @Test
     fun `a call with a second one waiting, and every broadcast twice, is one incoming call`() = runTest {
@@ -96,13 +120,6 @@ class CallStateSensorTest {
     }
 
     private fun at(seconds: Long): Instant = T0.plusSeconds(seconds)
-
-    private class InMemoryDetectorStore : DetectorStore {
-        var state = DetectorState()
-
-        override suspend fun apply(step: (DetectorState) -> Evaluation): List<Decision> =
-            step(state).also { state = it.state }.decisions
-    }
 
     private companion object {
         val T0: Instant = Instant.parse("2026-11-02T09:00:00Z")

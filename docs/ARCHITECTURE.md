@@ -24,6 +24,11 @@
 service téléphonique : appel entrant décroché, appel sortant, processus tué entre deux appels. Les autres
 capteurs sont la suite (§ 6).
 
+**L'écran STOP réel, le même jour** (`platform/stop/`, permissions `SYSTEM_ALERT_WINDOW` et
+`ANSWER_PHONE_CALLS`) : **mesure P-1 passée sur le S24 FE** — pendant un vrai appel, il passe devant l'appli
+bancaire, et « Raccrocher » coupe l'appel. Faute de capteur d'action sensible, seul un signal injecté par adb
+(version de test) le déclenche : la version publiée ne montre encore aucun STOP.
+
 ## 2. Les modules
 
 ```
@@ -109,11 +114,14 @@ app/src/main/java/com/filestech/callhalt/
   data/settings/  SettingsRepository + SettingsMapping (valeur hors bornes → défaut protecteur)
   data/store/     CallHaltDatabase, entités, DetectorDao, DetectorMapping (pur), RoomDetectorStore
   ui/          AppRoot, Routes, home/, stop/ (StopScreen, StopText), theme/ (palettes du portefeuille, Damier)
-  platform/    SensorQueue (la file unique, P-12), AndroidDecisionExecutor (exécute les décisions, au fil
-               des étapes) ; telephony/ — CallStateReceiver (manifeste, non exporté), CallStateSensor,
-               PhoneState (+ callSignal, pur), PhoneStateMemory (DataStore à part)
-  (à venir)    platform/<capteur>/ pour sms, notifications, usage, packages, accessibility ;
-               platform/stop/ — l'Activity STOP
+  platform/    SensorQueue (la file unique, P-12), AndroidDecisionExecutor (le STOP d'abord ; le reste au
+               fil des étapes) ; telephony/ — CallStateReceiver (manifeste, exporté : diffusion protégée),
+               CallStateSensor, PhoneState (+ callSignal, pur), PhoneStateMemory (DataStore à part), CallEvents
+               (fin d'appel, pour l'écran STOP) ; stop/ — StopActivity, StopRequest, StopDisplay (l'écran
+               confirme qu'il est devant), StopLauncher, CallControl (raccrocher), StopAnswers (réponse → moteur)
+  src/debug/   platform/debug/DebugSignalReceiver — action sensible injectée par adb (DUMP), version de test
+               seulement, pour mesurer l'écran STOP avant les capteurs
+  (à venir)    platform/<capteur>/ pour sms, notifications, usage, packages, accessibility
 ```
 
 ## 5. Décisions
@@ -136,8 +144,8 @@ app/src/main/java/com/filestech/callhalt/
 | D-014 | Le moteur ne lit aucune horloge ; un appel suivi plus de 8 h est une fin manquée | décisions reproductibles en test ; une fin perdue ne garde pas tous les SMS suivants « pendant un appel » |
 | D-015 | **SMS au proche : oui** (Patrice, 2026-11-01) | Fonction 7 de la fiche : le proche est prévenu quand un STOP s'affiche, quand « Continuer » est choisi malgré l'alerte, quand la protection est coupée. Le moteur décide déjà quand (`NotifyGuardian`) ; `SEND_SMS` arrivera avec le composant qui envoie (D-007), dans PRIVACY et la garde CI en même temps. C'est une permission soumise aux paramètres restreints (§ 6). Désactivé tant qu'aucun proche n'est configuré. |
 | D-016 | **Publication sur F-Droid : oui — mais rien n'est publié tant que l'appli n'est pas fiable, solide et sécurisée au mieux, avec un score d'au moins 95 sur 100** (Patrice, 2026-11-01) | **Condition de publication** : la grille qui donne ce score se fixe AVANT le premier audit de publication, sur trois éléments. **(1)** Aucun constat critique ou élevé ouvert : audit en 3 axes, audit de sécurité avec panel adverse, faux positifs des règles de détection, motifs de défaut. **(2)** Mesures P-1 à P-3 faites sur de vrais téléphones. **(3)** Une relecture externe du code qui décide. Un score sous 95, ou un critère non tenu : pas de publication. Comme Agenda Tech et SMS Tech. **Build reproductible** : déjà préparé (pas de foojay, bloc de dépendances de Play exclu). **Métadonnées fastlane** dans les 5 langues, changelog ≤ 500 caractères. **APK servi = notre APK**, signé de notre clé (`Binaries` + `AllowedAPKSigningKeys`) ; mises à jour par tag. **Toute montée de la chaîne de build** (AGP, Kotlin, Gradle) se vérifie côté F-Droid : elle se fait avec tout le portefeuille (Dependabot n° 3, AGP 9.5.0, fermée le 2026-11-01 pour cette raison). À mesurer : une installation par le client F-Droid échappe-t-elle aux paramètres restreints (P-3) ? |
-| D-017 | **Les mots de l'écran STOP** (Patrice, 2026-11-01), par ordre d'importance : où l'on est (« au téléphone » / « l'appel vient de se terminer »), ce qui vient d'arriver (un texte par déclencheur), « **si on vous dit d'ignorer cet écran, c'est une arnaque** », la règle (« ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération »), « le numéro ou le nom affiché ne prouve rien », que faire. Choisis par `ui/stop/StopText.kt` selon le déclencheur et l'appel (`CallSession` : en cours ou fini, téléphone ou VoIP), vérifiés par `StopTextTest` | Les escrocs ne jouent pas que la banque : police, impôts, URSSAF, mutuelle, assurance, crédit (Patrice). La règle **nomme qui ne demande jamais** au lieu de dire « personne » : le service client d'un opérateur peut faire relire un code qu'il vient d'envoyer, un proche peut aider par une appli de prise en main. Elle dit « **vous appelleront** » et non « vous demanderont au téléphone » : qui appelle lui-même sa vraie banque peut avoir à valider ce qu'il a demandé (relecture Claude, H2). Une règle qu'on sait fausse rendrait tout l'écran douteux. **Pas de question** « connaissez-vous votre interlocuteur ? » : la victime croit le connaître (numéro usurpé, son nom, ses opérations) et répondrait oui ; l'écran affirme. L'escroc est encore en ligne quand l'écran s'affiche (« c'est normal, appuyez sur Continuer ») : « ignorer cet écran » le désarme d'avance, et reste catégorique — si c'était la vraie banque, l'erreur ne coûte qu'un rappel. **Ordre mesuré sur le S9** (police normale puis 1,3) : ce qui suit la règle sortait de l'écran ; on ne fait pas défiler sous pression. **Prise en main à distance** : raccrocher ne coupe pas la session, le conseil est d'éteindre le téléphone. **Boutons** : « Raccrocher » seulement si l'appli peut le faire (appel téléphonique en cours : `endCall` ne raccroche pas la VoIP) ; pendant l'appel, « Raccrocher et appeler ma banque » (D-011 : raccrocher AVANT de composer) ; après, « Appeler ma banque » en premier. Ils restent en bas, visibles ; les textes défilent au-dessus. |
-| D-018 | **La mesure décide de la suite** (Patrice, 2026-11-01, sur recommandation de Claude) : si l'écran STOP ne s'affiche pas par-dessus l'appli bancaire (P-1), ou si ses demandes de validation sont illisibles (P-2), **le projet s'arrête** | La concurrence n'est pas la raison : en France, rien ne fait la même chose en français, sans Google ni Internet (fiche, § 9.1). Les vrais risques sont techniques (P-1 à P-3 ; Android resserre ces accès à chaque version : codes masqués dans les notifications depuis Android 15, SMS de code retardés par Android 17) et stratégiques (Google ou Samsung, s'ils couvrent un jour la France, la rendraient inutile au plus grand nombre). La journée déjà investie ne pèse pas : seuls les vrais téléphones tranchent. |
+| D-017 | **Les mots de l'écran STOP** (Patrice, 2026-11-01), par ordre d'importance : où l'on est (« au téléphone » / « l'appel vient de se terminer »), ce qui vient d'arriver (un texte par déclencheur), « **si on vous dit d'ignorer cet écran, c'est une arnaque** », la règle (« ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération »), « le numéro ou le nom affiché ne prouve rien », que faire. Choisis par `ui/stop/StopText.kt` selon le déclencheur, l'appel (en cours ou fini, téléphone ou VoIP) et la permission de raccrocher, vérifiés par `StopTextTest` | Les escrocs ne jouent pas que la banque : police, impôts, URSSAF, mutuelle, assurance, crédit (Patrice). La règle **nomme qui ne demande jamais** au lieu de dire « personne » : le service client d'un opérateur peut faire relire un code qu'il vient d'envoyer, un proche peut aider par une appli de prise en main. Elle dit « **vous appelleront** » et non « vous demanderont au téléphone » : qui appelle lui-même sa vraie banque peut avoir à valider ce qu'il a demandé (relecture Claude, H2). Une règle qu'on sait fausse rendrait tout l'écran douteux. **Pas de question** « connaissez-vous votre interlocuteur ? » : la victime croit le connaître (numéro usurpé, son nom, ses opérations) et répondrait oui ; l'écran affirme. L'escroc est encore en ligne quand l'écran s'affiche (« c'est normal, appuyez sur Continuer ») : « ignorer cet écran » le désarme d'avance, et reste catégorique — si c'était la vraie banque, l'erreur ne coûte qu'un rappel. **Ordre mesuré sur le S9** (police normale puis 1,3) : ce qui suit la règle sortait de l'écran ; on ne fait pas défiler sous pression. **Prise en main à distance** : raccrocher ne coupe pas la session, le conseil est d'éteindre le téléphone. **Boutons** : « Raccrocher » seulement si l'appli peut le faire (appel téléphonique en cours, permission accordée : `endCall` ne raccroche pas la VoIP) ; pendant l'appel, « Raccrocher et appeler ma banque » (D-011 : raccrocher AVANT de composer) ; après, « Appeler ma banque » en premier ; **pendant un appel que l'appli ne peut pas couper, aucun bouton d'appel** (le conseil dit de raccrocher). Si « Raccrocher » échoue, l'écran reste, sans ses boutons d'appel. Ils restent en bas, visibles ; les textes défilent au-dessus. **L'écran quitté sans réponse** (accueil, autre appli ; pas la mise en veille) se ferme et libère ses déclencheurs (`StopChoice.LEFT`, journalisé, sans SMS au proche) : une nouvelle tentative montre un nouvel écran. |
+| D-018 | **La mesure décide de la suite** (Patrice, 2026-11-01, sur recommandation de Claude) : si l'écran STOP ne s'affiche pas par-dessus l'appli bancaire (P-1), ou si ses demandes de validation sont illisibles (P-2), **le projet s'arrête** | La concurrence n'est pas la raison : en France, rien ne fait la même chose en français, sans Google ni Internet (fiche, § 9.1). Les vrais risques sont techniques (P-1 à P-3 ; Android resserre ces accès à chaque version : codes masqués dans les notifications depuis Android 15, SMS de code retardés par Android 17) et stratégiques (Google ou Samsung, s'ils couvrent un jour la France, la rendraient inutile au plus grand nombre). La journée déjà investie ne pèse pas : seuls les vrais téléphones tranchent. **P-1 passé le 2026-11-02** (S24 FE, Android 16) ; reste P-2. |
 
 ## 6. Les capteurs à brancher — ce qu'Android permet (vérifié le 2026-11-01)
 
@@ -156,8 +164,8 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
 | Installation d'une appli | `getChangedPackages` (au réveil) + `PACKAGE_ADDED` dynamique ; **filtrés par la visibilité des paquets** | `QUERY_ALL_PACKAGES` (`normal`) | non | confirmé |
 | Renvoi d'appel inconditionnel activé | `CallForwardingIndicatorListener` / `LISTEN_CALL_FORWARDING_INDICATOR` (pas les renvois conditionnels) | `READ_PHONE_STATE` | non | confirmé |
 | Service d'accessibilité activé | `AccessibilityManager.getEnabledAccessibilityServiceList` | aucune | — | confirmé |
-| Afficher STOP | Activity (D-006) | `SYSTEM_ALERT_WINDOW` | oui | confirmé (doc et code), **à mesurer (P-1)** |
-| Raccrocher | `TelecomManager.endCall` (déprécié, fonctionne) — ni appel d'urgence, ni VoIP | `ANSWER_PHONE_CALLS` | non | confirmé (code) |
+| Afficher STOP | Activity (D-006), lancée de l'arrière-plan ; l'écran confirme qu'il est au premier plan (`StopDisplay`), sinon « non affiché » | `SYSTEM_ALERT_WINDOW` | oui | **branché et MESURÉ le 2026-11-02 sur le S24 FE (Samsung, Android 16)** : pendant un vrai appel, l'appli Crédit Coopératif au premier plan, le STOP passe devant en ~1 s (P-1) ; capture d'écran par adb : noire (`FLAG_SECURE`) |
+| Raccrocher | `TelecomManager.endCall` (déprécié, fonctionne) — ni appel d'urgence, ni VoIP | `ANSWER_PHONE_CALLS` | non | **mesuré le 2026-11-02 sur le S24 FE** : « Raccrocher » coupe l'appel 0,56 s après l'appui (targetSdk 36) |
 | Prévenir le proche | `SmsManager` | `SEND_SMS` | oui | décision de Patrice (fiche, § 7) |
 | Survivre à l'oubli | l'**hibernation** épargne une appli dont l'écouteur de notifications est actif (AOSP `HibernationPolicy`) ; sinon `IntentCompat.createManageUnusedAppRestrictionsIntent` | — | — | confirmé |
 
@@ -165,6 +173,13 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
 
 - **P-1** — L'Activity STOP s'affiche-t-elle par-dessus l'appli bancaire, déclenchée depuis un récepteur,
   écran verrouillé compris ? Sur le S9 (Android 10) **et** un Android 14+ (le comportement change à 12 et à 15).
+  ✅ **Oui sur Android 16 (S24 FE), le 2026-11-02** : vrai appel, appli Crédit Coopératif au premier plan,
+  signal injecté par adb (version de test, `DebugSignalReceiver`) dans la même file et le même moteur qu'un
+  capteur ; STOP au premier plan en ~1 s, confirmé par l'écran lui-même ; « Raccrocher » a coupé l'appel ;
+  journal : STOP puis réponse. ✅ **Et sur Android 11 (émulateur API 30, le plus proche du plancher ; le S9 n'a
+  pas de SIM)** : devant l'appli au premier plan ; lancé écran éteint, présent au réveil ; **écran verrouillé
+  par code PIN : le STOP passe devant le verrou**, « Raccrocher » coupe l'appel sans déverrouiller, puis le
+  verrou revient. Reste Android 10 lui-même, sur un téléphone avec SIM.
 - **P-2** — Les demandes de validation des applis bancaires françaises sont-elles lisibles ? Le S9 n'est
   pas rooté (mesuré le 2026-11-01), mais son chargeur d'amorçage est déverrouillé, ce que certaines
   banques refusent : essayer d'abord sur le S9. Si la banque refuse, le S24 FE, **à la décision de Patrice**.
@@ -219,8 +234,10 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   par défaut échappe au délai de D-008 : c'est aussi un repli pour les codes.
 - **P-15** — **Prise en main à distance ouverte pendant le STOP** (relecture Claude du 2026-11-01, H1) :
   l'escroc voit l'écran (capture d'écran) et peut appuyer lui-même sur « Continuer » une fois les 10 s
-  passées. L'Activity STOP posera `FLAG_SECURE` (l'écran sort noir de la capture) ; pour « Continuer »,
-  chercher un geste que la prise de contrôle ne sait pas faire. À trancher avec l'Activity (étape 2).
+  passées. **Fait le 2026-11-02** : `FLAG_SECURE` (capture par adb sur le S24 : noire) ; à partir d'Android 14,
+  écran réservé aux outils d'accessibilité déclarés (`setAccessibilityDataSensitive`) : un service de prise en
+  main qui n'en est pas un ne peut ni le lire ni appuyer. **Reste à mesurer avec AnyDesk** sur le S24 ; et
+  avant Android 14, rien n'empêche un service d'accessibilité d'appuyer sur « Continuer ».
 - **P-16** — **Appel sortant vers le numéro de banque enregistré** (même relecture, H2) : l'utilisateur qui
   appelle lui-même sa vraie banque et valide une opération qu'il a demandée reçoit un STOP. Le texte reste
   vrai (« ne vous appelleront jamais », D-017), mais l'interruption est inutile. Piste : pas de STOP, ou un
@@ -228,6 +245,16 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   d'appel ou un numéro enregistré par l'escroc, si). À peser avant d'écrire la règle. ⚠️ Le capteur ne
   **déduit** le sens qu'à partir de l'état précédent : une sonnerie perdue fait lire un appel entrant comme
   sortant (relecture du 2026-11-02, L3). Le sens ne peut pas décider seul de taire un STOP.
+- **P-17** — **Écran STOP reconstruit après la mort du processus** : il reprend sa session sauvegardée, mais
+  ne peut pas distinguer l'appel qui l'a déclenché d'un appel plus récent (celui de la vraie banque) s'il n'a
+  pas vu la fin du premier. Piste : un identifiant d'appel porté par la décision (même famille que P-14).
+- **P-18** — **Fin d'un appel VoIP** : seule la téléphonie signale une fin à l'écran (`CallEvents`) ; sur un
+  appel WhatsApp, l'écran garderait « vous êtes au téléphone ». Sans effet tant qu'aucun capteur VoIP n'existe
+  (P-4).
+- **P-19** — **Repli quand l'écran STOP ne passe pas** : le contrat de l'exécuteur (`Ports.kt`) prévoit une
+  notification plein écran ; elle n'est pas construite. Aujourd'hui un STOP bloqué est journalisé « non
+  affiché » et son déclencheur réarmé. À construire avant publication (permissions `POST_NOTIFICATIONS`,
+  `USE_FULL_SCREEN_INTENT`, restreinte depuis Android 14).
 
 ## 8. Travailler dans ce dépôt
 

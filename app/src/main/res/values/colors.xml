@@ -3,4 +3,8 @@
     <!-- Window background before Compose draws: the page colour of the light theme (ui/theme/Color.kt), so nothing
          flashes before the first frame. values-night/ holds the dark one. -->
     <color name="window_background">#FFFDFCFF</color>
+
+    <!-- The STOP screen's window, before Compose draws: the checkerboard's red (ui/theme/Damier.kt, Damier.Red),
+         the same in both themes. -->
+    <color name="stop_background">#FFCA331F</color>
 </resources>

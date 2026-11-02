@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.filestech.callhalt.R
-import com.filestech.callhalt.domain.model.CallSession
+import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.ui.theme.OnStop
@@ -45,7 +45,8 @@ const val CONTINUE_DELAY_SECONDS = 10
 /**
  * The STOP screen (PROJET.md, § 3). It blocks nothing: it is a pause, with the one check that holds on the
  * phone — hang up, then call back yourself on a number you know. Its words come from [stopText]: what just
- * happened ([trigger]), and whether [call] is still going on, and on which channel.
+ * happened ([trigger]), whether the call is still going on ([onCall]) and on which [channel], and whether the
+ * app may end it ([canEndCall]).
  *
  * The same composable serves the demonstration ([demo] = true, nothing happened) and, once the adapters
  * exist, the real interruption shown by its own Activity — never an overlay window, which a banking app
@@ -56,8 +57,15 @@ const val CONTINUE_DELAY_SECONDS = 10
  * of the font.
  */
 @Composable
-fun StopScreen(trigger: SensitiveActionKind, call: CallSession, demo: Boolean, onAnswer: (StopChoice) -> Unit) {
-    val text = stopText(trigger, call)
+fun StopScreen(
+    trigger: SensitiveActionKind,
+    onCall: Boolean,
+    channel: CallChannel,
+    canEndCall: Boolean,
+    demo: Boolean,
+    onAnswer: (StopChoice) -> Unit,
+) {
+    val text = stopText(trigger, onCall, channel, canEndCall)
     // Saved across a rotation: turning the phone must not restart the wait, nor end it.
     var secondsLeft by rememberSaveable { mutableIntStateOf(CONTINUE_DELAY_SECONDS) }
     LaunchedEffect(Unit) {
@@ -113,18 +121,22 @@ fun StopScreen(trigger: SensitiveActionKind, call: CallSession, demo: Boolean, o
             Text(text = stringResource(text.advice), color = OnStop, style = MaterialTheme.typography.bodyLarge)
         }
 
-        // The first button is the safe way out: hang up while the app can, otherwise call the bank.
+        // The first button is the safe way out: hang up while the app can, otherwise call the bank — and neither
+        // during a call the app cannot end (the advice then says to hang up).
+        val callMyBank = text.callMyBank
         if (text.offerHangUp) {
             StopFilledButton(R.string.stop_hang_up) { onAnswer(StopChoice.HANG_UP) }
-            OutlinedButton(
-                onClick = { onAnswer(StopChoice.CALL_MY_BANK) },
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = OnStop),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                StopButtonLabel(text.callMyBank)
+            callMyBank?.let { label ->
+                OutlinedButton(
+                    onClick = { onAnswer(StopChoice.CALL_MY_BANK) },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = OnStop),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    StopButtonLabel(label)
+                }
             }
         } else {
-            StopFilledButton(text.callMyBank) { onAnswer(StopChoice.CALL_MY_BANK) }
+            callMyBank?.let { label -> StopFilledButton(label) { onAnswer(StopChoice.CALL_MY_BANK) } }
         }
         TextButton(
             onClick = { onAnswer(StopChoice.CONTINUE) },

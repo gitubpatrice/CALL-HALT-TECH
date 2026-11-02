@@ -6,7 +6,9 @@
 > (vérifications, relecture GPT, idées) : § 9. **Nom retenu le 2026-11-01 : Call Halt Tech** (§ 9.4).
 > Prochaine étape : le prototype de mesure (§ 8, complété en § 9.5). **Il décide de la suite** (Patrice,
 > 2026-11-01) : si l'écran STOP ne passe pas par-dessus l'appli bancaire, ou si ses demandes de validation
-> sont illisibles, le projet s'arrête (`docs/ARCHITECTURE.md`, D-018).
+> sont illisibles, le projet s'arrête (`docs/ARCHITECTURE.md`, D-018). **2026-11-02 : la première condition
+> est remplie** — sur le S24 FE (Android 16), pendant un vrai appel, l'écran STOP passe devant l'appli
+> bancaire, et « Raccrocher » coupe l'appel. Reste la seconde (P-2).
 
 ## 1. Le but
 

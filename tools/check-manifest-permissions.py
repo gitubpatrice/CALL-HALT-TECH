@@ -68,12 +68,17 @@ FORBIDDEN = {
 #
 # The one androidx.core generates for its own non-exported receivers (signature level, named after the
 # applicationId), then each permission with its component. The next ones, each with its own (docs/ARCHITECTURE.md,
-# § 6): READ_CALL_LOG, RECEIVE_SMS, SYSTEM_ALERT_WINDOW, ANSWER_PHONE_CALLS, PACKAGE_USAGE_STATS,
-# QUERY_ALL_PACKAGES, POST_NOTIFICATIONS, SEND_SMS (the relative, D-015).
+# § 6): READ_CALL_LOG, RECEIVE_SMS, PACKAGE_USAGE_STATS, QUERY_ALL_PACKAGES, POST_NOTIFICATIONS, SEND_SMS (the
+# relative, D-015).
 ALLOWED = {
     f"{PACKAGE}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
     # When a call starts and ends (platform/telephony/CallStateReceiver). Not the number: that is READ_CALL_LOG.
     "android.permission.READ_PHONE_STATE",
+    # The STOP screen started from the background, over the banking app (platform/stop, D-006). An activity, never
+    # an overlay window.
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    # "Hang up" on the STOP screen (platform/stop/CallControl).
+    "android.permission.ANSWER_PHONE_CALLS",
 }
 
 IN_CI = os.environ.get("GITHUB_ACTIONS") == "true"

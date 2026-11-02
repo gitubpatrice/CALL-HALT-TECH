@@ -5,4 +5,9 @@
     <style name="Theme.CallHaltTech" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
     </style>
+
+    <!-- The STOP screen's window: red from the first frame, whatever the phone's theme. -->
+    <style name="Theme.CallHaltTech.Stop">
+        <item name="android:windowBackground">@color/stop_background</item>
+    </style>
 </resources>

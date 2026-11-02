@@ -15,10 +15,12 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 ## Reprendre ici (2026-11-02)
 
 1. Textes de l'écran STOP (D-017) : **fusionnés** (PR #7).
-2. **Prototype de mesure, étape 1 faite** : le capteur de l'état de l'appel (PR #8), mesuré sur émulateurs
-   et sur le S24 FE avec de vrais appels. Suite : **l'étape 2, l'écran STOP réel** (P-1) : elle décide, avec
-   P-2, si le projet continue (décision 11). Le S9 n'a pas de SIM : les mesures de vrais appels et de SMS se
-   font sur le S24 FE.
+2. **Prototype de mesure, étapes 1 et 2 faites** : le capteur de l'état de l'appel (PR #8), puis l'écran STOP
+   réel (branche `feat/stop-activity`). **P-1 passée sur le S24 FE** (Android 16) : pendant un vrai appel,
+   le STOP passe devant l'appli Crédit Coopératif, et « Raccrocher » coupe l'appel. Confirmée sur l'émulateur
+   Android 11, écran verrouillé par PIN compris. **Suite : P-2**, la seconde mesure qui décide
+   (décision 11) — les demandes de validation de la banque sont-elles lisibles ? Il faudra une vraie opération
+   à valider dans l'appli bancaire du S24. Le S9 n'a pas de SIM : vrais appels et SMS sur le S24 FE.
 3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
@@ -84,8 +86,9 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 1. ✅ **L'état de l'appel** (début, fin) — récepteur `PHONE_STATE`, permission « téléphone » ; **fait le
    2026-11-02**, mesuré sur émulateurs (Android 11, 16, 17) et **sur le S24 FE avec de vrais appels** (sortant,
    reçu décroché, reçu refusé). Le numéro (`READ_CALL_LOG`) viendra avec le rappel d'appel long.
-2. **L'écran STOP réel** et l'exécution des décisions — c'est la mesure **P-1** : s'affiche-t-il par-dessus
-   l'appli bancaire, sur le S9 et le S24 ?
+2. ✅ **L'écran STOP réel** et l'exécution des décisions — la mesure **P-1** : il s'affiche par-dessus l'appli
+   bancaire, **passée le 2026-11-02 sur le S24 FE** (Android 16) et sur l'émulateur Android 11, écran
+   verrouillé compris. Reste Android 10 lui-même, sur un téléphone avec SIM.
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
    qui cherche les faux positifs).
 4. **Les notifications de la banque** — mesure **P-2** : sont-elles lisibles ? D'abord sur le S9 (non rooté).

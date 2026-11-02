@@ -17,6 +17,15 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!--
+        "Display over other apps": what lets platform/stop/StopActivity start from the background, over the banking
+        app (docs/ARCHITECTURE.md, D-006). The screen is an activity, never an overlay window.
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- "Hang up" on the STOP screen: platform/stop/CallControl. Offered only when granted (ui/stop/StopText). -->
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+
+    <!--
         No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
         on this phone (data_extraction_rules.xml for Android 12+, allowBackup for the older ones).
     -->
@@ -40,6 +49,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            The STOP screen, started by the app alone (not exported). A task of its own, so that it never brings
+            the app's other screens along, and out of the recent apps: once answered, it is gone. Red from the first
+            frame (Theme.CallHaltTech.Stop).
+        -->
+        <activity
+            android:name=".platform.stop.StopActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.stop"
+            android:theme="@style/Theme.CallHaltTech.Stop" />
 
         <!--
             The phone's call state, delivered even when the app is not running (PHONE_STATE is exempt from the

@@ -18,4 +18,6 @@ strict nécessaire ; GPT : `gpt-5.6-sol` effort `high`, plafond 2 $ par relectur
 
 | 2026-11-02 | Claude, agents `general-purpose` et `android-code-quality-deep-dive` (sécurité) | capteur de l'état de l'appel, avant commit | 0 $ (sous-agents) | [claude-capteur-appel](2026-11-02-claude-capteur-appel.md) | aucun constat élevé ; 6 corrigés (dont l'arrêt silencieux de la file), 1 mesuré puis corrigé (récepteur exporté), 2 à mesurer ou à faire avant publication (double SIM, P-13), le reste écrit |
 
+| 2026-11-02 | Claude, agents `android-code-quality-deep-dive` (sécurité) et `general-purpose` | écran STOP réel, avant commit | 0 $ (sous-agents) | [claude-ecran-stop](2026-11-02-claude-ecran-stop.md) | sécurité : aucun élevé, 3 corrigés ; générale : 2 élevés (écran quitté, STOP remplacé) et 3 moyens corrigés, 2 mesurés sur l'émulateur Android 16 ; 3 points ouverts (P-17 à P-19) |
+
 **Cumul des relectures payantes : 1,075 $.**

@@ -1,5 +1,6 @@
 package com.filestech.callhalt.platform.telephony
 
+import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import timber.log.Timber
 import java.time.Instant
@@ -11,6 +12,7 @@ import javax.inject.Singleton
 class CallStateSensor @Inject constructor(
     private val memory: PhoneStateMemory,
     private val processSignal: ProcessSignalUseCase,
+    private val events: CallEvents,
 ) {
     /** Called from the [com.filestech.callhalt.platform.SensorQueue] only, one state at a time, in arrival order. */
     suspend fun onPhoneState(current: PhoneState, at: Instant) {
@@ -19,6 +21,12 @@ class CallStateSensor @Inject constructor(
         // Debug builds only (no tree in release). The signal's TYPE, never the signal: once the number is read,
         // its toString() would print it (security review of 2026-11-02).
         Timber.d("Phone state %s after %s: %s", current, previous, signal?.javaClass?.simpleName)
-        signal?.let { processSignal(it) }
+        if (signal == null) return
+        // Told after the engine: a screen that reads the end must find it committed.
+        try {
+            processSignal(signal)
+        } finally {
+            if (signal is CallEnded) events.callEnded(signal.channel)
+        }
     }
 }
