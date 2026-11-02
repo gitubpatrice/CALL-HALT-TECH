@@ -20,6 +20,8 @@ data class ProtectionState(
     /** The accesses the phone may refuse until the user allows the restricted settings ([AccessChecker.mayBeRestricted]). */
     val mayBeRestricted: Set<Access>,
     val afterCallMinutes: Long,
+    /** [AccessChecker.phoneCanProtect]: when false, nothing is asked — the phone would refuse the STOP screen. */
+    val phoneCanProtect: Boolean = true,
 ) {
     /** In the order the activation asks for them. */
     val missing: List<Access> = Access.entries.filterNot { it in granted }
@@ -37,6 +39,7 @@ class ProtectionViewModel @Inject constructor(
 
     private val granted = MutableStateFlow(accesses.granted())
     private val mayBeRestricted = Access.entries.filterTo(mutableSetOf(), accesses::mayBeRestricted)
+    private val phoneCanProtect = accesses.phoneCanProtect()
 
     val state: StateFlow<ProtectionState> = combine(granted, settings.settings) { granted, current ->
         state(granted, current.afterCallWindow.toMinutes())
@@ -50,7 +53,8 @@ class ProtectionViewModel @Inject constructor(
         granted.value = accesses.granted()
     }
 
-    private fun state(granted: Set<Access>, afterCallMinutes: Long) = ProtectionState(granted, mayBeRestricted, afterCallMinutes)
+    private fun state(granted: Set<Access>, afterCallMinutes: Long) =
+        ProtectionState(granted, mayBeRestricted, afterCallMinutes, phoneCanProtect)
 
     private companion object {
         /** A rotation keeps the subscription. */

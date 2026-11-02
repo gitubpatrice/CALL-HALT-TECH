@@ -1,5 +1,6 @@
 package com.filestech.callhalt.platform.access
 
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -20,6 +21,13 @@ interface AccessChecker {
 
     /** See [mayBeRestricted]. */
     fun mayBeRestricted(access: Access): Boolean
+
+    /**
+     * False on a phone that can never grant [Access.SCREEN]: an "Android Go" one (low memory), where no app may display
+     * over the others from Android 10 (developer.android.com, Android Go; not measured: no such phone or image here).
+     * Asking would send the user to a page with no switch, again and again (general review of 2026-11-02, 6).
+     */
+    fun phoneCanProtect(): Boolean
 }
 
 @Singleton
@@ -31,6 +39,9 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
     override fun granted(): Set<Access> = Access.entries.filterTo(mutableSetOf(), ::isGranted)
 
     override fun mayBeRestricted(access: Access): Boolean = mayBeRestricted(access, Build.VERSION.SDK_INT, packageSource)
+
+    override fun phoneCanProtect(): Boolean =
+        context.getSystemService(ActivityManager::class.java)?.isLowRamDevice != true
 
     private fun isGranted(access: Access): Boolean = when (access) {
         Access.CALLS -> CALL_PERMISSIONS.all { permission ->

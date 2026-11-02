@@ -14,7 +14,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, dix
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, onze
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
@@ -45,18 +45,33 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
     livraison pendant l'appel du livreur…) et réécrite en deux niveaux ; ces 126 SMS sont son test, sur
     l'ordinateur et sur téléphone. Mesuré sur émulateur : pendant un appel, un code → STOP, une pub ou un code de
     livraison → rien, un code anglais masqué par Android → STOP ; sans appel → rien.
+11. **L'écran d'activation et l'état de la protection** (D-022, P-3, P-10) — l'appli demande elle-même ses trois accès,
+    un par écran (téléphone, affichage par-dessus, accès aux notifications) ; l'accueil dit « en marche » seulement
+    quand tout est accordé, et ce qu'elle surveille, rien de plus. **Mesuré (P-3)**, appli installée depuis un
+    fichier : Android 14 bloque l'accès aux notifications, **Android 16 aussi l'affichage par-dessus** ; le menu
+    « Autoriser les paramètres restreints » n'apparaît qu'après un premier refus ; un déblocage ouvre les deux. Parcours
+    complet fait sur l'émulateur Android 16, puis un code SMS pendant un appel → STOP. Trois relectures (deux Claude,
+    GPT) : 12 défauts corrigés, dont l'accueil qui promettait toutes les banques, l'aide qui pouvait servir aux escrocs,
+    des pages de réglages qu'une autre appli pouvait imiter.
 
-**Prochaine étape** : l'écran d'activation (P-3, qui demande les accès un par un) et l'écran d'état de la
-protection (P-10). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
+**Prochaine étape — avec Patrice, sur le S24 FE** : installer la version de test **depuis un fichier** (pas par adb,
+qui échappe aux paramètres restreints) et faire l'activation comme un utilisateur : le chemin et les mots de One UI
+(Samsung) ; puis un vrai appel et un code. Ensuite, côté code : l'écouteur relié ou non sur l'accueil (P-21), la panne
+du stockage sur l'accueil (P-10), le repli par notification (P-19). Le SMS de confirmation de la banque juste après un
+appel reste une piste (P-20).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
-l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui du redémarrage), Samsung
-Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits (95/100, D-016).
+P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, Samsung, la source
+d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
+du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
+(95/100, D-016).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
-**Mesurer sur un téléphone** (version de test seulement) : appli `com.filestech.callhalt.debug`, permissions
-par adb (`pm grant … READ_PHONE_STATE`, `… ANSWER_PHONE_CALLS`, `appops set … SYSTEM_ALERT_WINDOW allow`) ;
+**Mesurer sur un téléphone** (version de test seulement) : appli `com.filestech.callhalt.debug`, accès par l'écran
+d'activation, ou par adb (`pm grant … READ_PHONE_STATE`, `… ANSWER_PHONE_CALLS`, `appops set … SYSTEM_ALERT_WINDOW
+allow`). **Installée par adb, elle échappe aux paramètres restreints** (source `OTHER`) : pour les mesurer, la pousser
+dans Téléchargements (`adb push … /sdcard/Download/`) et l'ouvrir depuis l'appli Fichiers (source `LOCAL_FILE`) ;
 une action sensible injectée : `adb shell am broadcast -a com.filestech.callhalt.debug.SIGNAL --es kind
 CODE_MESSAGE -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.DebugSignalReceiver` ;
 l'écouteur de mesure : `adb shell cmd notification allow_listener com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.MeasureNotificationListener`
@@ -69,7 +84,8 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
 
-- **Le squelette est posé et vérifié. L'appli ne protège encore personne**, et le dit sur son écran.
+- **Le squelette est posé et vérifié.** Depuis le 2026-11-02 au soir, l'appli demande ses accès elle-même et, une fois
+  activée, protège pendant un appel contre un code reçu par SMS et une demande Sécur'Pass. Elle n'est pas publiée.
 - Ce qui existe : le **moteur de détection** (la méthode, testée règle par règle), sa **mémoire** (qui
   survit quand Android arrête l'appli), les **réglages**, l'**écran STOP en démonstration**, le thème du
   portefeuille (damier bleu et rouge), **5 langues**.
@@ -79,12 +95,12 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
   « Raccrocher » coupe l'appel.
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
-- Ce qui manque pour protéger quelqu'un : les autres **capteurs d'actions sensibles** (SMS de code, applis de
-  prise en main) et l'**écran d'activation** : aujourd'hui, aucun écran ne demande les accès ; il faut les
-  accorder un par un dans les réglages du téléphone (Android 13+ : « Autoriser les paramètres restreints » pour
-  l'accès aux notifications d'une appli installée depuis un fichier). C'est la suite.
-- Vérifications : 291 tests sur ordinateur, 12 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
-  sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
+- **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
+- Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
+  proche**, le **repli par notification** quand le STOP ne passe pas (P-19), et la liste « avant toute publication »
+  ci-dessus.
+- Vérifications : 297 tests sur ordinateur, 15 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+  sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
 
@@ -93,8 +109,8 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-014, ce qu'Android permet (vérifié sur sources officielles, § 6), points à mesurer P-1 à P-14 (§ 7), comment travailler (§ 8) |
-| `relectures/` | les trois relectures (deux par GPT, une par Claude) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-022, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-21 (§ 7), comment travailler (§ 8) |
+| `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 
 ## Les décisions qui comptent (détail et raisons dans `docs/ARCHITECTURE.md`)
@@ -139,12 +155,13 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 2. ✅ **L'écran STOP réel** et l'exécution des décisions — la mesure **P-1** : il s'affiche par-dessus l'appli
    bancaire, **passée le 2026-11-02 sur le S24 FE** (Android 16) et sur l'émulateur Android 11, écran
    verrouillé compris. Reste Android 10 lui-même, sur un téléphone avec SIM.
-3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
-   qui cherche les faux positifs).
+3. ✅ **Les SMS de code** — lus dans la notification de l'appli SMS par défaut (D-021, PR #18), la règle relue par
+   l'agent des faux positifs.
 4. **Les notifications de la banque** — mesure **P-2** : ✅ **lisibles, mesuré le 2026-11-02 sur le S24 FE**
-   (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #13). Restent la vraie demande
-   pendant un vrai appel sur le S24 FE, puis d'autres banques.
-5. **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3**.
+   (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #13), ✅ mesuré pendant un vrai appel
+   sur le S24 FE (PR #17). Restent d'autres banques.
+5. ✅ **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3** : construit et mesuré
+   sur émulateurs le 2026-11-02 (D-022) ; restent le S24 FE (Samsung), Android 15 et F-Droid.
 
 ## Ce qui attend Patrice
 

@@ -2,9 +2,9 @@ package com.filestech.callhalt.ui.activation
 
 import android.content.Context
 import android.content.Intent
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -77,20 +76,21 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
 @Composable
 private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () -> Unit, onLater: () -> Unit) {
     val context = LocalContext.current
-    val activity = LocalActivity.current
     val text = accessText(access)
-    // The phone stops showing its dialog once refused twice (or "don't ask again"): the request then answers "refused"
-    // at once. Only the settings can grant it from there. Saved: a rotation must not bring back a button that does nothing.
-    var noLongerAsked by rememberSaveable { mutableStateOf(false) }
+    // The phone stops showing its dialog once refused twice (or "don't ask again"), and the request then answers
+    // "refused" at once: only the settings can grant it from there. The app cannot tell that from a dialog closed with
+    // Back, or by an incoming call (Android 11+: also "refused", and not counted): after any refusal it offers both,
+    // the dialog again and the settings (general review of 2026-11-02, 4). Saved across a rotation.
+    var refused by rememberSaveable { mutableStateOf(false) }
     val ask = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
         onAnswered()
-        noLongerAsked = activity != null && results.values.any { granted -> !granted } &&
-            CALL_PERMISSIONS.none { ActivityCompat.shouldShowRequestPermissionRationale(activity, it) }
+        if (results.values.any { granted -> !granted }) refused = true
     }
-    val asksInApp = access == Access.CALLS && !noLongerAsked
+    val asksInApp = access == Access.CALLS
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        // The texts scroll; the buttons stay at the bottom, in sight whatever the size of the font.
+        // The texts scroll; the buttons stay at the bottom, in sight whatever the size of the font — the way through the
+        // restricted settings among them: at a large font, the help is out of sight (general review of 2026-11-02, 3).
         Column(
             modifier = Modifier
                 .safeDrawingPadding()
@@ -113,13 +113,11 @@ private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () 
                     modifier = Modifier.semantics { heading() },
                 )
                 Text(text = stringResource(text.why), style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = stringResource(if (noLongerAsked) R.string.access_calls_refused else text.how),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                if (mayBeRestricted) {
-                    RestrictedSettingsHelp(onOpenAppInfo = { AccessSettings.open(context, AccessSettings.appInfo(context)) })
+                Text(text = stringResource(text.how), style = MaterialTheme.typography.bodyLarge)
+                if (asksInApp && refused) {
+                    Text(text = stringResource(R.string.access_calls_refused), style = MaterialTheme.typography.bodyLarge)
                 }
+                if (mayBeRestricted) RestrictedSettingsHelp()
             }
             Button(
                 onClick = {
@@ -133,6 +131,14 @@ private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () 
                     modifier = Modifier.padding(vertical = 8.dp),
                 )
             }
+            when {
+                asksInApp && refused -> SecondButton(R.string.access_open_settings) {
+                    AccessSettings.open(context, AccessSettings.appInfo(context))
+                }
+                mayBeRestricted -> SecondButton(R.string.restricted_open_app_info) {
+                    AccessSettings.open(context, AccessSettings.appInfo(context))
+                }
+            }
             TextButton(onClick = onLater, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(R.string.access_later))
             }
@@ -140,12 +146,20 @@ private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () 
     }
 }
 
+@Composable
+private fun SecondButton(@StringRes label: Int, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Text(text = stringResource(label))
+    }
+}
+
 /**
  * The way through the phone's "restricted settings" (measured, docs/ARCHITECTURE.md, P-3): the menu that allows them
- * shows in the app info only once the phone has refused once — hence the order of the steps.
+ * shows in the app info only once the phone has refused once — hence the order of the steps. Its button is pinned with
+ * the others.
  */
 @Composable
-private fun RestrictedSettingsHelp(onOpenAppInfo: () -> Unit) {
+private fun RestrictedSettingsHelp() {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
@@ -153,17 +167,15 @@ private fun RestrictedSettingsHelp(onOpenAppInfo: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.semantics { heading() },
             )
-            Text(text = stringResource(R.string.restricted_why), style = MaterialTheme.typography.bodyLarge)
-            Text(text = stringResource(R.string.restricted_steps), style = MaterialTheme.typography.bodyLarge)
-            // Scammers have their victims allow the restricted settings of THEIR app.
+            // Scammers have their victims allow the restricted settings of THEIR app: before the steps, which someone
+            // guided on the phone follows without reading on (security review of 2026-11-02, S1).
             Text(
                 text = stringResource(R.string.restricted_warning),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            OutlinedButton(onClick = onOpenAppInfo, modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(R.string.restricted_open_app_info))
-            }
+            Text(text = stringResource(R.string.restricted_why), style = MaterialTheme.typography.bodyLarge)
+            Text(text = stringResource(R.string.restricted_steps), style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
