@@ -6,6 +6,7 @@ import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.PhoneRestarted
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -41,6 +42,7 @@ class DetectionEngine {
             is CallEnded -> onCallEnded(state, signal)
             is SensitiveAction -> onSensitiveAction(state, signal, settings)
             is Tick -> onTick(state, signal, settings)
+            is PhoneRestarted -> onPhoneRestarted(state, signal)
             is StopAnswered -> onStopAnswered(state, signal, settings)
             is StopNotShown -> Evaluation(
                 state = state.copy(pendingStops = state.pendingStops - signal.trigger),
@@ -82,6 +84,20 @@ class DetectionEngine {
         // Within the tolerance, an end stamped before the start is clamped to it.
         val ended = current.copy(endedAt = maxOf(signal.at, current.startedAt))
         return Evaluation(state.copy(calls = state.calls + (signal.channel to ended)))
+    }
+
+    /**
+     * No call survives a restart, nor any screen. A call still in progress when the phone restarted ended by then at
+     * the latest: its end is set to the restart — the after-call window runs from there, the protective side of an
+     * end nobody saw — and a call the 8-hour cap already closed is left closed, not revived. The screens shown
+     * before it are gone: their triggers are re-armed. Tracked whatever the settings, like every call.
+     */
+    private fun onPhoneRestarted(state: DetectorState, signal: PhoneRestarted): Evaluation {
+        val calls = state.calls.mapValues { (_, call) ->
+            if (CallWindow.inProgress(call, signal.at)) call.copy(endedAt = signal.at) else call
+        }
+        val pendingStops = state.pendingStops.filterValues { shownAt -> !shownAt.isBefore(signal.at) }
+        return Evaluation(state.copy(calls = calls, pendingStops = pendingStops))
     }
 
     private fun onSensitiveAction(state: DetectorState, signal: SensitiveAction, settings: ProtectionSettings): Evaluation {

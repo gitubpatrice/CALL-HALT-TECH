@@ -6,6 +6,7 @@ import com.filestech.callhalt.domain.model.JournalEntry
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
@@ -85,11 +86,15 @@ class StopAnswersTest {
         assertThat(calls.ended).isEqualTo(0)
     }
 
-    private fun TestScope.answers() = StopAnswers(
-        SensorQueue(backgroundScope),
-        { ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, AndroidDecisionExecutor { true }) },
-        calls,
+    private val processSignal = ProcessSignalUseCase(
+        DetectionEngine(),
+        store,
+        { ProtectionSettings() },
+        RestartSource { null },
+        AndroidDecisionExecutor { true },
     )
+
+    private fun TestScope.answers() = StopAnswers(SensorQueue(backgroundScope), { processSignal }, calls)
 
     private fun request(onCall: Boolean) = StopRequest(1, SensitiveActionKind.CODE_MESSAGE, onCall, CallChannel.CELLULAR)
 

@@ -1,5 +1,7 @@
 package com.filestech.callhalt.di
 
+import com.filestech.callhalt.platform.AndroidBootReader
+import com.filestech.callhalt.platform.BootReader
 import com.filestech.callhalt.platform.stop.ActivityStopLauncher
 import com.filestech.callhalt.platform.stop.CallControl
 import com.filestech.callhalt.platform.stop.StopLauncher
@@ -19,4 +21,7 @@ abstract class PlatformModule {
 
     @Binds
     abstract fun callControl(impl: TelecomCallControl): CallControl
+
+    @Binds
+    abstract fun bootReader(impl: AndroidBootReader): BootReader
 }

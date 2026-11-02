@@ -8,6 +8,7 @@ import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.PhoneRestarted
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -422,6 +423,83 @@ class DetectionEngineTest {
 
             assertThat(steps[1].decisions).isEmpty()
             assertThat(steps[2].state.calls.getValue(CallChannel.CELLULAR).startedAt).isEqualTo(at(max + 2))
+        }
+    }
+
+    /** Measured on Android 16 (2026-11-02): a phone switched off mid-call reports no call state when it boots. */
+    @Nested
+    inner class Restarts {
+
+        private val window = ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.toMinutes()
+
+        @Test
+        fun `a restart ends the call it interrupted, and the after-call window runs from the restart`() {
+            val steps = run(
+                callStarted(),
+                PhoneRestarted(at(40)),
+                action(SensitiveActionKind.BANK_VALIDATION_REQUEST, minutes = 40 + window),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 40 + window + 1),
+            )
+
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(at(40))
+            val stop = steps[2].decisions.filterIsInstance<Decision.ShowStop>().single()
+            assertThat(stop.call.isActive).isFalse()
+            // Without the restart, this one would still be "during a call", for up to 8 hours.
+            assertThat(steps[3].decisions).isEmpty()
+        }
+
+        @Test
+        fun `a call the 8-hour cap already closed is not revived by a later restart`() {
+            val max = CallWindow.MAX_TRACKED_CALL.toMinutes()
+            val steps = run(
+                callStarted(),
+                PhoneRestarted(at(max + 60)),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = max + 61),
+            )
+
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isNull()
+            assertThat(steps[2].decisions).isEmpty()
+        }
+
+        @Test
+        fun `a call that started after the restart is not ended by it`() {
+            val steps = run(callStarted(minutes = 5), PhoneRestarted(at(4)))
+
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).isActive).isTrue()
+        }
+
+        /** Within its 60-second hold, the screen the restart killed would otherwise absorb the next attempt. */
+        @Test
+        fun `a screen shown before a restart is gone - the action repeated right after it is stopped again`() {
+            val steps = run(
+                callStarted(),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 1),
+                PhoneRestarted(at(1, seconds = 20)),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 1, seconds = 40),
+            )
+
+            assertThat(steps[2].state.pendingStops).isEmpty()
+            assertThat(steps.lastStops()).hasSize(1)
+        }
+
+        /** Reported again until recorded (a process killed in between): the second time must change nothing. */
+        @Test
+        fun `the same restart twice is the same state`() {
+            val steps = run(
+                callStarted(),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 50),
+                PhoneRestarted(at(40)),
+                PhoneRestarted(at(40)),
+            )
+
+            assertThat(steps[3].state).isEqualTo(steps[2].state)
+        }
+
+        @Test
+        fun `a restart is tracked with protection off, like every call`() {
+            val steps = run(callStarted(), PhoneRestarted(at(40)), settings = ProtectionSettings(enabled = false))
+
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(at(40))
         }
     }
 

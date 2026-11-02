@@ -37,6 +37,15 @@ data class SensitiveAction(
 data class Tick(override val at: Instant) : Signal
 
 /**
+ * The phone restarted at [at]. No call survives a restart, and a phone switched off mid-call reports no call state
+ * when it boots (measured on Android 16): without this signal, the call would stay "in progress" for hours, and the
+ * user's own bank requests would be stopped (docs/ARCHITECTURE.md, D-020). Sent by
+ * [com.filestech.callhalt.domain.usecase.ProcessSignalUseCase] only, before the signals that follow it until it is
+ * committed — again, harmlessly, if the process dies first: it ends only the calls that started before it.
+ */
+data class PhoneRestarted(override val at: Instant) : Signal
+
+/**
  * The STOP screen decided for [trigger] could not be shown at all. It re-arms the trigger at once —
  * otherwise the next attempt ("the code did not go through, read it again") would be absorbed as the same
  * burst of a screen nobody saw — and the journal says so: a STOP that did not happen must not read as one

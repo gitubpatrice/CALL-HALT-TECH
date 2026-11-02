@@ -13,6 +13,8 @@ import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.port.DetectorStore
+import com.filestech.callhalt.domain.port.Restart
+import com.filestech.callhalt.domain.port.RestartSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -25,6 +27,8 @@ class ProcessSignalUseCaseTest {
 
     /** A saved contact: the call asks for no long-call wake-up, so the executor is first called for the STOP. */
     private val contact = Counterpart.Number("+33698765432", inContacts = true)
+
+    private val noRestart = RestartSource { null }
 
     /** An in-memory store with the contract's shape: step on the committed state, commit, return decisions. */
     private class MemoryStore : DetectorStore {
@@ -43,7 +47,7 @@ class ProcessSignalUseCaseTest {
     fun `the state survives from one signal to the next, and the decisions are carried out`() = runTest {
         val store = MemoryStore()
         val executed = mutableListOf<Decision>()
-        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, { executed += it })
+        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, noRestart, { executed += it })
 
         process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden))
         process(SensitiveAction(t0.plusSeconds(90), SensitiveActionKind.CODE_MESSAGE))
@@ -55,7 +59,7 @@ class ProcessSignalUseCaseTest {
     @Test
     fun `nothing to do means the executor is not called`() = runTest {
         var calls = 0
-        val process = ProcessSignalUseCase(DetectionEngine(), MemoryStore(), { ProtectionSettings() }, { calls++ })
+        val process = ProcessSignalUseCase(DetectionEngine(), MemoryStore(), { ProtectionSettings() }, noRestart, { calls++ })
 
         process(SensitiveAction(t0, SensitiveActionKind.CODE_MESSAGE))
 
@@ -67,7 +71,7 @@ class ProcessSignalUseCaseTest {
         val store = MemoryStore()
         var failNext = true
         val shown = mutableListOf<Decision>()
-        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }) { decisions ->
+        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, noRestart) { decisions ->
             if (failNext) {
                 failNext = false
                 error("the screen could not start")
@@ -97,7 +101,7 @@ class ProcessSignalUseCaseTest {
     @Test
     fun `a cancellation goes through untouched - nothing is reported as not shown`() = runTest {
         val store = MemoryStore()
-        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }) {
+        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, noRestart) {
             throw CancellationException("receiver window over")
         }
         process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, contact))
@@ -113,11 +117,82 @@ class ProcessSignalUseCaseTest {
         assertThat(store.journal.map { it::class }).containsExactly(JournalEntry.Stop::class)
     }
 
+    /** Asked by the one entry point, so that no adapter can forget it. */
+    @Test
+    fun `the restarts are asked for before every signal`() = runTest {
+        var asked = 0
+        val restarts = RestartSource {
+            asked++
+            null
+        }
+        val process = ProcessSignalUseCase(DetectionEngine(), MemoryStore(), { ProtectionSettings() }, restarts, {})
+
+        process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, contact))
+        process(SensitiveAction(t0.plusSeconds(30), SensitiveActionKind.CODE_MESSAGE))
+
+        assertThat(asked).isEqualTo(2)
+    }
+
+    /** A source that reports [unreported] until recorded, and remembers what the engine held when it was. */
+    private class FakeRestarts(private val store: MemoryStore) : RestartSource {
+        var unreported: Instant? = null
+        val callEndedWhenRecorded = mutableListOf<Instant?>()
+
+        override suspend fun unreported(): Restart? = unreported?.let { at ->
+            Restart(at) {
+                callEndedWhenRecorded += store.state.calls[CallChannel.CELLULAR]?.endedAt
+                unreported = null
+            }
+        }
+    }
+
+    /** The phone switched off mid-call, then restarted: no call state came at boot (measured on Android 16). */
+    @Test
+    fun `a restart reported before a signal ends the call it interrupted, before that signal looks for one`() = runTest {
+        val store = MemoryStore()
+        val restarts = FakeRestarts(store)
+        val executed = mutableListOf<Decision>()
+        val restartedAt = t0.plusSeconds(3_600)
+        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, restarts, { executed += it })
+        process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, contact))
+
+        restarts.unreported = restartedAt
+        val window = ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW
+        process(SensitiveAction(restartedAt.plus(window).plusSeconds(1), SensitiveActionKind.BANK_VALIDATION_REQUEST))
+        process(SensitiveAction(restartedAt.plus(window).plusSeconds(2), SensitiveActionKind.CODE_MESSAGE))
+
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(restartedAt)
+        // Without the restart, both would have been "during a call" for up to 8 hours.
+        assertThat(executed).isEmpty()
+        // Recorded once, and only once the engine had committed it: a process killed before reports it again.
+        assertThat(restarts.callEndedWhenRecorded).containsExactly(restartedAt)
+    }
+
+    /**
+     * Review of 2026-11-02: the boot's time is computed with the clock at the time of the question. Corrected forward
+     * since the call's start was stamped, it would end the ghost after that start, and absorb the real call into it.
+     */
+    @Test
+    fun `a restart is never placed after the signal that follows it`() = runTest {
+        val store = MemoryStore()
+        val restarts = FakeRestarts(store)
+        val process = ProcessSignalUseCase(DetectionEngine(), store, { ProtectionSettings() }, restarts, {})
+        process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, contact)) // the ghost
+
+        val realCallAt = t0.plusSeconds(3_600)
+        restarts.unreported = realCallAt.plusSeconds(5)
+        process(CallStarted(realCallAt, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden))
+
+        val call = store.state.calls.getValue(CallChannel.CELLULAR)
+        assertThat(call.startedAt).isEqualTo(realCallAt)
+        assertThat(call.isActive).isTrue()
+    }
+
     @Test
     fun `the settings are read for each signal`() = runTest {
         var settings = ProtectionSettings(enabled = false)
         val executed = mutableListOf<Decision>()
-        val process = ProcessSignalUseCase(DetectionEngine(), MemoryStore(), { settings }, { executed += it })
+        val process = ProcessSignalUseCase(DetectionEngine(), MemoryStore(), { settings }, noRestart, { executed += it })
 
         process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden))
         settings = ProtectionSettings()

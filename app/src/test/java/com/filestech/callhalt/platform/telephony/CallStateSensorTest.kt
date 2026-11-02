@@ -35,7 +35,7 @@ class CallStateSensorTest {
     private val events = CallEvents()
     private val sensor = CallStateSensor(
         PhoneStateMemory(InMemoryPreferences()),
-        ProcessSignalUseCase(DetectionEngine(), store, settings, AndroidDecisionExecutor(noStop)),
+        ProcessSignalUseCase(DetectionEngine(), store, settings, { null }, AndroidDecisionExecutor(noStop)),
         events,
     )
 
