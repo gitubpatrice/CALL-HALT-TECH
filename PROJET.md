@@ -33,7 +33,8 @@ compte, pas de Google Play Services, français d'abord puis les 5 langues du por
 | Truecaller, Hiya, anti-spam Google/Samsung, Orange Téléphone (de mémoire) | identification par base en ligne | envoient appels et contacts sur leurs serveurs |
 
 ⚠️ **Google construit la même idée** (l'appli bancaire ouverte pendant un appel d'un inconnu). Avant
-d'investir, relire où en est sa protection **en France** et pour quelles banques. Notre différence doit
+d'investir, relire où en est sa protection **en France** et pour quelles banques (**relu le 2026-11-02 : pas
+en France ; mais des applis bancaires françaises détectent déjà l'appel, chacune pour elle, § 9.6**). Notre différence doit
 tenir même si Google la déploie ici :
 1. **sans Google** (téléphones dégooglisés, utilisateurs de F-Droid) ;
 2. **au-delà du partage d'écran** : codes reçus par SMS, demandes de validation des applis bancaires,
@@ -290,3 +291,52 @@ Une appli bancaire peut donc s'y essayer pour la question 2 (lire les demandes d
 réserve : son chargeur d'amorçage est déverrouillé, ce que certaines banques refusent aussi. Si elle
 refuse, la mesure passe au S24 FE, **à la décision de Patrice**, et sans test automatisé sur ce téléphone
 (ces tests effacent les données de l'appli testée).
+
+### 9.6 Ce que font déjà les banques, l'État et les autres (recherche du 2026-11-02)
+
+Question de Patrice : « je me demande si les banques n'ont pas déjà ce type de protection ?? comme ma
+banque... ». Un agent de recherche (sources web, 72 recherches), puis **les trois sources qui décident relues
+par Claude** (marquées « vérifié »). Le reste est le rapport de l'agent, avec sa confiance.
+
+**Réponse courte : en partie, et chaque banque seulement dans sa propre appli.** Personne, en France, ne
+relie un code SMS ou la validation de **n'importe quelle** banque à un appel en cours, hors ligne, avec un
+proche prévenu.
+
+- **Des applis bancaires détectent déjà l'appel en cours** — **vérifié** :
+  [CNIL, 15/07/2025](https://www.cnil.fr/fr/appel-en-cours-pendant-lutilisation-dune-application-bancaire-vos-droits).
+  « Certaines applications bancaires » lisent l'existence et la durée d'un appel (pas le numéro, ni la
+  conversation), avec consentement, et peuvent alerter ou bloquer l'opération selon les réglages de la banque.
+  **Aucune banque n'est nommée**, et la recherche n'a pas pu les identifier. C'est le **risque à suivre** :
+  pour les clients de ces banques, Call Halt apporte surtout le transversal (toutes les banques, les codes
+  SMS, AnyDesk ouvert pendant l'appel) et le proche prévenu.
+- **La banque de Patrice** (Crédit Coopératif, groupe BPCE) **demande** « êtes-vous au téléphone ? » après
+  l'appui sur la notification (constaté le 2026-11-02, introuvable en ligne) : une question, dont l'escroc
+  dicte la réponse. Call Halt le sait sans demander.
+- **Les autres grandes banques** (agent, confiance moyenne à faible) : délais avant le premier virement vers
+  un nouveau bénéficiaire (Crédit Agricole : 24 h dans certaines caisses, chacune décide ; BPCE : 72 h si le
+  bénéficiaire est ajouté par SMS, immédiat avec Sécur'Pass), écrans de validation qui nomment l'opération
+  (BNP, La Banque Postale), conseils. **Revolut** détecte un appel en cours à l'ouverture de son appli, et dit
+  seulement si c'est Revolut qui appelle (confiance haute, France non citée).
+- **Google, la protection pendant l'appel** — **vérifié** :
+  [blog Google, 03/12/2025](https://blog.google/security/android-expands-pilot-in-call-scam-protection-financial-apps/).
+  Il faut une appli bancaire participante **et** un partage d'écran **et** un appel d'un numéro hors contacts.
+  Royaume-Uni, États-Unis, Brésil, Inde ; **la France n'est pas citée**.
+- **Google, les appels financiers vérifiés** — **vérifié** :
+  [blog Google, 12/05/2026](https://blog.google/security/whats-new-in-android-security-privacy-2026/).
+  Coupe un appel qui usurpe une appli participante : Revolut, Itaú, Nubank, d'autres « plus tard en 2026 ».
+  Android 11+, aucun pays précisé, aucune banque française.
+- **Samsung One UI 9** (agent, **non vérifié**) : avertit ou bloque une appli installée dans les heures qui
+  suivent un appel suspect. Disponibilité en France non confirmée.
+- **L'État et les opérateurs** (agent) : vérification du bénéficiaire (depuis le 09/10/2025 ; inutile quand
+  le compte est bien au nom donné, le cas typique du faux conseiller) ; authentification des appels (plus de
+  19 000 signalements d'usurpation à l'Arcep en 2025, déjà au § 9.1) ; tests de coupure des appels émis
+  depuis des numéros de banque réservés à la réception (depuis juin 2026). Fraude par manipulation en 2025 :
+  516 M€, +34 % (rapport de l'OSMP, publié le 07/09/2026, **chiffre non relu par Claude**).
+- **Applis comparables** (agent) : Dyleth (française, gratuite, vérifie numéros et SMS **sur ses serveurs**),
+  Bouygues Anti-Spam, Orange Téléphone, Saracroche, VoxSafe (déjà au § 9.1). Aucune ne relie un code ou une
+  validation à l'appel en cours.
+
+**Ce que cela change** : rien à la méthode. La différence du § 2 tient, et se précise : là où une banque
+détecte l'appel, elle ne voit que sa propre appli ; Call Halt voit toutes les banques, les codes SMS et la
+prise en main à distance, prévient un proche, sans réseau. Rapport complet de l'agent :
+`relectures/2026-11-02-recherche-protections-banques.md`.
