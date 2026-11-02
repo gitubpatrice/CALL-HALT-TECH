@@ -14,7 +14,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, neuf
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, dix
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
@@ -39,17 +39,19 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
    Sécur'Pass** : STOP 0,12 s après la notification, devant tout ; « Raccrocher » ; journal juste ; ni republication
    ni confirmation sur le canal. **Samsung ne masque aucun code SMS**, ni français ni anglais. La banque de Patrice
    confirme l'opération par SMS, 20 s après l'appel.
+10. **Le capteur des SMS de code** (PR #18, D-021 — Patrice : « ok a ») — le dernier message de la notification de
+    l'appli SMS par défaut, lu en mémoire, sans permission de plus. La règle des codes a été jugée « pas prête » par
+    l'agent des faux positifs (72 erreurs sur 126 SMS construits : les pubs « STOP au 36111 », les codes de
+    livraison pendant l'appel du livreur…) et réécrite en deux niveaux ; ces 126 SMS sont son test, sur
+    l'ordinateur et sur téléphone. Mesuré sur émulateur : pendant un appel, un code → STOP, une pub ou un code de
+    livraison → rien, un code anglais masqué par Android → STOP ; sans appel → rien.
 
-**Ce qui attend Patrice : trancher P-20** (`docs/ARCHITECTURE.md` § 7) — lire le texte de la notification de
-l'appli SMS (aucune permission de plus ; recommandation de Claude) ou demander la réception des SMS. La promesse
-de confidentialité change dans les deux cas. Le SMS de confirmation de la banque, juste après un appel, en est une
-piste de plus.
-
-**Prochaine étape** : selon P-20, le capteur des SMS de code ; puis l'écran d'activation (P-3, qui demande les
-accès un par un) et l'écran d'état de la protection (P-10).
+**Prochaine étape** : l'écran d'activation (P-3, qui demande les accès un par un) et l'écran d'état de la
+protection (P-10). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
-les deux SIM, la relecture des traductions par des natifs, les audits (95/100, D-016).
+l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui du redémarrage), Samsung
+Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits (95/100, D-016).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
@@ -81,7 +83,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
   prise en main) et l'**écran d'activation** : aujourd'hui, aucun écran ne demande les accès ; il faut les
   accorder un par un dans les réglages du téléphone (Android 13+ : « Autoriser les paramètres restreints » pour
   l'accès aux notifications d'une appli installée depuis un fichier). C'est la suite.
-- Vérifications : 159 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 291 tests sur ordinateur, 12 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

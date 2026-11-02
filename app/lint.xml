@@ -3,8 +3,9 @@
 <lint>
     <!--
         targetSdk stays at 36 on purpose (docs/ARCHITECTURE.md, D-008): from Android 17, an app targeting API 37+
-        gets SMS carrying a one-time code three hours late unless it is the default SMS app — the very signal of
-        PROJET.md § 4.3. Revisit when that rule changes, not when lint asks.
+        gets SMS carrying a one-time code three hours late unless it is the default SMS app. Since D-021 the code is
+        read in the default SMS app's notification, which that delay does not touch; 36 stays until Android 17's other
+        changes are measured. Revisit then, not when lint asks.
     -->
     <issue id="OldTargetApi" severity="ignore" />
 

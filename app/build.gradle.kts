@@ -74,9 +74,10 @@ android {
         applicationId = "com.filestech.callhalt"
         // Android 10: the S9 test phone, and the oldest version this method can run on (PROJET.md, § 5).
         minSdk = 29
-        // ⚠️ NOT 37 (docs/ARCHITECTURE.md, D-008). From Android 17, an app TARGETING API 37 or higher gets
+        // ⚠️ NOT 37 yet (docs/ARCHITECTURE.md, D-008). From Android 17, an app TARGETING API 37 or higher gets
         // SMS that carry a one-time code THREE HOURS late (SMS_RECEIVED withheld, provider filtered), unless
-        // it is the default SMS app — the very signal of PROJET.md § 4.3. Raising it ends that detection.
+        // it is the default SMS app. Since D-021 the code is read in the default SMS app's notification, which that
+        // delay does not touch; 36 stays until Android 17's other changes are measured.
         targetSdk = 36
 
         versionCode = appVersionCode
@@ -140,6 +141,10 @@ android {
             all { it.useJUnitPlatform() }
         }
     }
+
+    // The validation-code corpus, read on the JVM AND on a phone: Android's regex engine is not the JVM's
+    // (ValidationCodeOnDeviceTest), and only the phone's decides.
+    sourceSets["androidTest"].resources.directories += "src/test/resources"
 }
 
 kotlin {
