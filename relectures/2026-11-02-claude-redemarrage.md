@@ -30,3 +30,15 @@ le fantôme, l'autre absorbe un nouvel appel. (4) Redémarrage léger, à vérif
 question posée sur l'échec de `PhoneRestarted` : si le signal suivant était alors perdu, ce serait le mauvais côté
 (un STOP manqué plutôt qu'un STOP de trop) ; inatteignable aujourd'hui. Verdict : correctif juste pour le cas mesuré,
 qui ne termine aucun vrai appel sur le chemin normal ; fermer (1) et (2) avant publication.
+
+## Relecture de sécurité (`android-code-quality-deep-dive`), après les corrections — condensée
+
+Sur `a97fda4..15ebac3` : **aucun constat**. Écrire `BOOT_COUNT` demande `WRITE_SECURE_SETTINGS` (adb ou root), et un
+compte falsifié ne terminerait encore que des appels commencés avant le démarrage. Horloge avancée : bornée par le
+signal qui suit (test) ; reculée : le comportement d'horloge déjà connu (P-13), pas aggravé. Redémarrage ou
+effacement des données dictés par l'escroc : sans effet sur un appel commencé après le démarrage. Fichier corrompu :
+remplacé par un fichier vide, donc « jamais retenu », sans danger ; pas de boucle de plantage. Sauvegarde et
+transfert coupés (`allowBackup`, `data_extraction_rules.xml`) : aucune mémoire restaurée ne trompe le compteur.
+Deux signaux simultanés : impossible, la file `SensorQueue` les traite un à un (vérifié par l'auteur), et le
+double rapport est idempotent (test). Verdict : aucun chemin pour taire un STOP, en provoquer un faux, perdre des
+données ou planter en boucle.
