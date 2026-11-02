@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assert the permissions of the MERGED release manifest against a reviewed list — exactly.
+"""Assert the permissions — and the special accesses — of the MERGED release manifest against a reviewed list, exactly.
 
 Why this exists
 ---------------
@@ -21,6 +21,14 @@ A permission outside the list fails (it must be a deliberate, reviewed act). A p
 but absent from the manifest fails too: the list, PRIVACY.md and the APK would otherwise describe three
 different apps. Each component that brings a permission adds it here, in the same commit, with
 PRIVACY.md (docs/ARCHITECTURE.md, D-007).
+
+Special accesses are not permissions
+------------------------------------
+Notification access, accessibility, device administration, an input method: the user grants them in the
+phone's settings, and the app asks for none of them with a `<uses-permission>`. It declares a COMPONENT the
+system binds, guarded by an `android.permission.BIND_*` permission that only the system holds. These accesses
+are at least as wide as any permission, so the same rule holds: an exact list (ALLOWED_BINDINGS), each one
+with its component and its line in PRIVACY.md, and a few that must never appear (FORBIDDEN_BINDINGS).
 
 Usage
 -----
@@ -81,6 +89,23 @@ ALLOWED = {
     "android.permission.ANSWER_PHONE_CALLS",
 }
 
+# Every component the system binds with a special access — (component, its BIND_* permission) — no more, no less.
+ALLOWED_BINDINGS = {
+    # Notification access: a banking app's request to approve an operation (platform/notification).
+    (f"{PACKAGE}.platform.notification.NotificationListener", "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"),
+}
+
+# Must NEVER reach the APK, whatever the list says, each with the reason the failure message gives.
+FORBIDDEN_BINDINGS = {
+    "android.permission.BIND_ACCESSIBILITY_SERVICE":
+        "banking apps detect accessibility services and refuse to run (docs/ARCHITECTURE.md, D-010)",
+    "android.permission.BIND_VPN_SERVICE":
+        "a VPN carries the phone's traffic: the network Call Halt Tech promises never to touch",
+}
+
+BIND_PREFIX = "android.permission.BIND_"
+COMPONENTS = {"activity", "activity-alias", "service", "receiver", "provider"}
+
 IN_CI = os.environ.get("GITHUB_ACTIONS") == "true"
 
 
@@ -103,6 +128,24 @@ def parse(manifest_path: str) -> tuple[ET.Element, set[str]]:
             if name:
                 names.add(name)
     return root, names
+
+
+def bindings(root: ET.Element) -> set[tuple[str, str]]:
+    """Every (component, BIND_* permission) of the application: what the system binds with a special access."""
+    found = set()
+    application = root.find("application")
+    for element in application.iter():
+        permission = element.get(f"{{{ANDROID_NS}}}permission") or ""
+        if element.tag in COMPONENTS and permission.startswith(BIND_PREFIX):
+            found.add((full_name(element.get(f"{{{ANDROID_NS}}}name") or ""), permission))
+    return found
+
+
+def full_name(name: str) -> str:
+    """A class name as Android resolves it: the merger writes it in full, a hand-written manifest may not."""
+    if name.startswith("."):
+        return PACKAGE + name
+    return name if "." in name else f"{PACKAGE}.{name}"
 
 
 def main(argv: list[str]) -> int:
@@ -149,12 +192,18 @@ def main(argv: list[str]) -> int:
         ])
         return 1
 
+    bound = bindings(root)
+
     print(f"Manifest: {manifest_path}")
     print(f"applicationId: {package}")
     print(f"Permissions ({len(found)}):")
     for name in sorted(found):
         mark = "ok " if name in ALLOWED else "!! "
         print(f"  {mark}{name}")
+    print(f"Special accesses ({len(bound)}):")
+    for component, permission in sorted(bound):
+        mark = "ok " if (component, permission) in ALLOWED_BINDINGS else "!! "
+        print(f"  {mark}{component} ({permission})")
 
     problems: list[str] = []
 
@@ -185,14 +234,45 @@ def main(argv: list[str]) -> int:
             "from PRIVACY.md if the removal is intended.",
         )
 
+    problems += binding_problems(bound)
+
     if problems:
         print()
         fail(problems)
         return 1
 
     print()
-    print("OK: no network permission, and exactly the reviewed list.")
+    print("OK: no network permission, and exactly the reviewed list of permissions and special accesses.")
     return 0
+
+
+def binding_problems(bound: set[tuple[str, str]]) -> list[str]:
+    """The special accesses, held to the same rule as the permissions: none forbidden, exactly the list."""
+    problems: list[str] = []
+
+    forbidden = sorted((component, permission) for component, permission in bound if permission in FORBIDDEN_BINDINGS)
+    if forbidden:
+        problems.append("Special access that must NEVER be in the app:")
+        problems += [f"  {component} ({permission}): {FORBIDDEN_BINDINGS[permission]}" for component, permission in forbidden]
+
+    unexpected = sorted(binding for binding in bound - ALLOWED_BINDINGS if binding[1] not in FORBIDDEN_BINDINGS)
+    if unexpected:
+        problems.append("Special access(es) outside the reviewed list:")
+        problems += [f"  {component} ({permission})" for component, permission in unexpected]
+        problems.append(
+            "An access the user grants in the settings is a deliberate act too: add it to ALLOWED_BINDINGS in this "
+            "script AND to PRIVACY.md, or drop the component.",
+        )
+
+    missing = sorted(ALLOWED_BINDINGS - bound)
+    if missing:
+        problems.append("Special access(es) in the reviewed list but absent from the manifest:")
+        problems += [f"  {component} ({permission})" for component, permission in missing]
+        problems.append(
+            "The list, PRIVACY.md and the APK must describe the same app: remove them from ALLOWED_BINDINGS and "
+            "from PRIVACY.md if the removal is intended.",
+        )
+    return problems
 
 
 if __name__ == "__main__":

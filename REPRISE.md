@@ -14,8 +14,8 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, quatre
-PR fusionnées, chacune relue par un ou deux agents Claude (`relectures/`) :
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, cinq
+PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
 2. Le capteur de l'état de l'appel (PR #8) — vrais appels sur le S24 FE, émulateurs Android 11, 16, 17.
@@ -24,16 +24,19 @@ PR fusionnées, chacune relue par un ou deux agents Claude (`relectures/`) :
 4. La mesure **P-2** (PR #10) — la demande Sécur'Pass est lisible : canal `securpass_id`, titre qui nomme
    l'opération, `REASON_CLICK` quand on appuie dessus.
 
-**Prochaine étape : le capteur des notifications**, en version publiée (aujourd'hui l'écouteur n'existe qu'en
-version de test, pour la mesure). Il couvrira :
-- les demandes de validation bancaires, en commençant par le canal `securpass_id`, à vérifier sur une autre
-  banque du groupe BPCE ;
-- probablement les SMS de code, par la notification de l'appli SMS : depuis Android 15, un code y arrive
-  masqué, et ce masquage est lui-même un signal (à mesurer). Si c'est confirmé, la permission SMS devient
-  inutile.
+5. **Le capteur des notifications** (PR #12) — une demande de validation bancaire, reconnue à son canal
+   (`securpass_id`, D-019), affiche le STOP pendant l'appel ou juste après. Mesuré de bout en bout sur émulateur
+   (Android 16 et 17) avec une demande factice, et sur le S9 (Android 10, sans appel). L'écouteur ne lit que
+   l'appli et le canal de chaque notification.
 
-Deux mesures avec Patrice sur le S24 : une nouvelle demande Sécur'Pass (ajout d'un bénéficiaire depuis le
-site, sans argent engagé), et un vrai SMS de code. Puis l'écran d'activation (P-3) et l'écran d'état de la
+**Prochaine étape : un appel ne survit pas à un redémarrage** (P-7, mesuré pendant la PR #12). Un téléphone
+éteint en plein appel garde l'appel « en cours » jusqu'à 8 h, et la demande bancaire de l'utilisateur lui-même
+montre alors un faux STOP.
+
+Puis **deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel (ajout d'un
+bénéficiaire depuis le site, sans argent engagé), et un vrai SMS de code — depuis Android 15, un code arrive
+masqué dans la notification de l'appli SMS, et ce masquage est lui-même un signal (à mesurer ; si c'est
+confirmé, la permission SMS devient inutile). Puis l'écran d'activation (P-3) et l'écran d'état de la
 protection (P-10).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), les deux SIM, la
@@ -46,7 +49,11 @@ par adb (`pm grant … READ_PHONE_STATE`, `… ANSWER_PHONE_CALLS`, `appops set 
 une action sensible injectée : `adb shell am broadcast -a com.filestech.callhalt.debug.SIGNAL --es kind
 CODE_MESSAGE -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.DebugSignalReceiver` ;
 l'écouteur de mesure : `adb shell cmd notification allow_listener com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.MeasureNotificationListener`
-(et `disallow_listener` après). Sur émulateur : `adb emu gsm call|accept|cancel <numéro>`, une fois la SIM
+(et `disallow_listener` après). Le vrai capteur : même commande avec
+`com.filestech.callhalt.debug/com.filestech.callhalt.platform.notification.NotificationListener` ; une demande
+bancaire factice (après `pm grant … POST_NOTIFICATIONS`) : `adb shell am broadcast -a
+com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.StandInBankRequestReceiver`
+(le même `id` met la notification à jour). Sur émulateur : `adb emu gsm call|accept|cancel <numéro>`, une fois la SIM
 « LOADED ». Le S9 n'a pas de SIM : vrais appels et SMS sur le S24 FE.
 
 ## Où en est le projet (2026-11-01, complété le 2026-11-02)
@@ -58,10 +65,13 @@ l'écouteur de mesure : `adb shell cmd notification allow_listener com.filestech
 - **Premier capteur branché (2026-11-02)** : l'appli sait quand un appel commence et se termine, même
   tuée entre deux appels, par une file unique où passeront tous les capteurs.
 - **L'écran STOP réel (2026-11-02)** : lancé depuis l'arrière-plan, devant l'appli bancaire, verrou compris ;
-  « Raccrocher » coupe l'appel. Seul un signal injecté par adb (version de test) le déclenche encore.
-- Ce qui manque pour protéger quelqu'un : les **capteurs d'actions sensibles** (notifications de la banque,
-  SMS de code, applis de prise en main) et l'**écran d'activation**. C'est la suite.
-- Vérifications : 83 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+  « Raccrocher » coupe l'appel.
+- **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
+  vue dans sa notification.
+- Ce qui manque pour protéger quelqu'un : les autres **capteurs d'actions sensibles** (SMS de code, applis de
+  prise en main) et l'**écran d'activation** (l'accès aux notifications ne s'accorde aujourd'hui que par adb).
+  C'est la suite.
+- Vérifications : 144 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -120,7 +130,8 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent
    qui cherche les faux positifs).
 4. **Les notifications de la banque** — mesure **P-2** : ✅ **lisibles, mesuré le 2026-11-02 sur le S24 FE**
-   (Sécur'Pass, canal `securpass_id`). Reste à construire le vrai capteur, puis à mesurer d'autres banques.
+   (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #12). Restent la vraie demande
+   pendant un vrai appel sur le S24 FE, puis d'autres banques.
 5. **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3**.
 
 ## Ce qui attend Patrice
