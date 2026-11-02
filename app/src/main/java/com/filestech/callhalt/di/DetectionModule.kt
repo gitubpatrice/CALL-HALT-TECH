@@ -5,9 +5,11 @@ import com.filestech.callhalt.data.store.RoomDetectorStore
 import com.filestech.callhalt.domain.detection.DetectionEngine
 import com.filestech.callhalt.domain.port.DecisionExecutor
 import com.filestech.callhalt.domain.port.DetectorStore
+import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
+import com.filestech.callhalt.platform.BootCountRestarts
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -32,6 +34,9 @@ abstract class DetectionModule {
     @Binds
     abstract fun decisionExecutor(impl: AndroidDecisionExecutor): DecisionExecutor
 
+    @Binds
+    abstract fun restartSource(impl: BootCountRestarts): RestartSource
+
     companion object {
         /** Pure and stateless: the domain module has no injection, so it is built here. */
         @Provides
@@ -44,7 +49,8 @@ abstract class DetectionModule {
             engine: DetectionEngine,
             store: DetectorStore,
             settings: SettingsSource,
+            restarts: RestartSource,
             executor: DecisionExecutor,
-        ): ProcessSignalUseCase = ProcessSignalUseCase(engine, store, settings, executor)
+        ): ProcessSignalUseCase = ProcessSignalUseCase(engine, store, settings, restarts, executor)
     }
 }

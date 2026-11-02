@@ -14,7 +14,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (fin du 2026-11-02)
 
-**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, cinq
+**Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, sept
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 
 1. Les textes de l'écran STOP (PR #7).
@@ -23,24 +23,24 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
    « Raccrocher » coupe l'appel ; écran verrouillé compris (émulateur Android 11).
 4. La mesure **P-2** (PR #10) — la demande Sécur'Pass est lisible : canal `securpass_id`, titre qui nomme
    l'opération, `REASON_CLICK` quand on appuie dessus.
-
-5. **Le capteur des notifications** (PR #13) — une demande de validation bancaire, reconnue à son canal
+5. **Ce que font déjà les banques** (PR #12, `PROJET.md` § 9.6) — certaines applis bancaires détectent l'appel,
+   chacune pour elle ; rien de transversal en France ; la méthode ne change pas.
+6. **Le capteur des notifications** (PR #13) — une demande de validation bancaire, reconnue à son canal
    (`securpass_id`, D-019), affiche le STOP pendant l'appel ou juste après. Mesuré de bout en bout sur émulateur
    (Android 16 et 17) avec une demande factice, et sur le S9 (Android 10, sans appel). L'écouteur ne lit que
    l'appli et le canal de chaque notification.
+7. **Un appel ne survit pas à un redémarrage** (PR #14, D-020) — un téléphone éteint en plein appel gardait
+   l'appel « en cours » jusqu'à 8 h, et la demande bancaire de l'utilisateur lui-même montrait un faux STOP.
+   Mesuré sur émulateur (Android 16), appel coupé net puis redémarrage à froid.
 
-**Prochaine étape : un appel ne survit pas à un redémarrage** (P-7, mesuré pendant la PR #13). Un téléphone
-éteint en plein appel garde l'appel « en cours » jusqu'à 8 h, et la demande bancaire de l'utilisateur lui-même
-montre alors un faux STOP.
-
-Puis **deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel (ajout d'un
+**Prochaine étape : deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel (ajout d'un
 bénéficiaire depuis le site, sans argent engagé), et un vrai SMS de code — depuis Android 15, un code arrive
 masqué dans la notification de l'appli SMS, et ce masquage est lui-même un signal (à mesurer ; si c'est
 confirmé, la permission SMS devient inutile). Puis l'écran d'activation (P-3) et l'écran d'état de la
 protection (P-10).
 
-**Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), les deux SIM, la
-relecture des traductions par des natifs, les audits (95/100, D-016).
+**Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
+les deux SIM, la relecture des traductions par des natifs, les audits (95/100, D-016).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
@@ -72,7 +72,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
   prise en main) et l'**écran d'activation** : aujourd'hui, aucun écran ne demande les accès ; il faut les
   accorder un par un dans les réglages du téléphone (Android 13+ : « Autoriser les paramètres restreints » pour
   l'accès aux notifications d'une appli installée depuis un fichier). C'est la suite.
-- Vérifications : 146 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 159 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

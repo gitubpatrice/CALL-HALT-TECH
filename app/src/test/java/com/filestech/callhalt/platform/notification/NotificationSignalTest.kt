@@ -13,6 +13,7 @@ import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopAnswered
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
@@ -42,6 +43,7 @@ class NotificationSignalTest {
         DetectionEngine(),
         store,
         SettingsSource { ProtectionSettings() },
+        RestartSource { null },
         AndroidDecisionExecutor(launcher),
     )
 
