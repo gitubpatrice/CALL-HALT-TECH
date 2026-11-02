@@ -30,5 +30,15 @@
 | M2 | MOYENNE | « Jamais le numéro » ne sera plus vrai à l'étape `READ_CALL_LOG` : PRIVACY et la colonne `counterpart_number` changeront ensemble | Règle D-007 ; rien à corriger à cette étape |
 | L1-L3 | FAIBLE | Fichier `phone_state` bien exclu de la sauvegarde ; file sans plafond (accès réservé au système) ; la garde CI ne contrôle pas les composants exportés | Rien à corriger ; idée notée |
 
+## Seconde relecture de sécurité, sur le passage à `exported="true"` (après le commit `22e3cf0`)
+
+Aucun constat critique ni élevé. Une autre appli ne peut ni envoyer PHONE_STATE (diffusion protégée, refusée
+même au shell d'adb), ni changer un état par une autre action (ignorée d'emblée) : elle pourrait seulement
+réveiller le processus, sans effet. Ajouter `android:permission` (par exemple `READ_PRIVILEGED_PHONE_STATE`)
+est **déconseillé** : un processus téléphonique d'un fabricant qui ne la détiendrait pas couperait la livraison,
+en silence — la pire panne pour cette appli. Le délai de 8 s, la file et la nouvelle trace : sans défaut. Seul
+trou de preuve signalé, la protection hors Android 10 : **mesurée aussitôt sur l'émulateur Android 17**, même
+refus.
+
 **Jugé juste par les deux** : rien ne sort du téléphone, aucune donnée personnelle dans les journaux d'une
 release, sauvegarde coupée, contrat de l'exécuteur tenu, schéma d'injection d'Agenda Tech (leçon F2) repris.
