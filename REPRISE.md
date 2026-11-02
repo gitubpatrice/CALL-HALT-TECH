@@ -41,9 +41,11 @@ l'appli SMS (aucune permission de plus ; recommandation de Claude) ou demander l
 de confidentialité change dans les deux cas. Après la mesure sur le S24 (Samsung a son propre détecteur).
 
 **Prochaine étape : deux mesures avec Patrice sur le S24** : une nouvelle demande Sécur'Pass pendant un vrai appel
-(ajout d'un bénéficiaire depuis le site, sans argent engagé), et un vrai SMS de code de la banque (masqué ou non
-par Samsung ?). Installer d'abord la version de test à jour, et accorder l'accès aux notifications du vrai capteur
-et de l'écouteur de mesure (puis les retirer). Puis l'écran d'activation (P-3) et l'écran d'état de la
+(ajout d'un bénéficiaire depuis le site, sans argent engagé) ; et le détecteur de codes de Samsung, avec deux SMS que
+Patrice s'envoie à lui-même : « Votre code de validation est 482913 », puis « Your verification code is 482913 »
+(sa banque n'envoie aucun SMS de code, elle valide par Sécur'Pass ; le masquage dépend du texte, pas de
+l'expéditeur : mesuré sur émulateur). Installer d'abord la version de test à jour, et accorder l'accès aux
+notifications du vrai capteur et de l'écouteur de mesure (puis les retirer). Puis l'écran d'activation (P-3) et l'écran d'état de la
 protection (P-10).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
