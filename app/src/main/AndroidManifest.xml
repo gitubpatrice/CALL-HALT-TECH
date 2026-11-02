@@ -8,11 +8,13 @@
         control (tools/check-manifest-permissions.py).
 
         Every other permission arrives WITH the component that uses it, in the same commit as its line in
-        tools/check-manifest-permissions.py and in PRIVACY.md (docs/ARCHITECTURE.md, D-007). The skeleton
-        uses none.
+        tools/check-manifest-permissions.py and in PRIVACY.md (docs/ARCHITECTURE.md, D-007).
     -->
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+
+    <!-- When a call starts and ends: platform/telephony/CallStateReceiver. Not the number (READ_CALL_LOG). -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!--
         No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
@@ -38,5 +40,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            The phone's call state, delivered even when the app is not running (PHONE_STATE is exempt from the
+            ban on implicit broadcasts). Exported, safely: PHONE_STATE is a PROTECTED broadcast that only the
+            system may send (measured on the S9: even the adb shell is refused), so no app can forge a call;
+            exported, it is also heard from a phone that sends it from its telephony process. The receiver
+            ignores any other action.
+        -->
+        <receiver
+            android:name=".platform.telephony.CallStateReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

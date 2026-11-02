@@ -12,22 +12,24 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (arrêt du 2026-11-01 au soir)
+## Reprendre ici (2026-11-02)
 
-1. **Branche `feat/stop-screen-wording`** (textes de l'écran STOP, D-017 ; relecture Claude intégrée,
-   `relectures/2026-11-01-claude-textes-stop.md`) : gate local vert, 89 tests. Ouvrir la PR, attendre les
-   3 vérifications de la CI, fusionner.
-2. Puis **le prototype de mesure** : il décide si le projet continue (décision 11).
+1. Textes de l'écran STOP (D-017) : **fusionnés** (PR #7).
+2. **Prototype de mesure, étape 1 faite** : le capteur de l'état de l'appel (branche `feat/call-state-sensor`),
+   mesuré sur l'émulateur Android 16. Reste : un vrai appel sur le S9. Puis **l'étape 2, l'écran STOP réel**
+   (P-1) : elle décide, avec P-2, si le projet continue (décision 11).
 3. Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
-## Où en est le projet (2026-11-01)
+## Où en est le projet (2026-11-01, complété le 2026-11-02)
 
 - **Le squelette est posé et vérifié. L'appli ne protège encore personne**, et le dit sur son écran.
 - Ce qui existe : le **moteur de détection** (la méthode, testée règle par règle), sa **mémoire** (qui
   survit quand Android arrête l'appli), les **réglages**, l'**écran STOP en démonstration**, le thème du
   portefeuille (damier bleu et rouge), **5 langues**.
-- Ce qui manque : les **capteurs** (savoir qu'un appel est en cours, lire un SMS de code, voir la
-  notification de la banque…) et l'**écran STOP réel**. C'est la prochaine étape.
+- **Premier capteur branché (2026-11-02)** : l'appli sait quand un appel commence et se termine, même
+  tuée entre deux appels, par une file unique où passeront tous les capteurs.
+- Ce qui manque : les autres **capteurs** (lire un SMS de code, voir la notification de la banque…) et
+  l'**écran STOP réel**. C'est la suite.
 - Vérifications : 83 tests sur ordinateur, 6 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
@@ -78,7 +80,9 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 Brancher les capteurs un par un, chacun avec sa permission, sa vérification et son test, dans cet ordre :
 
-1. **L'état de l'appel** (début, fin, numéro) — récepteur `PHONE_STATE`, permission « téléphone ».
+1. ✅ **L'état de l'appel** (début, fin) — récepteur `PHONE_STATE`, permission « téléphone » ; **fait le
+   2026-11-02**, mesuré sur l'émulateur Android 16. Le numéro (`READ_CALL_LOG`) viendra avec le rappel
+   d'appel long. Reste : un vrai appel sur le S9.
 2. **L'écran STOP réel** et l'exécution des décisions — c'est la mesure **P-1** : s'affiche-t-il par-dessus
    l'appli bancaire, sur le S9 et le S24 ?
 3. **Les SMS de code** — réception des SMS, et le tri des messages (mots-clés, à faire relire par l'agent

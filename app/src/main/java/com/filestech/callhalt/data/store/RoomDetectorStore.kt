@@ -26,7 +26,8 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  * ⚠️ LIMIT (docs/ARCHITECTURE.md, P-7): a process started AFTER the failure has no such state. It decides
  * from an empty one, and a call recorded before the failure is not seen — the STOP is missed. What closes
- * it is a live probe of the call state by the telephony adapter, not a second copy of the state.
+ * it is a live probe of the call state, not a second copy of the state; the telephony sensor does not make
+ * one yet.
  */
 @Singleton
 class RoomDetectorStore @Inject constructor(

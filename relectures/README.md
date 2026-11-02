@@ -16,4 +16,6 @@ strict nécessaire ; GPT : `gpt-5.6-sol` effort `high`, plafond 2 $ par relectur
 
 | 2026-11-01 | Claude, agent `general-purpose` | textes de l'écran STOP (5 langues) + `StopText` / `StopScreen` | 0 $ (sous-agent) | [claude-textes-stop](2026-11-01-claude-textes-stop.md) | 11 constats : 9 corrigés (dont H1 prise en main, H2 règle fausse pour qui appelle sa banque), 1 laissé, 1 mesuré ; 2 points ouverts (P-15, P-16). Relecture GPT des phrases DE/IT/ES : pas faite, la relecture par un natif reste à faire |
 
+| 2026-11-02 | Claude, agents `general-purpose` et `android-code-quality-deep-dive` (sécurité) | capteur de l'état de l'appel, avant commit | 0 $ (sous-agents) | [claude-capteur-appel](2026-11-02-claude-capteur-appel.md) | aucun constat élevé ; 6 corrigés (dont l'arrêt silencieux de la file), 1 mesuré puis corrigé (récepteur exporté), 2 à mesurer ou à faire avant publication (double SIM, P-13), le reste écrit |
+
 **Cumul des relectures payantes : 1,075 $.**
