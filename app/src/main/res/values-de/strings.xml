@@ -3,8 +3,46 @@
     <!-- Startseite -->
     <string name="home_title">Schutz vor Telefonbetrug</string>
     <string name="home_rule">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie niemals anrufen, um nach einem Code zu fragen oder um die Freigabe eines Auftrags zu bitten.</string>
-    <string name="home_status_preview">Diese Version schützt Sie noch nicht – sie zeigt, wie der Schutz aussehen wird.</string>
+    <string name="home_on">Der Schutz ist eingeschaltet.</string>
+    <plurals name="home_on_detail">
+        <item quantity="one">Während eines Anrufs und %1$d Minute danach erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS erhalten oder wenn die App Ihrer Bank Sie bittet, einen Auftrag freizugeben.</item>
+        <item quantity="other">Während eines Anrufs und %1$d Minuten danach erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS erhalten oder wenn die App Ihrer Bank Sie bittet, einen Auftrag freizugeben.</item>
+    </plurals>
+    <string name="home_on_detail_call_only">Während eines Anrufs erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS erhalten oder wenn die App Ihrer Bank Sie bittet, einen Auftrag freizugeben.</string>
+    <string name="home_off">Der Schutz funktioniert nicht.</string>
+    <plurals name="home_missing">
+        <item quantity="one">%1$d Berechtigung fehlt.</item>
+        <item quantity="other">%1$d Berechtigungen fehlen.</item>
+    </plurals>
+    <string name="home_activate">Schutz einschalten</string>
     <string name="home_try_stop">STOP-Bildschirm ausprobieren</string>
+
+    <!-- Die Zugriffe -->
+    <string name="access_calls_title">Wissen, wann Sie telefonieren</string>
+    <string name="access_screen_title">Den STOP-Bildschirm vor anderen Apps zeigen</string>
+    <string name="access_notifications_title">Die Anfragen Ihrer Bank und erhaltene Codes sehen</string>
+    <string name="access_granted">Erlaubt</string>
+    <string name="access_missing">Nicht erlaubt</string>
+
+    <!-- Aktivierung -->
+    <string name="activation_step">Schritt %1$d von %2$d</string>
+    <string name="access_calls_why">Der STOP-Bildschirm erscheint nur während eines Anrufs oder kurz danach. Die App sieht, wann ein Anruf beginnt und endet – weder die Nummer noch das Gesagte.</string>
+    <string name="access_calls_how">Das Telefon wird Sie fragen, ob Sie der App erlauben, „Anrufe zu starten und zu verwalten“: So sieht sie Ihre Anrufe und legt auf, wenn Sie im STOP-Bildschirm „Auflegen“ drücken. Sie ruft niemals von sich aus jemanden an.</string>
+    <string name="access_calls_refused">Das Telefon fragt nicht mehr. Öffnen Sie die Einstellungen, dann „Berechtigungen“, „Telefon“, und wählen Sie „Zulassen“.</string>
+    <string name="access_screen_why">Damit der STOP-Bildschirm im richtigen Moment vor der App Ihrer Bank erscheint.</string>
+    <string name="access_screen_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie die Berechtigung ein und kehren Sie dann hierher zurück.</string>
+    <string name="access_notifications_why">Damit die App sieht, wenn Ihre Bank Sie bittet, einen Auftrag freizugeben, und wenn ein Code per SMS ankommt. Von jeder Benachrichtigung liest sie, welche App sie sendet; von denen Ihrer SMS-App auch die letzte Nachricht, ohne sie zu speichern oder zu versenden.</string>
+    <string name="access_notifications_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie den Zugriff ein, bestätigen Sie und kehren Sie dann hierher zurück.</string>
+    <string name="access_allow">Erlauben</string>
+    <string name="access_open_settings">Einstellungen öffnen</string>
+    <string name="access_later">Später</string>
+
+    <!-- Eingeschränkte Einstellungen -->
+    <string name="restricted_title">Wenn das Telefon ablehnt</string>
+    <string name="restricted_why">Android sperrt diesen Zugriff für Apps, die aus einer Datei installiert wurden. Sie geben ihn nur einmal frei.</string>
+    <string name="restricted_steps">1. Schließen Sie die Meldung des Telefons.\n2. Tippen Sie unten auf „App-Info öffnen“.\n3. Tippen Sie oben rechts auf die drei Punkte, dann auf „Eingeschränkte Einstellungen zulassen“. Das Telefon fragt eventuell nach dem Code, mit dem es entsperrt wird.\n4. Kehren Sie hierher zurück und tippen Sie erneut auf „Einstellungen öffnen“.</string>
+    <string name="restricted_warning">Tun Sie das nur für Call Halt Tech: Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie niemals bitten, es für eine andere App zu tun.</string>
+    <string name="restricted_open_app_info">App-Info öffnen</string>
 
     <!-- STOP-Bildschirm -->
     <string name="stop_title">STOP</string>

@@ -5,8 +5,10 @@
 An Android app against **phone scams** — the fake bank adviser, the fake technician, the fake fraud
 department — written first for elderly people and the relatives who look after them.
 
-**Status: in development. This version protects nobody yet.** It holds the detection logic, tested, and a
-demonstration of the screen the app will show.
+**Status: in development, not published.** Once its accesses are granted (it asks for them one by one), it
+shows the STOP screen when a code arrives by SMS, or a banking app asks to approve an operation (Sécur'Pass),
+during a call or just after it. Remote-control apps and the alert to a relative are still to come, and nothing is
+published before the app is reliable.
 
 ## The method
 

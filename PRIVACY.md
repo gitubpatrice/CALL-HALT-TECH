@@ -8,9 +8,8 @@ change that adds it to the app, and the build checks the app asks for nothing el
 ## What the app asks for
 
 - **Phone** (`READ_PHONE_STATE`): to know when a call starts and ends. The app does not read the number
-  (that would need another permission, which it does not ask for), and it never hears the call. This
-  version does not ask for it on screen yet: nothing is detected until it is granted in the phone's
-  settings and the app has been opened once.
+  (that would need another permission, which it does not ask for), and it never hears the call. The
+  activation screen asks for it, together with "Answer phone calls" below: Android groups both in one question.
 - **Display over other apps** (`SYSTEM_ALERT_WINDOW`): to put the STOP screen in front of the app you are
   using — your banking app included — when a risky action happens during a call. The app draws no window
   over other apps: the STOP screen is a full screen of its own, excluded from screenshots and screen
@@ -24,8 +23,11 @@ change that adds it to the app, and the build checks the app asks for nothing el
   recognises a bank's request by that channel alone: today, the requests of Sécur'Pass (banks of the BPCE group).
   **Of your SMS app's notifications only**, it also reads the latest message, in memory, to tell whether it is a
   validation code ("Votre code de validation est …"); the text is forgotten at once, never stored, never sent.
-  Of every other app's notifications, it reads neither the title nor the text. This version does not ask for
-  notification access on screen yet.
+  Of every other app's notifications, it reads neither the title nor the text. The activation screen opens the
+  phone's settings page for it: only you can grant it.
+
+To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
+installed on this phone — by a store, or from a file. It keeps nothing of it.
 
 The manifest also carries a line Android's own library adds for the app's internal use
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`); it gives no access to anything.

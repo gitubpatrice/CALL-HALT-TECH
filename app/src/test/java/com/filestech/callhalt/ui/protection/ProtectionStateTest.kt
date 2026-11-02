@@ -1,0 +1,24 @@
+package com.filestech.callhalt.ui.protection
+
+import com.filestech.callhalt.platform.access.Access
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
+
+/** The activation asks for the first access missing: each one is of use only with the ones before it (D-022). */
+class ProtectionStateTest {
+
+    @Test
+    fun `the missing accesses come in the order of the activation, whatever was granted first`() {
+        assertThat(state(granted = emptySet()).missing).containsExactly(Access.CALLS, Access.SCREEN, Access.NOTIFICATIONS).inOrder()
+        // Notification access granted alone (the phone's settings, before the app was opened): the calls still come first.
+        assertThat(state(granted = setOf(Access.NOTIFICATIONS)).missing).containsExactly(Access.CALLS, Access.SCREEN).inOrder()
+        assertThat(state(granted = setOf(Access.CALLS)).missing.first()).isEqualTo(Access.SCREEN)
+    }
+
+    @Test
+    fun `nothing missing once every access is granted`() {
+        assertThat(state(granted = Access.entries.toSet()).missing).isEmpty()
+    }
+
+    private fun state(granted: Set<Access>) = ProtectionState(granted, mayBeRestricted = emptySet(), afterCallMinutes = 15)
+}

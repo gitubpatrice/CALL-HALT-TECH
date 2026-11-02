@@ -2,6 +2,8 @@ package com.filestech.callhalt.di
 
 import com.filestech.callhalt.platform.AndroidBootReader
 import com.filestech.callhalt.platform.BootReader
+import com.filestech.callhalt.platform.access.AccessChecker
+import com.filestech.callhalt.platform.access.AndroidAccessChecker
 import com.filestech.callhalt.platform.stop.ActivityStopLauncher
 import com.filestech.callhalt.platform.stop.CallControl
 import com.filestech.callhalt.platform.stop.StopLauncher
@@ -24,4 +26,7 @@ abstract class PlatformModule {
 
     @Binds
     abstract fun bootReader(impl: AndroidBootReader): BootReader
+
+    @Binds
+    abstract fun accessChecker(impl: AndroidAccessChecker): AccessChecker
 }

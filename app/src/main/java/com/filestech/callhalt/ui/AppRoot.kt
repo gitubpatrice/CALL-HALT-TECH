@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.ui.activation.ActivationScreen
 import com.filestech.callhalt.ui.home.HomeScreen
 import com.filestech.callhalt.ui.stop.StopScreen
 
@@ -15,9 +16,14 @@ fun AppRoot() {
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
             HomeScreen(
-                // Single top: a double tap opens one demonstration, not two stacked.
+                // Single top: a double tap opens one screen, not two stacked.
+                onActivate = { navController.navigate(Routes.ACTIVATION) { launchSingleTop = true } },
                 onTryStop = { navController.navigate(Routes.STOP_DEMO) { launchSingleTop = true } },
             )
+        }
+        composable(Routes.ACTIVATION) {
+            // Pops the activation only if it is still there, for the same reason as the demonstration below.
+            ActivationScreen(onDone = { navController.popBackStack(Routes.ACTIVATION, inclusive = true) })
         }
         composable(Routes.STOP_DEMO) {
             StopScreen(

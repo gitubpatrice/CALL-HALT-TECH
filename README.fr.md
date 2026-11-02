@@ -5,8 +5,10 @@
 Une appli Android contre les **arnaques au téléphone** : faux conseiller bancaire, faux technicien, faux
 service des fraudes. Elle est pensée d'abord pour les personnes âgées et les proches qui veillent sur elles.
 
-**État : en développement. Cette version ne protège encore personne.** Elle contient la logique de
-détection, testée, et une démonstration de l'écran que l'appli affichera.
+**État : en développement, non publiée.** Une fois ses accès accordés (elle les demande un par un), elle
+affiche l'écran STOP quand un code arrive par SMS, ou quand l'appli d'une banque demande de valider une opération
+(Sécur'Pass), pendant un appel ou juste après. Les applis de prise en main à distance et l'alerte au proche sont
+à venir, et rien n'est publié avant que l'appli soit fiable.
 
 ## La méthode
 

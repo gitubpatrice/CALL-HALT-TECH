@@ -8,9 +8,8 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
 ## Ce que l'appli demande
 
 - **Téléphone** (`READ_PHONE_STATE`) : savoir quand un appel commence et se termine. L'appli ne lit pas le
-  numéro (il faudrait une autre permission, qu'elle ne demande pas) et n'entend jamais l'appel. Cette
-  version ne la demande pas encore à l'écran : rien n'est détecté tant qu'elle n'est pas accordée dans les
-  réglages du téléphone et que l'appli n'a pas été ouverte une fois.
+  numéro (il faudrait une autre permission, qu'elle ne demande pas) et n'entend jamais l'appel. L'écran
+  d'activation la demande, avec « Répondre aux appels » ci-dessous : Android pose les deux en une seule question.
 - **Affichage par-dessus les autres applis** (`SYSTEM_ALERT_WINDOW`) : mettre l'écran STOP devant l'appli
   que vous utilisez — celle de votre banque comprise — quand une action à risque arrive pendant un appel.
   L'appli ne dessine aucune fenêtre par-dessus les autres : l'écran STOP est un écran entier, à part, exclu des
@@ -26,7 +25,11 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   les demandes Sécur'Pass (banques du groupe BPCE). **Des seules notifications de votre appli SMS**, elle lit aussi
   le dernier message, en mémoire, pour savoir si c'est un code de validation (« Votre code de validation est … ») ;
   le texte est oublié aussitôt, jamais gardé, jamais envoyé. Des notifications de toute autre appli, elle ne lit ni
-  le titre ni le texte. Cette version ne demande pas encore l'accès aux notifications à l'écran.
+  le titre ni le texte. L'écran d'activation ouvre pour lui la page des réglages du téléphone : vous seul pouvez
+  l'accorder.
+
+Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
+comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien.
 
 Le manifeste porte aussi une ligne ajoutée par une bibliothèque d'Android pour l'usage interne de l'appli
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`) ; elle ne donne accès à rien.
