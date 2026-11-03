@@ -2,6 +2,7 @@ package com.filestech.callhalt.ui.activation
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -34,6 +35,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -41,7 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.filestech.callhalt.R
 import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessSettings
-import com.filestech.callhalt.platform.access.CALL_PERMISSIONS
+import com.filestech.callhalt.platform.access.runtimePermissions
 import com.filestech.callhalt.ui.protection.ProtectionViewModel
 import com.filestech.callhalt.ui.protection.accessText
 import com.filestech.callhalt.ui.theme.brandButtonColors
@@ -88,7 +90,12 @@ private fun AccessStep(
     onPass: (() -> Unit)?,
 ) {
     val context = LocalContext.current
-    val text = accessText(access)
+    // Null once all granted: an access still missing with them is fixed in the settings — the app's notifications turned
+    // off or down since (review of 2026-11-03, R-04). Asked again, the phone would answer "granted" without a dialog.
+    val permissions = runtimePermissions(access)?.takeUnless { asked ->
+        asked.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+    }
+    val text = accessText(access, phoneAsks = permissions != null)
     // The phone stops showing its dialog once refused twice (or "don't ask again"), and the request then answers
     // "refused" at once: only the settings can grant it from there. The app cannot tell that from a dialog closed with
     // Back, or by an incoming call (Android 11+: also "refused", and not counted): after any refusal it offers both,
@@ -134,8 +141,8 @@ private fun AccessStep(
             }
             Button(
                 onClick = {
-                    if (access == Access.CALLS) {
-                        ask.launch(CALL_PERMISSIONS)
+                    if (permissions != null) {
+                        ask.launch(permissions)
                     } else {
                         // A dialog of the settings answers nothing back: back here with the access still missing, it
                         // was refused, or never shown.
@@ -153,7 +160,7 @@ private fun AccessStep(
             }
             when {
                 phoneAsks && refused -> SecondButton(R.string.access_open_settings) {
-                    AccessSettings.open(context, AccessSettings.appInfo(context))
+                    AccessSettings.open(context, refusedPages(access, context))
                 }
                 mayBeRestricted -> SecondButton(R.string.restricted_open_app_info) {
                     AccessSettings.open(context, AccessSettings.appInfo(context))
@@ -206,4 +213,9 @@ private fun settingsPages(access: Access, context: Context): List<Intent> = when
     Access.SCREEN -> AccessSettings.screen(context)
     Access.BACKGROUND -> AccessSettings.background(context)
     Access.NOTIFICATIONS -> AccessSettings.notifications(context)
+    Access.ALERTS -> AccessSettings.alerts(context)
 }
+
+/** Once the phone's own dialog was refused: where the same access is granted by hand. */
+private fun refusedPages(access: Access, context: Context): List<Intent> =
+    if (access == Access.ALERTS) AccessSettings.alerts(context) else AccessSettings.appInfo(context)

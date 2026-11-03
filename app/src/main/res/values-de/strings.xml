@@ -27,6 +27,7 @@
     <string name="access_screen_title">Der STOP-Bildschirm vor anderen Apps</string>
     <string name="access_background_title">Aktiv, auch wenn Sie die App nicht öffnen</string>
     <string name="access_notifications_title">Anfragen Ihrer Bank und erhaltene Codes</string>
+    <string name="access_alerts_title">Warnung, wenn der STOP-Bildschirm blockiert ist</string>
     <string name="access_granted">Erlaubt</string>
     <string name="access_missing">Nicht erlaubt</string>
 
@@ -42,6 +43,10 @@
     <string name="access_background_refused">Wenn das Telefon nicht gefragt hat oder Sie abgelehnt haben: Tippen Sie auf „Einstellungen öffnen“, dann auf den Akku, und wählen Sie „Uneingeschränkt“.</string>
     <string name="access_notifications_why">Damit die App sieht, wenn Ihre Bank Sie bittet, einen Auftrag freizugeben, und wenn ein Code per SMS ankommt. Von jeder Benachrichtigung liest sie, welche App sie sendet und welcher Art sie ist; von denen Ihrer SMS-App auch die letzte Nachricht, ohne sie zu speichern oder zu versenden.</string>
     <string name="access_notifications_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie den Zugriff ein, bestätigen Sie und kehren Sie dann hierher zurück.</string>
+    <string name="access_alerts_why">Manche Telefone verhindern, dass der STOP-Bildschirm erscheint. Die App warnt Sie dann mit einer Benachrichtigung, die ihn öffnet. Sie sendet keine andere Benachrichtigung.</string>
+    <string name="access_alerts_how">Das Telefon wird Sie fragen, ob Sie der App erlauben, „Benachrichtigungen zu senden“: Tippen Sie auf „Zulassen“.</string>
+    <string name="access_alerts_refused">Wenn das Telefon nicht mehr fragt, öffnen Sie die Einstellungen und schalten Sie die Benachrichtigungen der App ein.</string>
+    <string name="access_alerts_how_settings">Das Telefon lässt die App Sie nicht auf dem Bildschirm warnen. Öffnen Sie die Einstellungen: Schalten Sie ihre Benachrichtigungen ein, auch die im Vollbild; tippen Sie dann auf „STOP-Bildschirm blockiert“ und lassen Sie sie oben auf dem Bildschirm erscheinen, nicht lautlos.</string>
     <string name="access_allow">Erlauben</string>
     <string name="access_open_settings">Einstellungen öffnen</string>
     <string name="access_later">Später</string>
@@ -56,6 +61,9 @@
 
     <!-- STOP-Bildschirm -->
     <string name="stop_title">STOP</string>
+    <string name="stop_notification_text">%1$s Tippen Sie hier und lesen Sie den STOP-Bildschirm, bevor Sie irgendetwas tun.</string>
+    <string name="stop_channel_name">STOP-Bildschirm blockiert</string>
+    <string name="stop_channel_description">Wenn das Telefon verhindert, dass der STOP-Bildschirm erscheint: eine Benachrichtigung, die ihn öffnet.</string>
     <string name="stop_on_call">Sie telefonieren gerade.</string>
     <string name="stop_call_ended">Ihr Anruf wurde gerade beendet.</string>
     <string name="stop_trigger_code">Sie haben gerade einen Code erhalten.</string>

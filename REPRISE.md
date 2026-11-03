@@ -26,11 +26,13 @@ corrigé, avec test et contrôle négatif. Au passage, un test sur téléphone q
 **Les deux autres états en forme courte aussi** (Patrice : « oui ») : « **Protection activée** », « **Protection
 désactivée** », les 5 langues en miroir.
 
-**Décidé pour P-19 (Patrice : « ok »)** — le repli quand l'écran STOP ne passe pas : une notification urgente qui
-ouvre l'écran STOP. Elle demande, depuis Android 13, l'autorisation d'envoyer des notifications : une **5ᵉ étape
-d'activation** (« vous prévenir si l'écran STOP ne peut pas s'afficher ») et une autorisation de plus dans la politique
-de confidentialité. Raison : le STOP bloqué est aujourd'hui invisible ; sans l'étape, le repli ne marcherait que
-jusqu'à Android 12. Non mesurable ici : un Xiaomi, là où le blocage est attendu. **C'est la prochaine étape.**
+**P-19 construit (D-024, Patrice : « ok »)** — le repli quand l'écran STOP ne passe pas : une notification qui ouvre
+l'écran STOP, et une **5ᵉ étape d'activation**, « **Alerte si l'écran STOP est bloqué** » (depuis Android 13, le
+téléphone demande « Autoriser Call Halt Tech à vous envoyer des notifications ? »). Raison : le STOP bloqué était
+invisible. **Mesuré sur l'émulateur Android 16**, l'affichage par-dessus retiré pendant un appel : notification 5 s
+après, un toucher ouvre le STOP ; écran éteint, la notification plein écran rallume l'écran et ouvre le STOP seule.
+Deux permissions de plus (`POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT`), dans la garde CI et la politique de
+confidentialité. **Restent à mesurer** : Samsung (le S24) et un Xiaomi (aucun ici).
 
 **Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
@@ -70,7 +72,7 @@ jusqu'à Android 12. Non mesurable ici : un Xiaomi, là où le blocage est atten
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
   (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
-**Prochaine étape** (P-10 fait l'après-midi, ci-dessus) : le repli par notification (P-19) ; puis, de P-21,
+**Prochaine étape** (P-10 et P-19 faits l'après-midi, ci-dessus) : P-19 sur le S24 (Samsung) ; puis, de P-21,
 l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
 plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
 
@@ -123,7 +125,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
+**Avant toute publication** : P-13 (horloge monotone), P-19 sur Samsung et Xiaomi (le repli est construit, D-024), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -160,9 +162,9 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
   vue dans sa notification.
 - **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
-  proche**, le **repli par notification** quand le STOP ne passe pas (P-19), et la liste « avant toute publication »
-  ci-dessus.
-- Vérifications : 299 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+  proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
+  2026-11-03 : D-024).
+- Vérifications : 300 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

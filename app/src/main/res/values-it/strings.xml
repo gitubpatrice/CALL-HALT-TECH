@@ -30,6 +30,7 @@
     <string name="access_screen_title">La schermata STOP sopra le altre app</string>
     <string name="access_background_title">Attiva anche quando non la apre</string>
     <string name="access_notifications_title">Richieste della Sua banca e codici ricevuti</string>
+    <string name="access_alerts_title">Avviso se la schermata STOP è bloccata</string>
     <string name="access_granted">Consentito</string>
     <string name="access_missing">Non consentito</string>
 
@@ -45,6 +46,10 @@
     <string name="access_background_refused">Se il telefono non ha chiesto nulla, o se ha rifiutato: tocchi «Aprire le impostazioni», poi la batteria, e scelga «Senza limitazioni».</string>
     <string name="access_notifications_why">Perché l\'app veda quando la Sua banca Le chiede di confermare un\'operazione, e quando arriva un codice via SMS. Di ogni notifica legge quale app la invia e di che tipo è; di quelle della Sua app SMS, anche l\'ultimo messaggio, senza conservarlo né inviarlo.</string>
     <string name="access_notifications_how">Il telefono apre le sue impostazioni. Se compare un elenco, tocchi «Call Halt Tech». Attivi l\'accesso, confermi, poi torni qui.</string>
+    <string name="access_alerts_why">Alcuni telefoni impediscono alla schermata STOP di comparire. L\'app La avvisa allora con una notifica, che la apre. Non invia nessun\'altra notifica.</string>
+    <string name="access_alerts_how">Il telefono Le chiederà se consentire all\'app «di inviarti notifiche»: tocchi «Consenti».</string>
+    <string name="access_alerts_refused">Se il telefono non lo chiede più, apra le impostazioni e attivi le notifiche dell\'app.</string>
+    <string name="access_alerts_how_settings">Il telefono non lascia che l\'app La avvisi sullo schermo. Apra le impostazioni: attivi le sue notifiche, anche quelle a schermo intero; poi tocchi «Schermata STOP bloccata» e la lasci comparire in alto sullo schermo, non in silenzio.</string>
     <string name="access_allow">Consentire</string>
     <string name="access_open_settings">Aprire le impostazioni</string>
     <string name="access_later">Più tardi</string>
@@ -59,6 +64,9 @@
 
     <!-- Schermata STOP -->
     <string name="stop_title">STOP</string>
+    <string name="stop_notification_text">%1$s Tocchi qui e legga la schermata STOP prima di fare qualsiasi cosa.</string>
+    <string name="stop_channel_name">Schermata STOP bloccata</string>
+    <string name="stop_channel_description">Quando il telefono impedisce alla schermata STOP di comparire: una notifica che la apre.</string>
     <string name="stop_on_call">Sta telefonando.</string>
     <string name="stop_call_ended">La Sua chiamata è appena terminata.</string>
     <string name="stop_trigger_code">Ha appena ricevuto un codice.</string>

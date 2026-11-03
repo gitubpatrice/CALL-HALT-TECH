@@ -2,12 +2,10 @@
 <!--
     DEBUG BUILDS ONLY: merged into the debug manifest, never into the release one (the source set of the debug
     build type). Read by hand in the merged release manifest (2026-11-02): nothing below is there. The CI guard
-    would see the permission and the measuring listener (a special access) reach it, not the two receivers.
+    would see the measuring listener (a special access) reach it, not the two receivers. The stand-in bank request
+    posts a notification with the main manifest's POST_NOTIFICATIONS (the STOP's fallback, D-024).
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- The stand-in bank request below posts a notification: Android 13+ asks for this, granted from adb. -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application>
         <!-- A sensitive action injected from adb, to measure the STOP screen (P-1). DUMP: the shell alone. -->

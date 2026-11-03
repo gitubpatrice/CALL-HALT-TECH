@@ -10,9 +10,9 @@ import javax.inject.Singleton
 /**
  * Carries the engine's decisions out ([DecisionExecutor]'s contract), as far as this step of the prototype can.
  *
- * - **STOP**, first of all: the screen ([StopLauncher]). One that did not get through makes this executor
- *   throw — the only way the contract allows — and the engine journals it as NOT shown. The full-screen
- *   notification the contract names as a fallback is NOT built yet (docs/ARCHITECTURE.md, P-19).
+ * - **STOP**, first of all: the screen, or the notification that opens it ([StopLauncher], docs/ARCHITECTURE.md,
+ *   D-024). One that reached the user neither way makes this executor throw — the only way the contract allows —
+ *   and the engine journals it as NOT shown.
  * - **Warning, text to the relative, wake-up**: not carried out yet, each with its own step (docs/ARCHITECTURE.md,
  *   § 6 and P-8). A wake-up is only asked for a long call with an unknown number, and the number is not read yet.
  */

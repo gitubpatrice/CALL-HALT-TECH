@@ -34,6 +34,15 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!--
+        The STOP screen's fallback, when the phone blocks it (platform/stop/StopNotifier, docs/ARCHITECTURE.md, D-024):
+        a notification that opens it. Android 13+ asks the user (the activation's last step); the app posts no other.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- That notification opens the STOP screen at once on a locked or sleeping phone: a full-screen notification. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!--
         The phone's settings pages the app opens: seen here so that platform/access/AccessSettings can send the
         user to the SYSTEM's own, never to an app that declares the same action. Not a permission: these names only.
     -->
@@ -54,6 +63,9 @@
         </intent>
         <intent>
             <action android:name="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.APP_NOTIFICATION_SETTINGS" />
         </intent>
         <intent>
             <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />

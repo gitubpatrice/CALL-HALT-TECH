@@ -44,6 +44,20 @@ class StopDisplayTest {
         assertThat(display.awaitShown(first, 5.seconds)).isTrue()
     }
 
+    /** Asked without waiting, once the notification is posted (D-024): this screen, or a later one, got through. */
+    @Test
+    fun `shown already is this request or a later one, never an earlier one`() {
+        val display = StopDisplay()
+        val first = display.nextId()
+        val second = display.nextId()
+        assertThat(display.isShown(first)).isFalse()
+        display.shown(first)
+        assertThat(display.isShown(first)).isTrue()
+        assertThat(display.isShown(second)).isFalse()
+        display.shown(second)
+        assertThat(display.isShown(first)).isTrue()
+    }
+
     /** The witness: an EARLIER screen in front does not stand for a later one that never came. */
     @Test
     fun `an earlier screen in front does not count for a later request`() = runTest {

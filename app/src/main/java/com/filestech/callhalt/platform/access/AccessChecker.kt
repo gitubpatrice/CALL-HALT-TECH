@@ -11,6 +11,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.filestech.callhalt.platform.notification.NotificationListener
+import com.filestech.callhalt.platform.stop.StopNotifier
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -55,6 +56,8 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
         // The component, not the package: the test version has a second listener, for measurements.
         Access.NOTIFICATIONS -> context.getSystemService(NotificationManager::class.java)
             ?.isNotificationListenerAccessGranted(ComponentName(context, NotificationListener::class.java)) == true
+        // Shown, and able to open the screen with the phone against the cheek: the case the fallback is most for.
+        Access.ALERTS -> StopNotifier.canPost(context) && StopNotifier.canOpenFullScreen(context)
     }
 
     private fun readPackageSource(): Int? {

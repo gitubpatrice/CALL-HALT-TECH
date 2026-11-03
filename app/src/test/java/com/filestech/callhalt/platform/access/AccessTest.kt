@@ -24,7 +24,7 @@ class AccessTest {
 
     @Test
     fun `the phone's own dialogs are never restricted`() {
-        listOf(Access.CALLS, Access.BACKGROUND).forEach { access ->
+        listOf(Access.CALLS, Access.BACKGROUND, Access.ALERTS).forEach { access ->
             assertThat(mayBeRestricted(access, Build.VERSION_CODES.BAKLAVA, PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE))
                 .isFalse()
         }
@@ -46,6 +46,18 @@ class AccessTest {
     @Test
     fun `before Android 13 - no install source, no restricted settings`() {
         assertThat(restricted(Build.VERSION_CODES.S_V2, packageSource = null)).isEmpty()
+    }
+
+    /** D-024: before Android 13 an app posts notifications without asking; the step then opens the settings. */
+    @Test
+    fun `the notifications are a question of the phone from Android 13 only`() {
+        assertThat(runtimePermissions(Access.ALERTS, Build.VERSION_CODES.TIRAMISU))
+            .asList().containsExactly(android.Manifest.permission.POST_NOTIFICATIONS)
+        assertThat(runtimePermissions(Access.ALERTS, Build.VERSION_CODES.S_V2)).isNull()
+        assertThat(runtimePermissions(Access.CALLS, Build.VERSION_CODES.Q)).isEqualTo(CALL_PERMISSIONS)
+        listOf(Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS).forEach { access ->
+            assertThat(runtimePermissions(access, Build.VERSION_CODES.BAKLAVA)).isNull()
+        }
     }
 
     private fun restricted(sdk: Int, packageSource: Int?): List<Access> =

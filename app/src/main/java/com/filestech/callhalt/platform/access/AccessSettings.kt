@@ -48,6 +48,11 @@ object AccessSettings {
         addAll(fallbacks(context))
     }
 
+    /** The app's notification settings: where its notifications are turned on once the phone's dialog was refused. */
+    fun alerts(context: Context): List<Intent> = listOf(
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
+    ) + fallbacks(context)
+
     /** The app info: where a permission the phone no longer asks for is granted, and the restricted settings allowed. */
     fun appInfo(context: Context): List<Intent> = fallbacks(context)
 
@@ -69,31 +74,31 @@ object AccessSettings {
         Timber.w("No system settings page: %s left to the phone", pages.first().action)
         start(context, pages.first())
     }
-
-    /**
-     * [page] as the phone's OWN settings serve it. Any app can declare the same action: the phone would then offer it
-     * beside them, and it could imitate them and give its own instructions (security review of 2026-11-02, S2). Seen
-     * through the manifest's `<queries>`. Null when no system app serves the page.
-     */
-    @Suppress("DEPRECATION") // The Int flags: ResolveInfoFlags only exists from Android 13; they mean the same.
-    private fun systemSettings(context: Context, page: Intent): Intent? =
-        context.packageManager.queryIntentActivities(page, PackageManager.MATCH_SYSTEM_ONLY).firstOrNull()
-            ?.let { settings -> Intent(page).setPackage(settings.activityInfo.packageName) }
-
-    private fun start(context: Context, page: Intent): Boolean = try {
-        context.startActivity(page)
-        true
-    } catch (missing: ActivityNotFoundException) {
-        Timber.w(missing, "No settings page for %s", page.action)
-        false
-    } catch (refused: SecurityException) {
-        // A page some maker does not export (general review of 2026-11-02, 7): the next one, not a crash.
-        Timber.w(refused, "Settings page refused: %s", page.action)
-        false
-    }
-
-    private fun fallbacks(context: Context): List<Intent> =
-        listOf(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri(context)), Intent(Settings.ACTION_SETTINGS))
-
-    private fun packageUri(context: Context): Uri = Uri.fromParts("package", context.packageName, null)
 }
+
+/**
+ * [page] as the phone's OWN settings serve it. Any app can declare the same action: the phone would then offer it
+ * beside them, and it could imitate them and give its own instructions (security review of 2026-11-02, S2). Seen
+ * through the manifest's `<queries>`. Null when no system app serves the page.
+ */
+@Suppress("DEPRECATION") // The Int flags: ResolveInfoFlags only exists from Android 13; they mean the same.
+private fun systemSettings(context: Context, page: Intent): Intent? =
+    context.packageManager.queryIntentActivities(page, PackageManager.MATCH_SYSTEM_ONLY).firstOrNull()
+        ?.let { settings -> Intent(page).setPackage(settings.activityInfo.packageName) }
+
+private fun start(context: Context, page: Intent): Boolean = try {
+    context.startActivity(page)
+    true
+} catch (missing: ActivityNotFoundException) {
+    Timber.w(missing, "No settings page for %s", page.action)
+    false
+} catch (refused: SecurityException) {
+    // A page some maker does not export (general review of 2026-11-02, 7): the next one, not a crash.
+    Timber.w(refused, "Settings page refused: %s", page.action)
+    false
+}
+
+private fun fallbacks(context: Context): List<Intent> =
+    listOf(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri(context)), Intent(Settings.ACTION_SETTINGS))
+
+private fun packageUri(context: Context): Uri = Uri.fromParts("package", context.packageName, null)
