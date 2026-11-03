@@ -27,12 +27,26 @@
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
     <!--
+        What lets the activation show the phone's own dialog, "Let app always run in background?"
+        (platform/access/AccessSettings.background): never put to sleep, the protection keeps working when the app is
+        not opened (docs/ARCHITECTURE.md, D-023; Samsung's deep sleep makes it deaf, measured). It reads nothing.
+    -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!--
         The phone's settings pages the activation opens: seen here so that platform/access/AccessSettings can send the
         user to the SYSTEM's own, never to an app that declares the same action. Not a permission: these names only.
     -->
     <queries>
         <intent>
             <action android:name="android.settings.action.MANAGE_OVERLAY_PERMISSION" />
+            <data android:scheme="package" />
+        </intent>
+        <!-- Lint's BatteryLife: a Play Store rule; the app is published on F-Droid (D-016), see the permission above. -->
+        <intent>
+            <action
+                android:name="android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+                tools:ignore="BatteryLife" />
             <data android:scheme="package" />
         </intent>
         <intent>

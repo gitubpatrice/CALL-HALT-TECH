@@ -38,9 +38,10 @@
     <string name="home_try_stop">Try the STOP screen</string>
 
     <!-- Each access, on the home screen and in the activation (platform/access/Access.kt). -->
-    <string name="access_calls_title">Know when you are on the phone</string>
-    <string name="access_screen_title">Show the STOP screen in front of other apps</string>
-    <string name="access_notifications_title">See your bank\'s requests and the codes you receive</string>
+    <string name="access_calls_title">When you are on the phone</string>
+    <string name="access_screen_title">The STOP screen in front of other apps</string>
+    <string name="access_background_title">Active even when you do not open it</string>
+    <string name="access_notifications_title">Your bank\'s requests and the codes you receive</string>
     <string name="access_granted">Allowed</string>
     <string name="access_missing">Not allowed</string>
 
@@ -53,11 +54,19 @@
     <string name="access_calls_refused">If the phone no longer asks, open the settings, then “Permissions”, “Phone”, and choose “Allow”.</string>
     <string name="access_screen_why">So that the STOP screen shows in front of your bank\'s app, at the right moment.</string>
     <string name="access_screen_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the permission on, then come back here.</string>
+    <!-- D-023: on Samsung, the deep sleep kills the app and takes the notification access back (measured). The dialog is
+         not quoted: Android 16 asks "Let app always run in background?" (Allow), Samsung "Stop optimising battery
+         usage?" (OK), measured in French. "Unrestricted" is the choice in the app's battery page (Android 16;
+         "Non restreinte" on a Samsung in French). -->
+    <string name="access_background_why">So that the phone does not put the app to sleep. A protection app is hardly ever opened, and the phone puts the apps nobody opens to sleep: asleep, it sees nothing. It uses hardly any battery: it acts only when a call or a notification comes.</string>
+    <string name="access_background_how">The phone will ask whether the app may always run in the background, or to stop optimising its battery: accept, with “Allow” or “OK” depending on the phone.</string>
+    <string name="access_background_refused">If the phone did not ask, or if you refused: touch “Open the settings”, then the battery, and choose “Unrestricted”.</string>
     <string name="access_notifications_why">So that the app sees when your bank asks you to approve a transaction, and when a code arrives by text message. Of each notification, it reads which app sent it and its kind; of your text-message app\'s, the last message as well, without keeping or sending it.</string>
     <string name="access_notifications_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the access on, confirm, then come back here.</string>
     <string name="access_allow">Allow</string>
     <string name="access_open_settings">Open the settings</string>
     <string name="access_later">Later</string>
+    <string name="access_skip">Skip this step</string>
 
     <!-- Android 13+ blocks some accesses for an app installed from a file, until "Allow restricted settings" in the app
          info — a menu that shows only once the phone has refused once (measured, P-3): step 1 is that refusal.

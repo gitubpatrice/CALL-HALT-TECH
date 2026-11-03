@@ -15,8 +15,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * What [AndroidAccessChecker] reads of the phone's two special accesses, granted then taken back as the user would in
- * the settings — here through the shell, which the JVM has no equivalent of. The runtime permissions are left out:
+ * What [AndroidAccessChecker] reads of the phone's special accesses, granted then taken back as the user would in the
+ * settings — here through the shell, which the JVM has no equivalent of. The runtime permissions are left out:
  * taking one back kills the process, this test's included.
  */
 @RunWith(AndroidJUnit4::class)
@@ -28,6 +28,7 @@ class AccessCheckerOnDeviceTest {
 
     @After
     fun takeBack() {
+        shell("cmd deviceidle whitelist -${context.packageName}")
         shell("appops set ${context.packageName} SYSTEM_ALERT_WINDOW default")
         shell("cmd notification disallow_listener $listener")
         shell("cmd notification disallow_listener ${component<MeasureNotificationListener>()}")
@@ -39,6 +40,15 @@ class AccessCheckerOnDeviceTest {
         assertThat(checker.granted()).contains(Access.SCREEN)
         shell("appops set ${context.packageName} SYSTEM_ALERT_WINDOW ignore")
         assertThat(checker.granted()).doesNotContain(Access.SCREEN)
+    }
+
+    /** The list the phone's dialog writes to, and its battery page ("Unrestricted"): measured the same on the S24 FE. */
+    @Test
+    fun neverAsleep_isReadAsTheBatterySettingsLeaveIt() {
+        shell("cmd deviceidle whitelist +${context.packageName}")
+        assertThat(checker.granted()).contains(Access.BACKGROUND)
+        shell("cmd deviceidle whitelist -${context.packageName}")
+        assertThat(checker.granted()).doesNotContain(Access.BACKGROUND)
     }
 
     @Test

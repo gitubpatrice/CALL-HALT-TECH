@@ -20,9 +20,10 @@
     <string name="home_try_stop">STOP-Bildschirm ausprobieren</string>
 
     <!-- Die Zugriffe -->
-    <string name="access_calls_title">Wissen, wann Sie telefonieren</string>
-    <string name="access_screen_title">Den STOP-Bildschirm vor anderen Apps zeigen</string>
-    <string name="access_notifications_title">Die Anfragen Ihrer Bank und erhaltene Codes sehen</string>
+    <string name="access_calls_title">Wenn Sie telefonieren</string>
+    <string name="access_screen_title">Der STOP-Bildschirm vor anderen Apps</string>
+    <string name="access_background_title">Aktiv, auch wenn Sie die App nicht öffnen</string>
+    <string name="access_notifications_title">Anfragen Ihrer Bank und erhaltene Codes</string>
     <string name="access_granted">Erlaubt</string>
     <string name="access_missing">Nicht erlaubt</string>
 
@@ -33,11 +34,15 @@
     <string name="access_calls_refused">Wenn das Telefon nicht mehr fragt, öffnen Sie die Einstellungen, dann „Berechtigungen“, „Telefon“, und wählen Sie „Zulassen“.</string>
     <string name="access_screen_why">Damit der STOP-Bildschirm im richtigen Moment vor der App Ihrer Bank erscheint.</string>
     <string name="access_screen_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie die Berechtigung ein und kehren Sie dann hierher zurück.</string>
+    <string name="access_background_why">Damit das Telefon die App nicht in den Ruhezustand versetzt. Eine Schutz-App öffnet man fast nie, und das Telefon versetzt Apps, die niemand öffnet, in den Ruhezustand: Dann sieht sie nichts mehr. Sie verbraucht kaum Akku: Sie wird nur tätig, wenn ein Anruf oder eine Benachrichtigung kommt.</string>
+    <string name="access_background_how">Das Telefon wird fragen, ob die App immer im Hintergrund laufen darf oder ob die Akkuoptimierung beendet werden soll: Stimmen Sie zu, je nach Telefon mit „Zulassen“ oder „OK“.</string>
+    <string name="access_background_refused">Wenn das Telefon nicht gefragt hat oder Sie abgelehnt haben: Tippen Sie auf „Einstellungen öffnen“, dann auf den Akku, und wählen Sie „Uneingeschränkt“.</string>
     <string name="access_notifications_why">Damit die App sieht, wenn Ihre Bank Sie bittet, einen Auftrag freizugeben, und wenn ein Code per SMS ankommt. Von jeder Benachrichtigung liest sie, welche App sie sendet und welcher Art sie ist; von denen Ihrer SMS-App auch die letzte Nachricht, ohne sie zu speichern oder zu versenden.</string>
     <string name="access_notifications_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie den Zugriff ein, bestätigen Sie und kehren Sie dann hierher zurück.</string>
     <string name="access_allow">Erlauben</string>
     <string name="access_open_settings">Einstellungen öffnen</string>
     <string name="access_later">Später</string>
+    <string name="access_skip">Diesen Schritt überspringen</string>
 
     <!-- Eingeschränkte Einstellungen -->
     <string name="restricted_title">Wenn das Telefon ablehnt</string>

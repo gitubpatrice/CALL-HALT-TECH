@@ -93,6 +93,9 @@ ALLOWED = {
     "android.permission.SYSTEM_ALERT_WINDOW",
     # "Hang up" on the STOP screen (platform/stop/CallControl).
     "android.permission.ANSWER_PHONE_CALLS",
+    # The phone's dialog "Let app always run in background?" (platform/access/AccessSettings.background, D-023): put to
+    # sleep, the protection is deaf. Reads nothing.
+    "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
 }
 
 # Every component the system binds with a special access — (component, its BIND_* permission) — no more, no less.

@@ -9,10 +9,22 @@ class ProtectionStateTest {
 
     @Test
     fun `the missing accesses come in the order of the activation, whatever was granted first`() {
-        assertThat(state(granted = emptySet()).missing).containsExactly(Access.CALLS, Access.SCREEN, Access.NOTIFICATIONS).inOrder()
+        assertThat(state(granted = emptySet()).missing)
+            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS).inOrder()
         // Notification access granted alone (the phone's settings, before the app was opened): the calls still come first.
-        assertThat(state(granted = setOf(Access.NOTIFICATIONS)).missing).containsExactly(Access.CALLS, Access.SCREEN).inOrder()
+        assertThat(state(granted = setOf(Access.NOTIFICATIONS)).missing)
+            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND).inOrder()
         assertThat(state(granted = setOf(Access.CALLS)).missing.first()).isEqualTo(Access.SCREEN)
+    }
+
+    /**
+     * Samsung's deep sleep takes the notification access back, and turns it off again while the app is in it (measured on
+     * the S24 FE, D-023): the way out of the deep sleep comes first, or the user would turn a switch that falls back.
+     */
+    @Test
+    fun `out of the phone's sleep before the notification access`() {
+        val asleep = state(granted = setOf(Access.CALLS, Access.SCREEN))
+        assertThat(asleep.missing).containsExactly(Access.BACKGROUND, Access.NOTIFICATIONS).inOrder()
     }
 
     @Test

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.filestech.callhalt.platform.notification.NotificationListener
@@ -48,6 +49,9 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         }
         Access.SCREEN -> Settings.canDrawOverlays(context)
+        // "Unrestricted" in the app's battery page: the same list the phone's dialog writes to (measured on the S24 FE).
+        Access.BACKGROUND -> context.getSystemService(PowerManager::class.java)
+            ?.isIgnoringBatteryOptimizations(context.packageName) == true
         // The component, not the package: the test version has a second listener, for measurements.
         Access.NOTIFICATIONS -> context.getSystemService(NotificationManager::class.java)
             ?.isNotificationListenerAccessGranted(ComponentName(context, NotificationListener::class.java)) == true
