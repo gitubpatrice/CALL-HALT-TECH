@@ -51,6 +51,22 @@
     </queries>
 
     <!--
+        The SMS apps, so that platform/notification/NotificationListener knows which one is the default
+        (Telephony.Sms.getDefaultSmsPackage sees only the apps this one may see, from Android 11). Without it, the answer
+        is "none" (measured on the S24 FE and Android 16, 2026-11-03), and a code SMS was read only because Android lets a
+        listener see the app of each notification it delivers. Not the SMS_DELIVER its documentation names: a protected
+        broadcast, and AOSP's AppsFilterUtils ignores protected broadcasts when it matches a query against receivers
+        (still "none", DefaultSmsAppOnDeviceTest red). Writing an SMS is what every SMS app must handle to be the default
+        one. Names only, like the block above.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+    </queries>
+
+    <!--
         No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
         on this phone (data_extraction_rules.xml for Android 12+, allowBackup for the older ones).
     -->

@@ -10,7 +10,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Während eines Telefonanrufs erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS (auf Französisch oder Englisch) oder eine Sécur\'Pass-Freigabeanfrage erhalten (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Er sieht nicht alles, auch keine Anrufe über das Internet (WhatsApp…): Auch ohne STOP-Bildschirm gilt die Regel unten.</string>
-    <string name="home_off">Der Schutz funktioniert nicht.</string>
+    <string name="home_off">Der Schutz ist ausgeschaltet.</string>
     <string name="home_unsupported">Dieses Telefon erlaubt den Schutz nicht: Android lässt dort keine App vor anderen erscheinen (ein „Android Go“-Telefon).</string>
     <plurals name="home_missing">
         <item quantity="one">%1$d Berechtigung fehlt.</item>

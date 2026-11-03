@@ -12,7 +12,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Durante una telefonata, la schermata STOP compare quando riceve un codice via SMS (in francese o in inglese) o una richiesta di conferma Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Non vede tutto, nemmeno le chiamate via Internet (WhatsApp…): anche senza schermata STOP, la regola qui sotto resta valida.</string>
-    <string name="home_off">La protezione non funziona.</string>
+    <string name="home_off">La protezione è disattivata.</string>
     <string name="home_unsupported">Questo telefono non consente la protezione: Android non vi lascia comparire nessuna app sopra le altre (un telefono «Android Go»).</string>
     <plurals name="home_missing">
         <item quantity="one">Manca %1$d autorizzazione.</item>
