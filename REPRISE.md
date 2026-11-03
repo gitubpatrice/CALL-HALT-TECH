@@ -38,7 +38,12 @@ allumé, la notification par-dessus l'écran d'appel, un toucher ouvre le STOP ;
 **et fermé** : l'appli repose la notification quand l'écran se rallume, la bannière paraît quand on éloigne le
 téléphone, un toucher ouvre le STOP (Patrice : « ça a marché avec l'écran STOP »). **Accueil quand seule cette étape
 manque** (Patrice : « ok pour B ») : « Protection affaiblie », pas « désactivée ». Relecture :
-`relectures/2026-11-03-claude-repli-stop.md`. **Reste à mesurer** : un Xiaomi (aucun ici).
+`relectures/2026-11-03-claude-repli-stop.md`. **Mesuré aussi sur un Xiaomi**, le Redmi 9C de Patrice (MIUI 12,
+Android 10, appli installée depuis un fichier, sans SIM : appel simulé par la version de test) : le réglage de MIUI
+« Afficher les fenêtres pop-up pendant que vous parcourez en arrière-plan » est **autorisé d'office** — l'écran STOP
+passe ; **refusé par Patrice**, MIUI bloque l'écran STOP, la notification s'affiche en haut de l'écran, un toucher
+ouvre le STOP ; écran éteint, la notification plein écran crée l'écran STOP derrière l'écran éteint (MIUI ne le
+rallume pas), il est là dès qu'on rallume. **À regarder** : le « Démarrage automatique », refusé d'office par MIUI.
 
 **Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
@@ -131,7 +136,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-13 (horloge monotone), P-19 sur un Xiaomi (le repli est construit et mesuré sur Samsung, D-024), P-11 (élaguer le journal),
+**Avant toute publication** : P-13 (horloge monotone), le « Démarrage automatique » de MIUI (le repli, D-024, est mesuré sur Samsung et Xiaomi), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -241,9 +246,8 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
   langue : une consigne mal traduite ferait faire l'inverse.
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid
   oui ; DataStore 1.3.0 fusionné, AGP 9.5.0 reporté à la prochaine montée de tout le portefeuille.
-- **Un Xiaomi, à emprunter dix minutes** (Patrice n'en a pas, 2026-11-03), avant la publication : y refaire l'essai du
-  2026-11-03 (l'écran STOP lancé pendant un appel, puis la notification de repli, D-024). C'est là que le blocage est
-  attendu (P-21), et le seul cas du repli non mesuré. À défaut : un service de téléphones à distance (payant).
+- ~~Un Xiaomi, à emprunter~~ — **fait le 2026-11-03** : Patrice a branché un Redmi 9C (MIUI 12, Android 10, sans SIM) ;
+  mesures dans D-024 et P-21. Reste, sur ce Redmi : l'effet du « Démarrage automatique », refusé d'office par MIUI.
 - Facultatif : la recherche de marque sur TMview (Union européenne) ; la calibration de GPT Luna
   (moins de 0,10 $) pour savoir s'il trouve autant que Sol.
 
