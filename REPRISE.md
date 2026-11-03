@@ -12,7 +12,33 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (fin du 2026-11-02)
+## Reprendre ici (2026-11-03, fin de matinée)
+
+**Le 2026-11-03, sur le S24 FE avec Patrice** (et le S9) :
+
+- **L'activation comme un utilisateur** (P-3) : ancienne version désinstallée, nouvelle installée depuis un fichier
+  (Read Files Tech, source `LOCAL_FILE`). Play Protect demande une analyse, puis « Cette appli semble sûre ».
+  **Samsung ne bloque rien** (ni « Vue en premier plan », ni l'accès aux notifications), contrairement à l'émulateur
+  Android 16 ; moins d'une minute jusqu'à « en marche ». Le S9 (Android 10) : parcours complet aussi.
+- **Vrai appel (messagerie 123) et code envoyé à soi-même** : STOP 27 ms après la notification de SMS Tech,
+  « Raccrocher » coupe l'appel.
+- **Un vrai défaut trouvé dans le journal, corrigé** : l'appli ne voyait pas l'appli SMS par défaut (« aucune » pendant
+  5 min), faute de `<queries>` ; le code n'était lu que parce qu'Android montre à l'écouteur l'appli de chaque
+  notification. La requête que nomme la documentation d'Android (`SMS_DELIVER`) ne marche pas (diffusion protégée,
+  vérifié dans AOSP) ; `SENDTO smsto` la trouve du premier coup (émulateur 16, S24). Test sur téléphone avec contrôle
+  négatif ; relecture de sécurité : aucun constat (`relectures/2026-11-03-claude-visibilite-sms.md`).
+- **P-21 mesuré en partie** : arrêt forcé → écouteur relié de nouveau en moins d'une seconde (Android 16 et Samsung) ;
+  veille profonde de Samsung : reçue écran allumé ; **écran éteint, pas essayé** (mesures arrêtées par Patrice).
+- **Question de Patrice** : « Raccrocher et appeler ma banque » s'affiche même quand on n'est pas au téléphone avec sa
+  banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
+  (WhatsApp…) rend le bouton inutile mais pas nuisible. **Recommandation de Claude : le garder ; à trancher par
+  Patrice** (le réserver aux demandes Sécur'Pass est possible).
+
+**Prochaine étape** : la veille profonde écran éteint (une demande factice après 5 min, puis retirer l'appli de la
+liste) ; puis le code : l'écouteur relié ou non sur l'accueil (P-21), la panne du stockage (P-10), le repli par
+notification (P-19).
+
+## Le 2026-11-02
 
 **Les deux mesures qui décidaient sont passées : le projet continue** (décision 11). Fait le 2026-11-02, onze
 PR, chacune relue par un ou deux agents Claude (`relectures/`) :
@@ -54,14 +80,11 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
     GPT) : 12 défauts corrigés, dont l'accueil qui promettait toutes les banques, l'aide qui pouvait servir aux escrocs,
     des pages de réglages qu'une autre appli pouvait imiter.
 
-**Prochaine étape — avec Patrice, sur le S24 FE** : installer la version de test **depuis un fichier** (pas par adb,
-qui échappe aux paramètres restreints) et faire l'activation comme un utilisateur : le chemin et les mots de One UI
-(Samsung) ; puis un vrai appel et un code. Ensuite, côté code : l'écouteur relié ou non sur l'accueil (P-21), la panne
-du stockage sur l'accueil (P-10), le repli par notification (P-19). Le SMS de confirmation de la banque juste après un
-appel reste une piste (P-20).
+L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
+2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
 **Avant toute publication** : P-13 (horloge monotone), P-19 (repli par notification), P-11 (élaguer le journal),
-P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, Samsung, la source
+P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
 (95/100, D-016).
@@ -99,7 +122,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, le **repli par notification** quand le STOP ne passe pas (P-19), et la liste « avant toute publication »
   ci-dessus.
-- Vérifications : 297 tests sur ordinateur, 15 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 297 tests sur ordinateur, 18 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -161,7 +184,7 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
    (Sécur'Pass, canal `securpass_id`). ✅ **Capteur branché le 2026-11-02** (PR #13), ✅ mesuré pendant un vrai appel
    sur le S24 FE (PR #17). Restent d'autres banques.
 5. ✅ **Le parcours d'activation** (« paramètres restreints » d'Android 13+) — mesure **P-3** : construit et mesuré
-   sur émulateurs le 2026-11-02 (D-022) ; restent le S24 FE (Samsung), Android 15 et F-Droid.
+   sur émulateurs le 2026-11-02 (D-022), sur le S24 FE et le S9 le 2026-11-03 ; restent Android 15 et F-Droid.
 
 ## Ce qui attend Patrice
 
