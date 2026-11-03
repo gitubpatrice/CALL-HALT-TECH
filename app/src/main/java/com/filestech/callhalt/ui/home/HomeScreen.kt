@@ -1,5 +1,6 @@
 package com.filestech.callhalt.ui.home
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,7 +94,7 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                 text = stringResource(
                     when (state.status) {
                         ProtectionStatus.ON -> R.string.home_on
-                        ProtectionStatus.WEAKENED -> R.string.home_weakened
+                        ProtectionStatus.NO_ALERT, ProtectionStatus.STORAGE_FAILING -> R.string.home_weakened
                         ProtectionStatus.OFF, ProtectionStatus.UNSUPPORTED -> R.string.home_off
                     },
                 ),
@@ -106,16 +107,14 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                     Text(text = watched(state.afterCallMinutes), style = MaterialTheme.typography.bodyLarge)
                     Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
                 }
-                ProtectionStatus.WEAKENED -> {
+                ProtectionStatus.NO_ALERT -> {
+                    Text(text = stringResource(R.string.home_weakened_alerts), style = MaterialTheme.typography.bodyLarge)
+                    CardButton(R.string.home_activate, onActivate)
+                }
+                ProtectionStatus.STORAGE_FAILING -> {
                     val context = LocalContext.current
                     Text(text = stringResource(R.string.home_weakened_detail), style = MaterialTheme.typography.bodyLarge)
-                    Button(
-                        onClick = { AccessSettings.open(context, AccessSettings.storage()) },
-                        colors = brandButtonColors(),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(text = stringResource(R.string.home_open_storage), modifier = Modifier.padding(vertical = 8.dp))
-                    }
+                    CardButton(R.string.home_open_storage) { AccessSettings.open(context, AccessSettings.storage()) }
                 }
                 // No button: it would lead to a settings page with no switch.
                 ProtectionStatus.UNSUPPORTED ->
@@ -125,12 +124,17 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                         text = pluralStringResource(R.plurals.home_missing, state.missing.size, state.missing.size),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    Button(onClick = onActivate, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
-                        Text(text = stringResource(R.string.home_activate), modifier = Modifier.padding(vertical = 8.dp))
-                    }
+                    CardButton(R.string.home_activate, onActivate)
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CardButton(@StringRes label: Int, onClick: () -> Unit) {
+    Button(onClick = onClick, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
+        Text(text = stringResource(label), modifier = Modifier.padding(vertical = 8.dp))
     }
 }
 

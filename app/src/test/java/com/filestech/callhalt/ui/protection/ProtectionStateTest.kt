@@ -36,10 +36,23 @@ class ProtectionStateTest {
     @Test
     fun `storage failing weakens the protection, the accesses first`() {
         assertThat(state(granted = Access.entries.toSet()).status).isEqualTo(ProtectionStatus.ON)
-        assertThat(state(granted = Access.entries.toSet(), storageFailing = true).status).isEqualTo(ProtectionStatus.WEAKENED)
+        assertThat(state(granted = Access.entries.toSet(), storageFailing = true).status)
+            .isEqualTo(ProtectionStatus.STORAGE_FAILING)
         assertThat(state(granted = setOf(Access.CALLS), storageFailing = true).status).isEqualTo(ProtectionStatus.OFF)
         assertThat(state(granted = Access.entries.toSet(), storageFailing = true, phoneCanProtect = false).status)
             .isEqualTo(ProtectionStatus.UNSUPPORTED)
+    }
+
+    /**
+     * D-024 (Patrice: "ok pour B"): without the STOP's fallback the screen still shows on most phones — weakened, not off.
+     * Any other access missing is "off", whatever the fallback.
+     */
+    @Test
+    fun `only the fallback missing weakens the protection, never turns it off`() {
+        val allButAlerts = Access.entries.toSet() - Access.ALERTS
+        assertThat(state(granted = allButAlerts).status).isEqualTo(ProtectionStatus.NO_ALERT)
+        assertThat(state(granted = allButAlerts, storageFailing = true).status).isEqualTo(ProtectionStatus.NO_ALERT)
+        assertThat(state(granted = allButAlerts - Access.CALLS).status).isEqualTo(ProtectionStatus.OFF)
     }
 
     private fun state(granted: Set<Access>, storageFailing: Boolean = false, phoneCanProtect: Boolean = true) =

@@ -32,7 +32,13 @@ téléphone demande « Autoriser Call Halt Tech à vous envoyer des notification
 invisible. **Mesuré sur l'émulateur Android 16**, l'affichage par-dessus retiré pendant un appel : notification 5 s
 après, un toucher ouvre le STOP ; écran éteint, la notification plein écran rallume l'écran et ouvre le STOP seule.
 Deux permissions de plus (`POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT`), dans la garde CI et la politique de
-confidentialité. **Restent à mesurer** : Samsung (le S24) et un Xiaomi (aucun ici).
+confidentialité. **Mesuré sur le S24 FE avec Patrice** (vrai appel, le 123, l'écran STOP bloqué exprès) : écran
+allumé, la notification par-dessus l'écran d'appel, un toucher ouvre le STOP ; **à l'oreille, un trou trouvé** (écran
+éteint par le capteur, mais téléphone ni endormi ni verrouillé : Android n'ouvre rien et n'affiche pas la bannière)
+**et fermé** : l'appli repose la notification quand l'écran se rallume, la bannière paraît quand on éloigne le
+téléphone, un toucher ouvre le STOP (Patrice : « ça a marché avec l'écran STOP »). **Accueil quand seule cette étape
+manque** (Patrice : « ok pour B ») : « Protection affaiblie », pas « désactivée ». Relecture :
+`relectures/2026-11-03-claude-repli-stop.md`. **Reste à mesurer** : un Xiaomi (aucun ici).
 
 **Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
@@ -72,7 +78,7 @@ confidentialité. **Restent à mesurer** : Samsung (le S24) et un Xiaomi (aucun 
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
   (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
-**Prochaine étape** (P-10 et P-19 faits l'après-midi, ci-dessus) : P-19 sur le S24 (Samsung) ; puis, de P-21,
+**Prochaine étape** (P-10 et P-19 faits et mesurés l'après-midi, ci-dessus) : de P-21,
 l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
 plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
 
@@ -125,7 +131,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-13 (horloge monotone), P-19 sur Samsung et Xiaomi (le repli est construit, D-024), P-11 (élaguer le journal),
+**Avant toute publication** : P-13 (horloge monotone), P-19 sur un Xiaomi (le repli est construit et mesuré sur Samsung, D-024), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -164,7 +170,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 300 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 302 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

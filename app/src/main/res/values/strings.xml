@@ -31,6 +31,7 @@
     <!-- Storage failing (docs/ARCHITECTURE.md, P-10): the STOP is still decided, but a process restarted during a call forgets it. -->
     <string name="home_weakened">Protection weakened</string>
     <string name="home_weakened_detail">The app can no longer save what it sees. It still protects you, but if the phone stops it during a call, it will no longer know you were on the phone. The phone may be full: free up some space, then come back here. If it has some, restart it.</string>
+    <string name="home_weakened_alerts">If the phone prevents the STOP screen from showing, the app will not be able to warn you.</string>
     <string name="home_open_storage">Open the phone\'s storage</string>
     <!-- An "Android Go" phone (low memory) grants no app the display over the others (AccessChecker.phoneCanProtect). -->
     <string name="home_unsupported">This phone cannot run the protection: on it, Android lets no app show in front of the others (an “Android Go” phone).</string>

@@ -13,6 +13,7 @@
     <string name="home_off">Schutz ausgeschaltet</string>
     <string name="home_weakened">Schutz geschwächt</string>
     <string name="home_weakened_detail">Die App kann nicht mehr speichern, was sie sieht. Sie schützt Sie weiterhin, aber wenn das Telefon sie während eines Anrufs beendet, weiß sie nicht mehr, dass Sie telefonieren. Vielleicht ist das Telefon voll: Geben Sie Speicherplatz frei und kommen Sie dann hierher zurück. Hat es genug Platz, starten Sie es neu.</string>
+    <string name="home_weakened_alerts">Wenn das Telefon verhindert, dass der STOP-Bildschirm erscheint, kann die App Sie nicht warnen.</string>
     <string name="home_open_storage">Speicher des Telefons öffnen</string>
     <string name="home_unsupported">Dieses Telefon erlaubt den Schutz nicht: Android lässt dort keine App vor anderen erscheinen (ein „Android Go“-Telefon).</string>
     <plurals name="home_missing">
