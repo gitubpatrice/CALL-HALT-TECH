@@ -15,7 +15,7 @@
     <!-- Home: the state of the protection, read from the phone each time the app comes to the front (D-022). -->
     <string name="home_title">Protection against phone scams</string>
     <string name="home_rule">Your bank, the police, the tax office, your insurer: none of them will ever call you to ask for a code or to approve a transaction.</string>
-    <string name="home_on">The protection is on.</string>
+    <string name="home_on">Protection on</string>
     <!-- What the protection watches today, no more: a protection app that claims more than it does is worse than none.
          Phone calls (not those over the internet, P-4); Sécur'Pass, the one bank request recognised (D-019); codes in
          French or English, the only words the rule reads (D-021) — which the German, Italian and Spanish texts say. -->
@@ -27,7 +27,7 @@
     <!-- PROJET.md, § 6: not 100 %. A code read in an open conversation posts no notification, an action on a computer
          touches no phone: the rule still holds. -->
     <string name="home_on_limit">It does not see everything, nor calls over the internet (WhatsApp…): even without a STOP screen, the rule below still holds.</string>
-    <string name="home_off">The protection is off.</string>
+    <string name="home_off">Protection off</string>
     <!-- Storage failing (docs/ARCHITECTURE.md, P-10): the STOP is still decided, but a process restarted during a call forgets it. -->
     <string name="home_weakened">Protection weakened</string>
     <string name="home_weakened_detail">The app can no longer save what it sees. It still protects you, but if the phone stops it during a call, it will no longer know you were on the phone. The phone may be full: free up some space, then come back here. If it has some, restart it.</string>

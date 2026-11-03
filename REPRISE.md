@@ -23,14 +23,14 @@ aucun constat de sécurité ; l'essai ne faisait que lire, un stockage passé en
 corrigé, avec test et contrôle négatif. Au passage, un test sur téléphone qui dépendait de l'état laissé par une mesure
 (l'accès aux notifications déjà accordé) part maintenant d'un état propre.
 
-**Question posée à Patrice, en attente** : les deux autres états en forme courte aussi (« Protection activée »,
-« Protection désactivée ») ? Sans réponse, ils restent « La protection est activée. » / « … désactivée. ».
+**Les deux autres états en forme courte aussi** (Patrice : « oui ») : « **Protection activée** », « **Protection
+désactivée** », les 5 langues en miroir.
 
-**Décision demandée à Patrice pour P-19** (le repli quand l'écran STOP ne passe pas) : une notification urgente qui
-ouvre l'écran STOP demande, depuis Android 13, l'autorisation d'envoyer des notifications, donc une **5ᵉ étape
+**Décidé pour P-19 (Patrice : « ok »)** — le repli quand l'écran STOP ne passe pas : une notification urgente qui
+ouvre l'écran STOP. Elle demande, depuis Android 13, l'autorisation d'envoyer des notifications : une **5ᵉ étape
 d'activation** (« vous prévenir si l'écran STOP ne peut pas s'afficher ») et une autorisation de plus dans la politique
-de confidentialité. Recommandation de Claude : oui (le STOP bloqué est aujourd'hui invisible ; sans l'étape, le repli
-ne marche que jusqu'à Android 12). Non mesurable ici : un Xiaomi, là où le blocage est attendu.
+de confidentialité. Raison : le STOP bloqué est aujourd'hui invisible ; sans l'étape, le repli ne marcherait que
+jusqu'à Android 12. Non mesurable ici : un Xiaomi, là où le blocage est attendu. **C'est la prochaine étape.**
 
 **Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
@@ -62,7 +62,8 @@ ne marche que jusqu'à Android 12). Non mesurable ici : un Xiaomi, là où le bl
   Nouvelle permission `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (ne lit rien), dans la garde CI et la politique de
   confidentialité.
 - **Les mots de l'accueil** (Patrice) : « La protection est **activée** » (« en marche, ça ne se dit pas ») et « La
-  protection est **désactivée** » (au lieu de « ne fonctionne pas ») ; les titres des accès sans verbe ni article
+  protection est **désactivée** » (au lieu de « ne fonctionne pas ») — devenus l'après-midi « Protection activée » et
+  « Protection désactivée » ; les titres des accès sans verbe ni article
   (« Quand vous êtes au téléphone », « L'écran STOP devant les autres applis », « Active même quand vous ne l'ouvrez
   pas », « Demandes de votre banque et codes reçus ») ; les 5 langues en miroir.
 - **Question de Patrice** : « Raccrocher et appeler ma banque » s'affiche même quand on n'est pas au téléphone avec sa
