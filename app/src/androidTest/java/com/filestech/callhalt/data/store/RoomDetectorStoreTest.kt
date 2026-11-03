@@ -1,5 +1,6 @@
 package com.filestech.callhalt.data.store
 
+import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -21,6 +22,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 import java.time.Instant
 
 /**
@@ -112,6 +114,62 @@ class RoomDetectorStoreTest {
 
         assertThat(decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
         assertThat(database.detectorDao().callSessions()).hasSize(1)
+    }
+
+    /** P-10: the home screen says the protection is weakened while storage fails, and no longer once it is repaired. */
+    @Test
+    fun aFailureShowsUntilTheCheckWritesTheStateBack() = runTest {
+        failWritesInto("call_session")
+        val store = RoomDetectorStore(database)
+        store.process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden))
+        assertThat(store.failing.value).isTrue()
+
+        store.check()
+        assertThat(store.failing.value).isTrue() // Still full: still said.
+
+        database.openHelper.writableDatabase.execSQL("DROP TRIGGER full_call_session")
+        store.check()
+
+        // The user freed some space and came back: no signal needed, the call is kept and the warning gone.
+        assertThat(store.failing.value).isFalse()
+        assertThat(database.detectorDao().callSessions()).hasSize(1)
+    }
+
+    /**
+     * A NEW process, nothing failed in it yet: a storage that still reads but no longer writes shows before any signal
+     * (review of 2026-11-03 — a read alone would pass), and the call it holds is not lost by the check.
+     */
+    @Test
+    fun theCheckWritesNotOnlyReads() = runTest {
+        RoomDetectorStore(database).process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden))
+        failWritesInto("call_session")
+
+        val store = RoomDetectorStore(database)
+        store.check()
+
+        assertThat(store.failing.value).isTrue()
+        assertThat(database.detectorDao().callSessions()).hasSize(1)
+    }
+
+    /** A database that cannot be opened (a migration missing) shows before any signal, and a healthy one does not. */
+    @Test
+    fun theCheckOpensTheDatabase() = runTest {
+        val healthy = RoomDetectorStore(database)
+        healthy.check()
+        assertThat(healthy.failing.value).isFalse()
+
+        // A folder where the file should be: SQLite cannot open it — for the store, the same as a migration missing.
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val blocked = File(context.cacheDir, "blocked.db").apply { mkdirs() }
+        val unopenable = Room.databaseBuilder(context, CallHaltDatabase::class.java, blocked.path).build()
+        try {
+            val broken = RoomDetectorStore(unopenable)
+            broken.check()
+            assertThat(broken.failing.value).isTrue()
+        } finally {
+            unopenable.close()
+            blocked.delete()
+        }
     }
 
     /**
