@@ -4,7 +4,7 @@
     <!-- Inicio -->
     <string name="home_title">Protección contra las estafas telefónicas</string>
     <string name="home_rule">Ni su banco, ni la policía, ni Hacienda, ni su aseguradora le llamarán nunca para pedirle un código o que confirme una operación.</string>
-    <string name="home_on">La protección está activada.</string>
+    <string name="home_on">Protección activada</string>
     <plurals name="home_on_detail">
         <item quantity="one">Durante una llamada telefónica y %1$d minuto después, la pantalla STOP aparece cuando recibe un código por SMS (en francés o en inglés) o una solicitud de confirmación Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</item>
         <item quantity="many">Durante una llamada telefónica y %1$d minutos después, la pantalla STOP aparece cuando recibe un código por SMS (en francés o en inglés) o una solicitud de confirmación Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</item>
@@ -12,7 +12,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Durante una llamada telefónica, la pantalla STOP aparece cuando recibe un código por SMS (en francés o en inglés) o una solicitud de confirmación Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">No lo ve todo, tampoco las llamadas por Internet (WhatsApp…): incluso sin pantalla STOP, la regla de abajo sigue siendo válida.</string>
-    <string name="home_off">La protección está desactivada.</string>
+    <string name="home_off">Protección desactivada</string>
     <string name="home_weakened">Protección debilitada</string>
     <string name="home_weakened_detail">La app ya no consigue guardar lo que ve. Le sigue protegiendo, pero si el teléfono la cierra durante una llamada, ya no sabrá que estaba al teléfono. Quizá el teléfono esté lleno: libere espacio y vuelva aquí. Si tiene espacio, reinícielo.</string>
     <string name="home_open_storage">Abrir el almacenamiento del teléfono</string>
