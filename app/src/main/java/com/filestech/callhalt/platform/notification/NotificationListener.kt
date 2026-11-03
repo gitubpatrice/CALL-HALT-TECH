@@ -71,8 +71,10 @@ class NotificationListener : NotificationListenerService() {
     }
 
     /**
-     * Looked up once a minute — but an answer of none is never kept: measured on Android 16, right after the app was
-     * installed, a first lookup missed the SMS app, and three code SMS of the next minute went unread.
+     * Looked up once a minute. It sees only an SMS app the app may see (the manifest's `<queries>`): without them, the
+     * answer was none — measured on Android 16 and on the S24 FE — and a code SMS was read only because Android shows a
+     * listener the app of each notification it delivers. An answer of none is still never kept: on Android 16, before
+     * the `<queries>`, a kept "none" left three code SMS of the next minute unread; a phone may also have no SMS app yet.
      */
     private fun defaultSmsApp(): String? {
         val now = SystemClock.elapsedRealtime()
