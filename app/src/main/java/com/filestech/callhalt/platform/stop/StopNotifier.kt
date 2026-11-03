@@ -2,12 +2,17 @@ package com.filestech.callhalt.platform.stop
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.display.DisplayManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.view.Display
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -22,13 +27,17 @@ import javax.inject.Singleton
 /**
  * The STOP screen's fallback (docs/ARCHITECTURE.md, D-024, P-19): when the phone blocks the screen started from the
  * background, a notification that opens it. On a locked or sleeping phone it opens the screen at once (a full-screen
- * notification); otherwise it shows at the top of the screen, and a touch opens it. One at a time: a later STOP takes
- * its place, and any STOP screen shown removes it.
+ * notification); otherwise it shows at the top of the screen, and a touch opens it — against the cheek, once the screen
+ * is back on. One at a time: a later STOP takes its place, and any STOP screen shown removes it.
  */
 @Singleton
 class StopNotifier @Inject constructor(@ApplicationContext private val context: Context) {
 
     private val manager = NotificationManagerCompat.from(context)
+    private val main = Handler(Looper.getMainLooper())
+
+    /** Waiting for the screen to come back on ([alertAgainWhenScreenOn]); touched on the main thread only. */
+    private var waiting: DisplayManager.DisplayListener? = null
 
     /** At the app's start: the user then finds it by its name in the app's notification settings. Idempotent. */
     fun createChannel() {
@@ -66,6 +75,7 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
             .build()
         return try {
             manager.notify(NOTIFICATION_ID, notification)
+            alertAgainWhenScreenOn(notification)
             true
         } catch (refused: SecurityException) {
             Timber.w(refused, "STOP notification refused")
@@ -74,7 +84,47 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
     }
 
     /** A STOP screen got through: the notification has nothing left to open. */
-    fun cancel() = manager.cancel(NOTIFICATION_ID)
+    fun cancel() {
+        manager.cancel(NOTIFICATION_ID)
+        main.post(::stopWaiting)
+    }
+
+    /**
+     * The phone against the cheek (measured on the S24 FE, 2026-11-03): the screen is off, by the proximity sensor, but
+     * the phone neither asleep nor locked. Android then neither opens the full screen nor shows the banner, and the
+     * notification waits in the shade, unseen when the user looks again. Posted again once the screen is back on, it
+     * shows at the top of it. Waits until then, or until the notification is gone (touched, or a STOP screen shown).
+     */
+    @SuppressLint("MissingPermission") // Posted again only while it is there: the permission was read to post it.
+    private fun alertAgainWhenScreenOn(notification: Notification) = main.post {
+        stopWaiting()
+        val displays = context.getSystemService(DisplayManager::class.java) ?: return@post
+        if (displays.getDisplay(Display.DEFAULT_DISPLAY)?.state == Display.STATE_ON) return@post
+        val listener = object : DisplayManager.DisplayListener {
+            override fun onDisplayChanged(displayId: Int) {
+                if (displayId != Display.DEFAULT_DISPLAY) return
+                if (displays.getDisplay(displayId)?.state != Display.STATE_ON) return
+                stopWaiting()
+                if (stillPosted()) manager.notify(NOTIFICATION_ID, notification)
+                Timber.i("Screen back on: STOP notification posted again")
+            }
+
+            override fun onDisplayAdded(displayId: Int) = Unit
+
+            override fun onDisplayRemoved(displayId: Int) = Unit
+        }
+        displays.registerDisplayListener(listener, main)
+        waiting = listener
+        Timber.i("Screen off: the STOP notification is posted again once it is back on")
+    }
+
+    /** On the main thread only, as [waiting]. */
+    private fun stopWaiting() {
+        waiting?.let { context.getSystemService(DisplayManager::class.java)?.unregisterDisplayListener(it) }
+        waiting = null
+    }
+
+    private fun stillPosted(): Boolean = manager.activeNotifications.any { it.id == NOTIFICATION_ID }
 
     companion object {
         private const val CHANNEL = "stop"

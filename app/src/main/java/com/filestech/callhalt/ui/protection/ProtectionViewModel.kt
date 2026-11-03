@@ -33,14 +33,28 @@ data class ProtectionState(
     /** The first problem only, as the activation asks for one access at a time: the accesses before the storage. */
     val status: ProtectionStatus = when {
         !phoneCanProtect -> ProtectionStatus.UNSUPPORTED
-        missing.isNotEmpty() -> ProtectionStatus.OFF
-        storageFailing -> ProtectionStatus.WEAKENED
+        missing.any { it != Access.ALERTS } -> ProtectionStatus.OFF
+        Access.ALERTS in missing -> ProtectionStatus.NO_ALERT
+        storageFailing -> ProtectionStatus.STORAGE_FAILING
         else -> ProtectionStatus.ON
     }
 }
 
 /** What the home screen says of the protection. */
-enum class ProtectionStatus { ON, WEAKENED, OFF, UNSUPPORTED }
+enum class ProtectionStatus {
+    ON,
+
+    /**
+     * Weakened: only the STOP screen's fallback is missing (D-024). The screen still shows on most phones, so not "off"
+     * (Patrice, 2026-11-03: "ok pour B"); but where the phone blocks it, the user would be told nothing.
+     */
+    NO_ALERT,
+
+    /** Weakened: storage fails (P-10). */
+    STORAGE_FAILING,
+    OFF,
+    UNSUPPORTED,
+}
 
 /**
  * The accesses are read again by [refresh], each time a screen comes back to the front: the user grants them in the

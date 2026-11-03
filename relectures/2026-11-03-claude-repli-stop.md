@@ -20,5 +20,15 @@
 | R-07 | Faible : publique sur l'écran verrouillé, elle dit « code reçu » ou « demande de la banque » ; la politique disait « rien de personnel » | réel | **texte corrigé** : ni le numéro, ni le code, ni la banque — l'écran STOP, au-dessus de l'écran verrouillé, en dit autant |
 | — | Mise à jour d'une notification affichée : le plein écran se relance-t-il ? | à mesurer | sans effet visible (`singleTask`, même écran) |
 
+## Après la relecture, mesuré sur le S24 FE
+
+Un trou que ni la relecture ni l'émulateur n'avaient vu : **téléphone à l'oreille**, l'écran est éteint par le capteur
+de proximité mais le téléphone n'est ni endormi ni verrouillé ; Android n'ouvre pas le plein écran et n'affiche pas la
+bannière (« NO_FSI_NO_HUN_OR_KEYGUARD »). Corrigé : postée écran éteint, la notification est reposée quand l'écran se
+rallume (`StopNotifier.alertAgainWhenScreenOn`, un `DisplayListener` sur le fil principal, retiré à l'écran rallumé, à
+la notification retirée, ou à un nouvel envoi). Mesuré avec Patrice : la bannière paraît quand on éloigne le téléphone.
+Relu par Claude (session principale) : pas de fuite du listener, pas de nouvel envoi si la notification n'est plus là.
+Et la décision R-05 : B (« Protection affaiblie »), Patrice.
+
 **Bilan** : aucun constat de sécurité ; 3 moyens et 2 faibles corrigés (dont 4 mesurés sur l'émulateur), 1 décision posée
 à Patrice, 1 faible laissé avec sa raison.
