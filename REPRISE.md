@@ -21,7 +21,9 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
   **Samsung ne bloque rien** (ni « Vue en premier plan », ni l'accès aux notifications), contrairement à l'émulateur
   Android 16 ; moins d'une minute jusqu'à « en marche ». Le S9 (Android 10) : parcours complet aussi.
 - **Vrai appel (messagerie 123) et code envoyé à soi-même** : STOP 27 ms après la notification de SMS Tech,
-  « Raccrocher » coupe l'appel.
+  « Raccrocher » coupe l'appel. **Téléphone à l'oreille** (écran éteint par le capteur de proximité) : une demande
+  Sécur'Pass factice → STOP 35 ms après, devant l'écran d'appel ; le téléphone éloigné, il est là ; « Raccrocher » OK.
+- **Décidé (Patrice, « ok pour tout »)** : « Raccrocher et appeler ma banque » reste proposé pour tous les déclencheurs.
 - **Un vrai défaut trouvé dans le journal, corrigé** : l'appli ne voyait pas l'appli SMS par défaut (« aucune » pendant
   5 min), faute de `<queries>` ; le code n'était lu que parce qu'Android montre à l'écouteur l'appli de chaque
   notification. La requête que nomme la documentation d'Android (`SMS_DELIVER`) ne marche pas (diffusion protégée,
@@ -37,12 +39,10 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
   protection est **désactivée** » (au lieu de « ne fonctionne pas ») ; les 5 langues en miroir.
 - **Question de Patrice** : « Raccrocher et appeler ma banque » s'affiche même quand on n'est pas au téléphone avec sa
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
-  (WhatsApp…) rend le bouton inutile mais pas nuisible. **Recommandation de Claude : le garder ; à trancher par
-  Patrice** (le réserver aux demandes Sécur'Pass est possible).
+  (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
 **Prochaine étape** : P-21 côté code (la veille de Samsung reconnue et expliquée, l'étape « jamais mise en veille »,
-l'écouteur relié ou non sur l'accueil) ; puis la panne du stockage (P-10) et le repli par notification (P-19). À mesurer
-avec Patrice : le STOP quand le téléphone est **à l'oreille** pendant l'appel (écran éteint par le capteur de proximité).
+l'écouteur relié ou non sur l'accueil) ; puis la panne du stockage (P-10) et le repli par notification (P-19).
 
 ## Le 2026-11-02
 

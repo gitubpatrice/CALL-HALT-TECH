@@ -200,7 +200,10 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   journal : STOP puis réponse. ✅ **Et sur Android 11 (émulateur API 30, le plus proche du plancher ; le S9 n'a
   pas de SIM)** : devant l'appli au premier plan ; lancé écran éteint, présent au réveil ; **écran verrouillé
   par code PIN : le STOP passe devant le verrou**, « Raccrocher » coupe l'appel sans déverrouiller, puis le
-  verrou revient. Reste Android 10 lui-même, sur un téléphone avec SIM.
+  verrou revient. ✅ **Téléphone à l'oreille, S24 FE, le 2026-11-03** (vrai appel, la messagerie ; écran éteint par le
+  capteur de proximité) : une demande Sécur'Pass factice, reçue par l'écouteur, démarre le STOP 35 ms plus tard ; il
+  prend le premier plan devant l'écran d'appel de Samsung, écran toujours éteint ; le téléphone éloigné, il est là ;
+  « Raccrocher » coupe l'appel. Reste Android 10 lui-même, sur un téléphone avec SIM.
 - **P-2** — Les demandes de validation des applis bancaires françaises sont-elles lisibles ? Le S9 n'est
   pas rooté (mesuré le 2026-11-01), mais son chargeur d'amorçage est déverrouillé, ce que certaines
   banques refusent : essayer d'abord sur le S9. Si la banque refuse, le S24 FE, **à la décision de Patrice**.
