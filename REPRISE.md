@@ -43,7 +43,16 @@ Android 10, appli installée depuis un fichier, sans SIM : appel simulé par la 
 « Afficher les fenêtres pop-up pendant que vous parcourez en arrière-plan » est **autorisé d'office** — l'écran STOP
 passe ; **refusé par Patrice**, MIUI bloque l'écran STOP, la notification s'affiche en haut de l'écran, un toucher
 ouvre le STOP ; écran éteint, la notification plein écran crée l'écran STOP derrière l'écran éteint (MIUI ne le
-rallume pas), il est là dès qu'on rallume. **À regarder** : le « Démarrage automatique », refusé d'office par MIUI.
+rallume pas), il est là dès qu'on rallume.
+
+**🔴 Puis, sur ce Redmi, un trou de la protection trouvé et fermé (D-025, Patrice : « fais tout maintenant »)** : le
+« Démarrage automatique » de MIUI, refusé d'office ; une fois l'appli arrêtée, MIUI refuse de relier l'écouteur, même
+l'appli rouverte, et l'accueil disait « Protection activée » — sourde en fait. **Construit** : l'appli sait si son
+écouteur est vraiment relié, **se répare elle-même** à l'ouverture (mesuré sur le Redmi : reliée 1,3 s après, avant que
+Patrice touche au réglage), et l'accueil dit « Protection désactivée » si la réparation échoue ; sur les Xiaomi, une
+**étape « Démarrage automatique »**, qui ouvre la page de MIUI (mesuré : refusé → l'étape, autorisé par Patrice →
+« Autorisé », 6 accès). Ailleurs, l'étape n'existe pas (S24 : 5 accès, mesuré). Relecture :
+`relectures/2026-11-03-claude-ecouteur.md`.
 
 **Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
@@ -83,9 +92,9 @@ rallume pas), il est là dès qu'on rallume. **À regarder** : le « Démarrage 
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
   (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
-**Prochaine étape** (P-10 et P-19 faits et mesurés l'après-midi, ci-dessus) : de P-21,
-l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
-plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
+**Prochaine étape** (P-10, P-19 et D-025 faits et mesurés l'après-midi, ci-dessus) : la liste « avant toute
+publication » ci-dessous (P-11, P-13, Android 15, HyperOS…). À observer sur plusieurs jours sur le S24 : l'appli en
+« Non restreinte » n'est jamais mise en veille.
 
 **État des téléphones à la pause** : S24 FE = version de test de `4dc03b3` (installée par adb), les 4 accès accordés,
 « Non restreinte », seul le vrai écouteur actif (celui de mesure coupé), `POST_NOTIFICATIONS` accordée pour la demande
@@ -136,7 +145,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-13 (horloge monotone), le « Démarrage automatique » de MIUI (le repli, D-024, est mesuré sur Samsung et Xiaomi), P-11 (élaguer le journal),
+**Avant toute publication** : P-13 (horloge monotone), HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -175,7 +184,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 302 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 304 tests sur ordinateur, 23 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -247,7 +256,7 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid
   oui ; DataStore 1.3.0 fusionné, AGP 9.5.0 reporté à la prochaine montée de tout le portefeuille.
 - ~~Un Xiaomi, à emprunter~~ — **fait le 2026-11-03** : Patrice a branché un Redmi 9C (MIUI 12, Android 10, sans SIM) ;
-  mesures dans D-024 et P-21. Reste, sur ce Redmi : l'effet du « Démarrage automatique », refusé d'office par MIUI.
+  mesures dans D-024, D-025 et P-21 (le « Démarrage automatique » de MIUI, trouvé et traité le même jour).
 - Facultatif : la recherche de marque sur TMview (Union européenne) ; la calibration de GPT Luna
   (moins de 0,10 $) pour savoir s'il trouve autant que Sol.
 

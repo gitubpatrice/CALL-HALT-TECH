@@ -37,7 +37,9 @@ change that adds it to the app, and the build checks the app asks for nothing el
   Android 13, the phone asks for your consent; you can take it back in the app's notification settings.
 
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
-installed on this phone — by a store, or from a file. It keeps nothing of it.
+installed on this phone — by a store, or from a file. It keeps nothing of it. On a Xiaomi phone, it reads in the same
+way whether the phone lets it "start automatically", to ask for that setting only if it is missing; and it knows whether
+its own notification access is at work, to say so on the home screen.
 
 The manifest also carries a line Android's own library adds for the app's internal use
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`); it gives no access to anything.

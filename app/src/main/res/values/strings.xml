@@ -32,6 +32,7 @@
     <string name="home_weakened">Protection weakened</string>
     <string name="home_weakened_detail">The app can no longer save what it sees. It still protects you, but if the phone stops it during a call, it will no longer know you were on the phone. The phone may be full: free up some space, then come back here. If it has some, restart it.</string>
     <string name="home_weakened_alerts">If the phone prevents the STOP screen from showing, the app will not be able to warn you.</string>
+    <string name="home_not_listening">The app no longer receives the notifications — the phone has probably stopped it: it does not see your bank\'s requests or the codes you receive. If this message stays, open the settings, turn the access of Call Halt Tech off, then on again.</string>
     <string name="home_open_storage">Open the phone\'s storage</string>
     <!-- An "Android Go" phone (low memory) grants no app the display over the others (AccessChecker.phoneCanProtect). -->
     <string name="home_unsupported">This phone cannot run the protection: on it, Android lets no app show in front of the others (an “Android Go” phone).</string>
@@ -46,6 +47,7 @@
     <string name="access_calls_title">When you are on the phone</string>
     <string name="access_screen_title">The STOP screen in front of other apps</string>
     <string name="access_background_title">Active even when you do not open it</string>
+    <string name="access_autostart_title">Autostart</string>
     <string name="access_notifications_title">Your bank\'s requests and the codes you receive</string>
     <string name="access_alerts_title">Alert if the STOP screen is blocked</string>
     <string name="access_granted">Allowed</string>
@@ -67,6 +69,8 @@
     <string name="access_background_why">So that the phone does not put the app to sleep. A protection app is hardly ever opened, and the phone puts the apps nobody opens to sleep: asleep, it sees nothing. It uses hardly any battery: it acts only when a call or a notification comes.</string>
     <string name="access_background_how">The phone will ask whether the app may always run in the background, or to stop optimising its battery: accept, with “Allow” or “OK” depending on the phone.</string>
     <string name="access_background_refused">If the phone did not ask, or if you refused: touch “Open the settings”, then the battery, and choose “Unrestricted”.</string>
+    <string name="access_autostart_why">Xiaomi phones often stop apps, then keep them from starting again: the app would no longer see your bank\'s requests or the codes you receive.</string>
+    <string name="access_autostart_how">The phone opens its list of the apps allowed to start by themselves (“Autostart”): turn on the switch of Call Halt Tech, then come back here.</string>
     <string name="access_notifications_why">So that the app sees when your bank asks you to approve a transaction, and when a code arrives by text message. Of each notification, it reads which app sent it and its kind; of your text-message app\'s, the last message as well, without keeping or sending it.</string>
     <string name="access_notifications_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the access on, confirm, then come back here.</string>
     <!-- D-024: the STOP screen's fallback notification. Android 13+ asks "Allow app to send you notifications?" (Allow);

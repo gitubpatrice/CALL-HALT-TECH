@@ -7,7 +7,10 @@ import com.filestech.callhalt.data.store.RoomDetectorStore
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessChecker
+import com.filestech.callhalt.platform.notification.ListenerConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 /** What the home and activation screens show (docs/ARCHITECTURE.md, D-022). */
 data class ProtectionState(
@@ -26,14 +30,22 @@ data class ProtectionState(
     val phoneCanProtect: Boolean = true,
     /** [RoomDetectorStore.failing]: the protection still decides, but forgets the call if the phone stops the app (P-10). */
     val storageFailing: Boolean = false,
+    /** [AccessChecker.applicable]: the accesses this phone has, in the activation's order. */
+    val applicable: List<Access> = Access.entries,
+    /**
+     * False once the notification access is granted but the system keeps its listener unbound, and asking it to bind
+     * again did not help ([ListenerConnection], P-21, D-025): the protection is deaf, the access still granted.
+     */
+    val listening: Boolean = true,
 ) {
     /** In the order the activation asks for them. */
-    val missing: List<Access> = Access.entries.filterNot { it in granted }
+    val missing: List<Access> = applicable.filterNot { it in granted }
 
     /** The first problem only, as the activation asks for one access at a time: the accesses before the storage. */
     val status: ProtectionStatus = when {
         !phoneCanProtect -> ProtectionStatus.UNSUPPORTED
         missing.any { it != Access.ALERTS } -> ProtectionStatus.OFF
+        !listening -> ProtectionStatus.NOT_LISTENING
         Access.ALERTS in missing -> ProtectionStatus.NO_ALERT
         storageFailing -> ProtectionStatus.STORAGE_FAILING
         else -> ProtectionStatus.ON
@@ -52,43 +64,96 @@ enum class ProtectionStatus {
 
     /** Weakened: storage fails (P-10). */
     STORAGE_FAILING,
+
+    /** Off in fact: every access granted, but the phone keeps the listener unbound (D-025). */
+    NOT_LISTENING,
     OFF,
     UNSUPPORTED,
 }
 
 /**
  * The accesses are read again by [refresh], each time a screen comes back to the front: the user grants them in the
- * phone's settings, and can take them back there at any time. Storage is tried again at the same moment.
+ * phone's settings, and can take them back there at any time. Storage is tried again at the same moment, and the
+ * listener checked.
  */
 @HiltViewModel
 class ProtectionViewModel @Inject constructor(
     private val accesses: AccessChecker,
     private val store: RoomDetectorStore,
+    private val listener: ListenerConnection,
     settings: SettingsRepository,
 ) : ViewModel() {
 
-    private val granted = MutableStateFlow(accesses.granted())
+    private val read = MutableStateFlow(readAccesses())
     private val mayBeRestricted = Access.entries.filterTo(mutableSetOf(), accesses::mayBeRestricted)
     private val phoneCanProtect = accesses.phoneCanProtect()
 
-    val state: StateFlow<ProtectionState> = combine(granted, settings.settings, store.failing) { granted, current, failing ->
-        state(granted, current.afterCallWindow.toMinutes(), failing)
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-        state(granted.value, ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.toMinutes(), store.failing.value),
-    )
+    /** True once the listener was found unbound, asked to bind, and still unbound ([checkListener]). */
+    private val unbound = MutableStateFlow(false)
+    private var listenerCheck: Job? = null
+
+    val state: StateFlow<ProtectionState> =
+        combine(read, settings.settings, store.failing, listener.connected, unbound) { now, current, failing, bound, gaveUp ->
+            state(now, current.afterCallWindow.toMinutes(), failing, listening = bound || !gaveUp)
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            state(read.value, ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.toMinutes(), store.failing.value, listening = true),
+        )
 
     fun refresh() {
-        granted.value = accesses.granted()
+        read.value = readAccesses()
         viewModelScope.launch { store.check() }
+        checkListener()
     }
 
-    private fun state(granted: Set<Access>, afterCallMinutes: Long, storageFailing: Boolean) =
-        ProtectionState(granted, mayBeRestricted, afterCallMinutes, phoneCanProtect, storageFailing)
+    /** The screen left the front: the listener is asked to bind only while the app is in front, where MIUI allows it. */
+    fun leave() {
+        listenerCheck?.cancel()
+    }
+
+    /**
+     * Just after the app starts, the system may not have bound the listener yet: unbound after [LISTENER_GRACE], it is
+     * asked to bind again, which works with the app in front (measured on the Redmi 9C); still unbound after as long, the
+     * home screen says it. What was found last stays said until the listener is bound — not "on" again for the time of
+     * a check (review of 2026-11-03, 2). Nothing is said while the access is not granted: the activation asks for it.
+     */
+    private fun checkListener() {
+        listenerCheck?.cancel()
+        if (Access.NOTIFICATIONS !in read.value.granted || listener.connected.value) {
+            unbound.value = false
+            return
+        }
+        listenerCheck = viewModelScope.launch {
+            delay(LISTENER_GRACE)
+            if (listener.connected.value) return@launch
+            listener.rebind()
+            delay(LISTENER_GRACE)
+            unbound.value = !listener.connected.value
+        }
+    }
+
+    private fun readAccesses() = Accesses(accesses.granted(), accesses.applicable())
+
+    private fun state(read: Accesses, afterCallMinutes: Long, storageFailing: Boolean, listening: Boolean) =
+        ProtectionState(
+            read.granted,
+            mayBeRestricted,
+            afterCallMinutes,
+            phoneCanProtect,
+            storageFailing,
+            read.applicable,
+            listening,
+        )
+
+    /** Read together: [AccessChecker.applicable] can change with the phone's settings too. */
+    private data class Accesses(val granted: Set<Access>, val applicable: List<Access>)
 
     private companion object {
         /** A rotation keeps the subscription. */
         const val STOP_TIMEOUT_MILLIS = 5_000L
+
+        /** The system binds a listener in well under a second when it may (measured: Android 16, S24 FE, Redmi 9C). */
+        val LISTENER_GRACE = 3.seconds
     }
 }

@@ -35,6 +35,9 @@ object AccessSettings {
     fun background(context: Context): List<Intent> =
         listOf(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, packageUri(context))) + fallbacks(context)
 
+    /** Xiaomi's list of the apps allowed to start by themselves (D-025): the app is in it, its switch off. */
+    fun autostart(context: Context): List<Intent> = listOf(Miui.autostartPage) + fallbacks(context)
+
     /** From Android 11, the app's own page; before, the list of the apps that asked. */
     fun notifications(context: Context): List<Intent> = buildList {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

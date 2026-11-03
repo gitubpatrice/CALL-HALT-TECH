@@ -32,7 +32,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.filestech.callhalt.R
-import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessSettings
 import com.filestech.callhalt.ui.protection.ProtectionState
 import com.filestech.callhalt.ui.protection.ProtectionStatus
@@ -50,6 +49,7 @@ import com.filestech.callhalt.ui.theme.brandButtonColors
 fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: ProtectionViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { viewModel.leave() }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -95,7 +95,7 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                     when (state.status) {
                         ProtectionStatus.ON -> R.string.home_on
                         ProtectionStatus.NO_ALERT, ProtectionStatus.STORAGE_FAILING -> R.string.home_weakened
-                        ProtectionStatus.OFF, ProtectionStatus.UNSUPPORTED -> R.string.home_off
+                        ProtectionStatus.OFF, ProtectionStatus.NOT_LISTENING, ProtectionStatus.UNSUPPORTED -> R.string.home_off
                     },
                 ),
                 style = MaterialTheme.typography.titleLarge,
@@ -110,6 +110,14 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                 ProtectionStatus.NO_ALERT -> {
                     Text(text = stringResource(R.string.home_weakened_alerts), style = MaterialTheme.typography.bodyLarge)
                     CardButton(R.string.home_activate, onActivate)
+                }
+                // The app asked the phone to bind it again already: turning the access off and on is what is left.
+                ProtectionStatus.NOT_LISTENING -> {
+                    val context = LocalContext.current
+                    Text(text = stringResource(R.string.home_not_listening), style = MaterialTheme.typography.bodyLarge)
+                    CardButton(R.string.access_open_settings) {
+                        AccessSettings.open(context, AccessSettings.notifications(context))
+                    }
                 }
                 ProtectionStatus.STORAGE_FAILING -> {
                     val context = LocalContext.current
@@ -150,7 +158,7 @@ private fun watched(afterCallMinutes: Long): String = if (afterCallMinutes == 0L
 @Composable
 private fun AccessList(state: ProtectionState) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Access.entries.forEach { access ->
+        state.applicable.forEach { access ->
             val granted = access in state.granted
             Row(
                 modifier = Modifier
