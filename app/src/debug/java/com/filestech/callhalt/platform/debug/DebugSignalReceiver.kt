@@ -3,8 +3,14 @@ package com.filestech.callhalt.platform.debug
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.filestech.callhalt.domain.model.CallChannel
+import com.filestech.callhalt.domain.model.CallDirection
+import com.filestech.callhalt.domain.model.CallEnded
+import com.filestech.callhalt.domain.model.CallStarted
+import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.Signal
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.SensorQueue
 import com.filestech.callhalt.platform.queueAsync
@@ -22,6 +28,10 @@ import javax.inject.Provider
  *     adb shell am broadcast -a com.filestech.callhalt.debug.SIGNAL --es kind CODE_MESSAGE \
  *         -n com.filestech.callhalt.debug/com.filestech.callhalt.platform.debug.DebugSignalReceiver
  *
+ * `--es call START` (or `END`) in place of `kind`: the start or the end of a cellular call, for a phone with no SIM —
+ * the Redmi of 2026-11-03, where the STOP's fallback is measured (D-024, P-21). No real call: "Hang up" has nothing
+ * to end, and the STOP screen reads the phone's own state (no call going on).
+ *
  * Reserved to the shell by `android:permission="android.permission.DUMP"` (src/debug/AndroidManifest.xml), a
  * permission no ordinary app can hold.
  */
@@ -34,13 +44,20 @@ class DebugSignalReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != ACTION) return
-        val kind = SensitiveActionKind.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_KIND) } ?: return
-        val at = Instant.now()
-        queueAsync(queue, reason = "debug signal $kind") { processSignal.get()(SensitiveAction(at, kind, source = "adb")) }
+        val signal = signal(intent, Instant.now()) ?: return
+        queueAsync(queue, reason = "debug signal ${signal::class.simpleName}") { processSignal.get()(signal) }
+    }
+
+    private fun signal(intent: Intent, at: Instant): Signal? = when (intent.getStringExtra(EXTRA_CALL)) {
+        "START" -> CallStarted(at, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden)
+        "END" -> CallEnded(at, CallChannel.CELLULAR)
+        else -> SensitiveActionKind.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_KIND) }
+            ?.let { kind -> SensitiveAction(at, kind, source = "adb") }
     }
 
     private companion object {
         const val ACTION = "com.filestech.callhalt.debug.SIGNAL"
         const val EXTRA_KIND = "kind"
+        const val EXTRA_CALL = "call"
     }
 }
