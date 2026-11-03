@@ -75,6 +75,8 @@
         <intent>
             <action android:name="android.settings.INTERNAL_STORAGE_SETTINGS" />
         </intent>
+        <!-- Xiaomi's Security app, where its autostart is allowed (platform/access/Miui, D-025): a page, by its name. -->
+        <package android:name="com.miui.securitycenter" />
         <intent>
             <action android:name="android.settings.SETTINGS" />
         </intent>

@@ -57,12 +57,17 @@ import com.filestech.callhalt.ui.theme.brandButtonColors
 fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { viewModel.leave() }
 
     // Passed once refused: the notification access still comes next. Without it no bank request and no code is seen, and
-    // a phone may refuse its battery dialog for good (review of 2026-11-03, 1). The home screen still says it is
-    // missing, and the next activation asks for it again.
+    // a phone may refuse its battery dialog for good (review of 2026-11-03, 1) — or a Xiaomi read its autostart wrong
+    // (another MIUI, HyperOS: not measured; D-025 review, 3). The home screen still says it is missing, and the next
+    // activation asks for it again.
     var backgroundPassed by rememberSaveable { mutableStateOf(false) }
-    val access = state.missing.firstOrNull { it != Access.BACKGROUND || !backgroundPassed }
+    var autostartPassed by rememberSaveable { mutableStateOf(false) }
+    val access = state.missing.firstOrNull {
+        (it != Access.BACKGROUND || !backgroundPassed) && (it != Access.AUTOSTART || !autostartPassed)
+    }
     if (access == null) {
         LaunchedEffect(Unit) { onDone() }
         return
@@ -72,10 +77,17 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
     key(access) {
         AccessStep(
             access = access,
+            // Of the accesses this phone has: no step for what does not apply to it (D-025, Xiaomi's autostart).
+            step = state.applicable.indexOf(access) + 1,
+            steps = state.applicable.size,
             mayBeRestricted = access in state.mayBeRestricted,
             onAnswered = viewModel::refresh,
             onLater = onDone,
-            onPass = if (access == Access.BACKGROUND) ({ backgroundPassed = true }) else null,
+            onPass = when (access) {
+                Access.BACKGROUND -> ({ backgroundPassed = true })
+                Access.AUTOSTART -> ({ autostartPassed = true })
+                else -> null
+            },
         )
     }
 }
@@ -84,6 +96,8 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
 @Composable
 private fun AccessStep(
     access: Access,
+    step: Int,
+    steps: Int,
     mayBeRestricted: Boolean,
     onAnswered: () -> Unit,
     onLater: () -> Unit,
@@ -124,7 +138,7 @@ private fun AccessStep(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
-                    text = stringResource(R.string.activation_step, access.ordinal + 1, Access.entries.size),
+                    text = stringResource(R.string.activation_step, step, steps),
                     style = MaterialTheme.typography.labelLarge,
                 )
                 Text(
@@ -145,8 +159,8 @@ private fun AccessStep(
                         ask.launch(permissions)
                     } else {
                         // A dialog of the settings answers nothing back: back here with the access still missing, it
-                        // was refused, or never shown.
-                        if (phoneAsks) refused = true
+                        // was refused, or never shown. A step that can be passed is, once tried.
+                        if (phoneAsks || onPass != null) refused = true
                         AccessSettings.open(context, settingsPages(access, context))
                     }
                 },
@@ -212,6 +226,7 @@ private fun settingsPages(access: Access, context: Context): List<Intent> = when
     Access.CALLS -> AccessSettings.appInfo(context)
     Access.SCREEN -> AccessSettings.screen(context)
     Access.BACKGROUND -> AccessSettings.background(context)
+    Access.AUTOSTART -> AccessSettings.autostart(context)
     Access.NOTIFICATIONS -> AccessSettings.notifications(context)
     Access.ALERTS -> AccessSettings.alerts(context)
 }

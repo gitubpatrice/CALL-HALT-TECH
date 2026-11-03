@@ -7,7 +7,7 @@ import android.os.Build
 
 /**
  * What the protection needs from the phone, in the order the activation asks for it (docs/ARCHITECTURE.md, D-022,
- * D-023, D-024). Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a
+ * D-023, D-024, D-025). Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a
  * STOP that can show.
  */
 enum class Access {
@@ -25,6 +25,13 @@ enum class Access {
      * access back off until the app is out of it.
      */
     BACKGROUND,
+
+    /**
+     * Xiaomi only: MIUI's autostart ([Miui]). Refused, once MIUI stops the app it keeps the notification listener
+     * unbound — the protection deaf (measured on a Redmi 9C, D-025). After [BACKGROUND], as it: never stopped for good.
+     * On any other phone it does not apply ([AccessChecker.applies]).
+     */
+    AUTOSTART,
 
     /** The bank's requests and the codes received by SMS, seen in their notifications (D-019, D-021). */
     NOTIFICATIONS,
@@ -52,7 +59,7 @@ val CALL_PERMISSIONS = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.pe
 fun runtimePermissions(access: Access, sdk: Int = Build.VERSION.SDK_INT): Array<String>? = when (access) {
     Access.CALLS -> CALL_PERMISSIONS
     Access.ALERTS -> if (sdk >= Build.VERSION_CODES.TIRAMISU) arrayOf(Manifest.permission.POST_NOTIFICATIONS) else null
-    Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS -> null
+    Access.SCREEN, Access.BACKGROUND, Access.AUTOSTART, Access.NOTIFICATIONS -> null
 }
 
 /**
@@ -68,7 +75,7 @@ fun runtimePermissions(access: Access, sdk: Int = Build.VERSION.SDK_INT): Array<
 internal fun mayBeRestricted(access: Access, sdk: Int, packageSource: Int?): Boolean {
     if (packageSource == null || packageSource == PackageInstaller.PACKAGE_SOURCE_STORE) return false
     return when (access) {
-        Access.CALLS, Access.BACKGROUND, Access.ALERTS -> false
+        Access.CALLS, Access.BACKGROUND, Access.AUTOSTART, Access.ALERTS -> false
         Access.SCREEN -> sdk >= Build.VERSION_CODES.VANILLA_ICE_CREAM
         Access.NOTIFICATIONS -> sdk >= Build.VERSION_CODES.TIRAMISU
     }

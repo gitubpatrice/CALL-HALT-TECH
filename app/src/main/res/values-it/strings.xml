@@ -16,6 +16,7 @@
     <string name="home_weakened">Protezione indebolita</string>
     <string name="home_weakened_detail">L\'app non riesce più a salvare ciò che vede. La protegge ancora, ma se il telefono la chiude durante una chiamata, non saprà più che era al telefono. Forse il telefono è pieno: liberi un po\' di spazio, poi torni qui. Se lo spazio c\'è, lo riavvii.</string>
     <string name="home_weakened_alerts">Se il telefono impedisce alla schermata STOP di comparire, l\'app non potrà avvisarLa.</string>
+    <string name="home_not_listening">L\'app non riceve più le notifiche — probabilmente il telefono l\'ha chiusa: non vede le richieste della Sua banca né i codici ricevuti. Se questo messaggio resta, apra le impostazioni, disattivi l\'accesso di Call Halt Tech e poi lo riattivi.</string>
     <string name="home_open_storage">Aprire la memoria del telefono</string>
     <string name="home_unsupported">Questo telefono non consente la protezione: Android non vi lascia comparire nessuna app sopra le altre (un telefono «Android Go»).</string>
     <plurals name="home_missing">
@@ -30,6 +31,7 @@
     <string name="access_calls_title">Quando è al telefono</string>
     <string name="access_screen_title">La schermata STOP sopra le altre app</string>
     <string name="access_background_title">Attiva anche quando non la apre</string>
+    <string name="access_autostart_title">Avvio automatico</string>
     <string name="access_notifications_title">Richieste della Sua banca e codici ricevuti</string>
     <string name="access_alerts_title">Avviso se la schermata STOP è bloccata</string>
     <string name="access_granted">Consentito</string>
@@ -45,6 +47,8 @@
     <string name="access_background_why">Perché il telefono non metta l\'app in sospensione. Un\'app di protezione non si apre quasi mai, e il telefono sospende le app che nessuno apre: sospesa, non vede più nulla. Consuma pochissima batteria: agisce solo quando arriva una chiamata o una notifica.</string>
     <string name="access_background_how">Il telefono Le chiederà se l\'app può funzionare sempre in background, o di interrompere l\'ottimizzazione della batteria: accetti, con «Consenti» o «OK» a seconda del telefono.</string>
     <string name="access_background_refused">Se il telefono non ha chiesto nulla, o se ha rifiutato: tocchi «Aprire le impostazioni», poi la batteria, e scelga «Senza limitazioni».</string>
+    <string name="access_autostart_why">I telefoni Xiaomi chiudono spesso le app, poi impediscono loro di ripartire: l\'app non vedrebbe più le richieste della Sua banca né i codici ricevuti.</string>
+    <string name="access_autostart_how">Il telefono apre il suo elenco delle app che possono avviarsi da sole: attivi l\'interruttore di Call Halt Tech, poi torni qui.</string>
     <string name="access_notifications_why">Perché l\'app veda quando la Sua banca Le chiede di confermare un\'operazione, e quando arriva un codice via SMS. Di ogni notifica legge quale app la invia e di che tipo è; di quelle della Sua app SMS, anche l\'ultimo messaggio, senza conservarlo né inviarlo.</string>
     <string name="access_notifications_how">Il telefono apre le sue impostazioni. Se compare un elenco, tocchi «Call Halt Tech». Attivi l\'accesso, confermi, poi torni qui.</string>
     <string name="access_alerts_why">Alcuni telefoni impediscono alla schermata STOP di comparire. L\'app La avvisa allora con una notifica, che la apre. Non invia nessun\'altra notifica.</string>

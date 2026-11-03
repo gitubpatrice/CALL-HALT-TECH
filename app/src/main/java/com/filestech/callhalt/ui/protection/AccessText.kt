@@ -34,6 +34,7 @@ internal fun accessText(access: Access, phoneAsks: Boolean = true): AccessText =
         R.string.access_background_how,
         R.string.access_background_refused,
     )
+    Access.AUTOSTART -> AccessText(R.string.access_autostart_title, R.string.access_autostart_why, R.string.access_autostart_how)
     Access.NOTIFICATIONS ->
         AccessText(R.string.access_notifications_title, R.string.access_notifications_why, R.string.access_notifications_how)
     Access.ALERTS -> if (phoneAsks) {

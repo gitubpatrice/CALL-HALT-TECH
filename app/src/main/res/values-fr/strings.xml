@@ -15,6 +15,7 @@
     <string name="home_weakened">Protection affaiblie</string>
     <string name="home_weakened_detail">L\'appli n\'arrive plus à enregistrer ce qu\'elle voit. Elle vous protège encore, mais si le téléphone l\'arrête pendant un appel, elle ne saura plus que vous étiez au téléphone. Le téléphone est peut-être plein\u00A0: libérez de la place, puis revenez ici. S\'il en a, redémarrez-le.</string>
     <string name="home_weakened_alerts">Si le téléphone empêche l\'écran STOP de s\'afficher, l\'appli ne pourra pas vous prévenir.</string>
+    <string name="home_not_listening">L\'appli ne reçoit plus les notifications — le téléphone l\'a sans doute arrêtée : elle ne voit pas les demandes de votre banque ni les codes reçus. Si ce message reste, ouvrez les réglages, coupez l\'accès de Call Halt Tech puis rallumez-le.</string>
     <string name="home_open_storage">Ouvrir le stockage du téléphone</string>
     <string name="home_unsupported">Ce téléphone ne permet pas la protection : Android n\'y laisse aucune appli s\'afficher devant les autres (téléphone «\u00A0Android Go\u00A0»).</string>
     <plurals name="home_missing">
@@ -29,6 +30,7 @@
     <string name="access_calls_title">Quand vous êtes au téléphone</string>
     <string name="access_screen_title">L\'écran STOP devant les autres applis</string>
     <string name="access_background_title">Active même quand vous ne l\'ouvrez pas</string>
+    <string name="access_autostart_title">Démarrage automatique</string>
     <string name="access_notifications_title">Demandes de votre banque et codes reçus</string>
     <string name="access_alerts_title">Alerte si l\'écran STOP est bloqué</string>
     <string name="access_granted">Autorisé</string>
@@ -44,6 +46,8 @@
     <string name="access_background_why">Pour que le téléphone ne mette pas l\'appli en veille. Une appli de protection, on ne l\'ouvre presque jamais, et le téléphone endort les applis qu\'on n\'ouvre pas : endormie, elle ne voit plus rien. Elle ne consomme presque pas de batterie : elle n\'agit que quand un appel ou une notification arrive.</string>
     <string name="access_background_how">Le téléphone va vous demander si l\'appli peut toujours fonctionner en arrière-plan, ou d\'arrêter d\'optimiser sa batterie : acceptez, avec «\u00A0Autoriser\u00A0» ou «\u00A0OK\u00A0» selon le téléphone.</string>
     <string name="access_background_refused">Si le téléphone n\'a rien demandé, ou si vous avez refusé : touchez «\u00A0Ouvrir les réglages\u00A0», puis la batterie, et choisissez «\u00A0Sans restriction\u00A0» (sur un Samsung : «\u00A0Non restreinte\u00A0»).</string>
+    <string name="access_autostart_why">Les téléphones Xiaomi arrêtent souvent les applis, puis les empêchent de reprendre : l\'appli ne verrait plus les demandes de votre banque ni les codes reçus.</string>
+    <string name="access_autostart_how">Le téléphone ouvre sa liste «\u00A0Démarrage automatique en arrière-plan\u00A0» : activez l\'interrupteur de Call Halt Tech, puis revenez ici.</string>
     <string name="access_notifications_why">Pour que l\'appli voie quand votre banque vous demande de valider une opération, et quand un code arrive par SMS. De chaque notification, elle lit l\'appli qui l\'envoie et son type ; de celles de votre appli SMS, aussi le dernier message, sans le garder ni l\'envoyer.</string>
     <string name="access_notifications_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'accès, confirmez, puis revenez ici.</string>
     <string name="access_alerts_why">Certains téléphones empêchent l\'écran STOP de s\'afficher. L\'appli vous prévient alors par une notification, qui l\'ouvre. Elle n\'envoie aucune autre notification.</string>

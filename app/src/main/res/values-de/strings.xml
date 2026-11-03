@@ -14,6 +14,7 @@
     <string name="home_weakened">Schutz geschwächt</string>
     <string name="home_weakened_detail">Die App kann nicht mehr speichern, was sie sieht. Sie schützt Sie weiterhin, aber wenn das Telefon sie während eines Anrufs beendet, weiß sie nicht mehr, dass Sie telefonieren. Vielleicht ist das Telefon voll: Geben Sie Speicherplatz frei und kommen Sie dann hierher zurück. Hat es genug Platz, starten Sie es neu.</string>
     <string name="home_weakened_alerts">Wenn das Telefon verhindert, dass der STOP-Bildschirm erscheint, kann die App Sie nicht warnen.</string>
+    <string name="home_not_listening">Die App empfängt keine Benachrichtigungen mehr — das Telefon hat sie wohl beendet: Sie sieht die Anfragen Ihrer Bank und die erhaltenen Codes nicht. Wenn diese Meldung bleibt, öffnen Sie die Einstellungen, schalten Sie den Zugriff von Call Halt Tech aus und wieder ein.</string>
     <string name="home_open_storage">Speicher des Telefons öffnen</string>
     <string name="home_unsupported">Dieses Telefon erlaubt den Schutz nicht: Android lässt dort keine App vor anderen erscheinen (ein „Android Go“-Telefon).</string>
     <plurals name="home_missing">
@@ -27,6 +28,7 @@
     <string name="access_calls_title">Wenn Sie telefonieren</string>
     <string name="access_screen_title">Der STOP-Bildschirm vor anderen Apps</string>
     <string name="access_background_title">Aktiv, auch wenn Sie die App nicht öffnen</string>
+    <string name="access_autostart_title">Autostart</string>
     <string name="access_notifications_title">Anfragen Ihrer Bank und erhaltene Codes</string>
     <string name="access_alerts_title">Warnung, wenn der STOP-Bildschirm blockiert ist</string>
     <string name="access_granted">Erlaubt</string>
@@ -42,6 +44,8 @@
     <string name="access_background_why">Damit das Telefon die App nicht in den Ruhezustand versetzt. Eine Schutz-App öffnet man fast nie, und das Telefon versetzt Apps, die niemand öffnet, in den Ruhezustand: Dann sieht sie nichts mehr. Sie verbraucht kaum Akku: Sie wird nur tätig, wenn ein Anruf oder eine Benachrichtigung kommt.</string>
     <string name="access_background_how">Das Telefon wird fragen, ob die App immer im Hintergrund laufen darf oder ob die Akkuoptimierung beendet werden soll: Stimmen Sie zu, je nach Telefon mit „Zulassen“ oder „OK“.</string>
     <string name="access_background_refused">Wenn das Telefon nicht gefragt hat oder Sie abgelehnt haben: Tippen Sie auf „Einstellungen öffnen“, dann auf den Akku, und wählen Sie „Uneingeschränkt“.</string>
+    <string name="access_autostart_why">Xiaomi-Telefone beenden Apps oft und hindern sie dann daran, wieder zu starten: Die App sähe die Anfragen Ihrer Bank und die erhaltenen Codes nicht mehr.</string>
+    <string name="access_autostart_how">Das Telefon öffnet seine Liste der Apps, die von selbst starten dürfen: Schalten Sie den Schalter von Call Halt Tech ein und kehren Sie dann hierher zurück.</string>
     <string name="access_notifications_why">Damit die App sieht, wenn Ihre Bank Sie bittet, einen Auftrag freizugeben, und wenn ein Code per SMS ankommt. Von jeder Benachrichtigung liest sie, welche App sie sendet und welcher Art sie ist; von denen Ihrer SMS-App auch die letzte Nachricht, ohne sie zu speichern oder zu versenden.</string>
     <string name="access_notifications_how">Das Telefon öffnet seine Einstellungen. Wenn eine Liste erscheint, tippen Sie auf „Call Halt Tech“. Schalten Sie den Zugriff ein, bestätigen Sie und kehren Sie dann hierher zurück.</string>
     <string name="access_alerts_why">Manche Telefone verhindern, dass der STOP-Bildschirm erscheint. Die App warnt Sie dann mit einer Benachrichtigung, die ihn öffnet. Sie sendet keine andere Benachrichtigung.</string>

@@ -55,6 +55,41 @@ class ProtectionStateTest {
         assertThat(state(granted = allButAlerts - Access.CALLS).status).isEqualTo(ProtectionStatus.OFF)
     }
 
-    private fun state(granted: Set<Access>, storageFailing: Boolean = false, phoneCanProtect: Boolean = true) =
-        ProtectionState(granted, mayBeRestricted = emptySet(), afterCallMinutes = 15, phoneCanProtect, storageFailing)
+    /** D-025: on a Xiaomi, MIUI's autostart comes with the battery, before the notification access. */
+    @Test
+    fun `on a Xiaomi the autostart comes after the battery`() {
+        val xiaomi = state(granted = emptySet(), applicable = Access.entries)
+        assertThat(xiaomi.missing).containsExactlyElementsIn(Access.entries).inOrder()
+        assertThat(Access.entries.indexOf(Access.AUTOSTART)).isEqualTo(Access.entries.indexOf(Access.BACKGROUND) + 1)
+        // Elsewhere it does not apply: never missing, whatever the phone answers for it.
+        assertThat(state(granted = Access.entries.toSet() - Access.AUTOSTART).status).isEqualTo(ProtectionStatus.ON)
+    }
+
+    /**
+     * D-025: every access granted but the listener kept unbound (MIUI, measured) is "off", not "on" — and said after the
+     * accesses still missing, before what only weakens the protection.
+     */
+    @Test
+    fun `a listener kept unbound turns the protection off in fact`() {
+        val all = Access.entries.toSet()
+        assertThat(state(granted = all, listening = false).status).isEqualTo(ProtectionStatus.NOT_LISTENING)
+        assertThat(state(granted = all - Access.ALERTS, listening = false).status).isEqualTo(ProtectionStatus.NOT_LISTENING)
+        assertThat(state(granted = all - Access.CALLS, listening = false).status).isEqualTo(ProtectionStatus.OFF)
+    }
+
+    private fun state(
+        granted: Set<Access>,
+        storageFailing: Boolean = false,
+        phoneCanProtect: Boolean = true,
+        applicable: List<Access> = Access.entries - Access.AUTOSTART,
+        listening: Boolean = true,
+    ) = ProtectionState(
+        granted,
+        mayBeRestricted = emptySet(),
+        afterCallMinutes = 15,
+        phoneCanProtect,
+        storageFailing,
+        applicable,
+        listening,
+    )
 }

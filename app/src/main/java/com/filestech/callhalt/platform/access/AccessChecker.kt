@@ -21,6 +21,9 @@ import javax.inject.Singleton
 interface AccessChecker {
     fun granted(): Set<Access>
 
+    /** The accesses this phone has, in [Access]'s order: [Access.AUTOSTART] on a Xiaomi only. */
+    fun applicable(): List<Access>
+
     /** See [mayBeRestricted]. */
     fun mayBeRestricted(access: Access): Boolean
 
@@ -40,6 +43,11 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
 
     override fun granted(): Set<Access> = Access.entries.filterTo(mutableSetOf(), ::isGranted)
 
+    override fun applicable(): List<Access> {
+        val xiaomi = Miui.autostartAllowed(context) != null
+        return Access.entries.filter { it != Access.AUTOSTART || xiaomi }
+    }
+
     override fun mayBeRestricted(access: Access): Boolean = mayBeRestricted(access, Build.VERSION.SDK_INT, packageSource)
 
     override fun phoneCanProtect(): Boolean =
@@ -53,6 +61,7 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
         // "Unrestricted" in the app's battery page: the same list the phone's dialog writes to (measured on the S24 FE).
         Access.BACKGROUND -> context.getSystemService(PowerManager::class.java)
             ?.isIgnoringBatteryOptimizations(context.packageName) == true
+        Access.AUTOSTART -> Miui.autostartAllowed(context) == true
         // The component, not the package: the test version has a second listener, for measurements.
         Access.NOTIFICATIONS -> context.getSystemService(NotificationManager::class.java)
             ?.isNotificationListenerAccessGranted(ComponentName(context, NotificationListener::class.java)) == true

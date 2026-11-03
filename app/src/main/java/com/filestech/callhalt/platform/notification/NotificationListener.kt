@@ -47,6 +47,9 @@ class NotificationListener : NotificationListenerService() {
     /** Resolved in the queue, never at injection time: it reaches the database (Agenda Tech, audit F2). */
     @Inject lateinit var processSignal: Provider<ProcessSignalUseCase>
 
+    /** Bound or not: the home screen says it (P-21, D-025). */
+    @Inject lateinit var connection: ListenerConnection
+
     // All of what follows is touched on the main thread only, where the callbacks come.
     private var smsApp: String? = null
     private var smsAppReadAt: Long? = null
@@ -56,6 +59,12 @@ class NotificationListener : NotificationListenerService() {
     override fun onListenerConnected() {
         // Debug builds only (no tree in release): for the measurements, when the system binds the listener.
         Timber.d("Notification listener connected")
+        connection.connected(true)
+    }
+
+    override fun onListenerDisconnected() {
+        Timber.d("Notification listener disconnected")
+        connection.connected(false)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
