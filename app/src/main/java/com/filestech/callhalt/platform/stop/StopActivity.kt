@@ -52,6 +52,8 @@ class StopActivity : ComponentActivity() {
 
     @Inject lateinit var callEvents: CallEvents
 
+    @Inject lateinit var notifier: StopNotifier
+
     private var session by mutableStateOf<StopSession?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +77,9 @@ class StopActivity : ComponentActivity() {
             return
         }
         session = created
-        // Created: Android let the start through (StopDisplay).
+        // Created: Android let the start through (StopDisplay), or the notification opened it — which it replaces.
         display.shown(created.current.id)
+        notifier.cancel()
         // For the screen's whole life, not only while in front: an end missed while it was hidden would leave it
         // offering to cut the next call.
         lifecycleScope.launch {
@@ -109,6 +112,7 @@ class StopActivity : ComponentActivity() {
         StopRequest.readFrom(intent)?.let { next ->
             session = session?.replacedBy(next) ?: StopSession.of(next)
             display.shown(next.id)
+            notifier.cancel()
         }
     }
 

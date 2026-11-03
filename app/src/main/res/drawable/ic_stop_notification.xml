@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The STOP screen's notification (platform/stop/StopNotifier): a stop sign, one colour, as Android draws these icons. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M7.5,2L16.5,2L22,7.5L22,16.5L16.5,22L7.5,22L2,16.5L2,7.5Z M6,10.5L18,10.5L18,13.5L6,13.5Z" />
+</vector>

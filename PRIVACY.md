@@ -29,6 +29,12 @@ change that adds it to the app, and the build checks the app asks for nothing el
   validation code ("Votre code de validation est …"); the text is forgotten at once, never stored, never sent.
   Of every other app's notifications, it reads neither the title nor the text. The activation screen opens the
   phone's settings page for it: only you can grant it.
+- **Notifications** (`POST_NOTIFICATIONS`, and `USE_FULL_SCREEN_INTENT`): if the phone prevents the STOP screen from
+  showing, the app warns you with a notification that opens it; on a locked phone or a sleeping screen, it opens it at
+  once, as long as the phone lets it (an Android setting, "full-screen notifications", can take that back). It is the
+  only notification the app sends. It says what just happened (a code received, a request from your bank) — the STOP
+  screen says it too, over the lock screen — but neither the number calling, nor the code, nor your bank's name. From
+  Android 13, the phone asks for your consent; you can take it back in the app's notification settings.
 
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
 installed on this phone — by a store, or from a file. It keeps nothing of it.

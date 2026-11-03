@@ -18,27 +18,36 @@ fun interface StopLauncher {
 /**
  * Starts [StopActivity] from the background — allowed to an app holding "display over other apps"
  * (SYSTEM_ALERT_WINDOW, docs/ARCHITECTURE.md, D-006) — then waits for the screen to say it is in front. An
- * activity, never an overlay window: a banking app hides overlays.
+ * activity, never an overlay window: a banking app hides overlays. Blocked by the phone (Xiaomi's "pop-up windows
+ * in the background", P-21, or the access taken back), the notification that opens it ([StopNotifier], D-024):
+ * the user is told, which is what "shown" means here.
  */
 @Singleton
 class ActivityStopLauncher @Inject constructor(
     @ApplicationContext private val context: Context,
     private val display: StopDisplay,
+    private val notifier: StopNotifier,
 ) : StopLauncher {
 
     override suspend fun show(stop: Decision.ShowStop): Boolean {
         val request = StopRequest(display.nextId(), stop.trigger, stop.call.isActive, stop.call.channel)
-        val intent = request.writeTo(Intent(context, StopActivity::class.java))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        try {
-            context.startActivity(intent)
-        } catch (failure: ActivityNotFoundException) {
-            Timber.w(failure, "STOP screen not started")
-            return false
-        }
-        return display.awaitShown(request.id, SHOW_TIMEOUT).also { shown ->
-            if (!shown) Timber.w("STOP screen not in front after %s: blocked by the system?", SHOW_TIMEOUT)
-        }
+        if (started(request) && display.awaitShown(request.id, SHOW_TIMEOUT)) return true
+        Timber.w("STOP screen not in front after %s: blocked by the system? The notification instead", SHOW_TIMEOUT)
+        val posted = notifier.post(request)
+        // The screen may have got through between the wait and the post: it removed nothing yet, so this does — or the
+        // notification would stay, and a touch later open a STOP already answered (review of 2026-11-03, R-02). Got
+        // through after this, the screen removes it itself.
+        if (posted && display.isShown(request.id)) notifier.cancel()
+        if (!posted) Timber.w("STOP notification not allowed either")
+        return posted
+    }
+
+    private fun started(request: StopRequest): Boolean = try {
+        context.startActivity(request.writeTo(Intent(context, StopActivity::class.java)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        true
+    } catch (failure: ActivityNotFoundException) {
+        Timber.w(failure, "STOP screen not started")
+        false
     }
 
     private companion object {

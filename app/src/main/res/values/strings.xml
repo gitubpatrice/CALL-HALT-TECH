@@ -46,6 +46,7 @@
     <string name="access_screen_title">The STOP screen in front of other apps</string>
     <string name="access_background_title">Active even when you do not open it</string>
     <string name="access_notifications_title">Your bank\'s requests and the codes you receive</string>
+    <string name="access_alerts_title">Alert if the STOP screen is blocked</string>
     <string name="access_granted">Allowed</string>
     <string name="access_missing">Not allowed</string>
 
@@ -67,6 +68,12 @@
     <string name="access_background_refused">If the phone did not ask, or if you refused: touch “Open the settings”, then the battery, and choose “Unrestricted”.</string>
     <string name="access_notifications_why">So that the app sees when your bank asks you to approve a transaction, and when a code arrives by text message. Of each notification, it reads which app sent it and its kind; of your text-message app\'s, the last message as well, without keeping or sending it.</string>
     <string name="access_notifications_how">The phone opens its settings. If a list shows, touch “Call Halt Tech”. Turn the access on, confirm, then come back here.</string>
+    <!-- D-024: the STOP screen's fallback notification. Android 13+ asks "Allow app to send you notifications?" (Allow);
+         before, nothing is asked, and the step shows only if the user turned the app's notifications off. -->
+    <string name="access_alerts_why">Some phones prevent the STOP screen from showing. The app then warns you with a notification, which opens it. It sends no other notification.</string>
+    <string name="access_alerts_how">The phone will ask whether to allow the app “to send you notifications”: touch “Allow”.</string>
+    <string name="access_alerts_refused">If the phone no longer asks, open the settings, and turn on the app\'s notifications.</string>
+    <string name="access_alerts_how_settings">The phone does not let the app alert you on the screen. Open the settings: turn its notifications on, and the full-screen ones; then touch “STOP screen blocked” and let it show at the top of the screen, not silently.</string>
     <string name="access_allow">Allow</string>
     <string name="access_open_settings">Open the settings</string>
     <string name="access_later">Later</string>
@@ -85,6 +92,10 @@
     <!-- STOP screen. The screen also shows in the minutes after a call: each text that depends on it has an
          "on call" and an "after call" form, chosen by ui/stop/StopText.kt. -->
     <string name="stop_title">STOP</string>
+    <!-- The STOP screen's notification, when the phone blocks the screen (D-024); %1$s: what just happened. -->
+    <string name="stop_notification_text">%1$s Touch here to read the STOP screen before doing anything.</string>
+    <string name="stop_channel_name">STOP screen blocked</string>
+    <string name="stop_channel_description">When the phone prevents the STOP screen from showing: a notification that opens it.</string>
     <string name="stop_on_call">You are on the phone.</string>
     <string name="stop_call_ended">Your call has just ended.</string>
     <!-- What just happened, one text per trigger (SensitiveActionKind). -->

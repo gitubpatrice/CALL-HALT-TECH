@@ -1,12 +1,13 @@
 package com.filestech.callhalt.platform.access
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageInstaller
 import android.os.Build
 
 /**
  * What the protection needs from the phone, in the order the activation asks for it (docs/ARCHITECTURE.md, D-022,
- * D-023). Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a
+ * D-023, D-024). Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a
  * STOP that can show.
  */
 enum class Access {
@@ -27,6 +28,13 @@ enum class Access {
 
     /** The bank's requests and the codes received by SMS, seen in their notifications (D-019, D-021). */
     NOTIFICATIONS,
+
+    /**
+     * The app's own notifications: the STOP screen's fallback, when the phone blocks the screen (platform/stop/StopNotifier,
+     * docs/ARCHITECTURE.md, D-024). Last: of use only once a STOP can be decided. Before Android 13 the phone does not ask
+     * for it — granted unless the user turned the app's notifications off.
+     */
+    ALERTS,
 }
 
 /**
@@ -34,6 +42,18 @@ enum class Access {
  * screen act during a call, and a second question for it would be a step of nothing but doubt.
  */
 val CALL_PERMISSIONS = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ANSWER_PHONE_CALLS)
+
+/**
+ * The runtime permissions the phone asks [access] with, in a dialog of its own; null for an access granted in the
+ * phone's settings. [Access.ALERTS] is one only from Android 13.
+ */
+// Lint cannot read [sdk] as the version: POST_NOTIFICATIONS is a string, copied in at build, and given only from 13.
+@SuppressLint("InlinedApi")
+fun runtimePermissions(access: Access, sdk: Int = Build.VERSION.SDK_INT): Array<String>? = when (access) {
+    Access.CALLS -> CALL_PERMISSIONS
+    Access.ALERTS -> if (sdk >= Build.VERSION_CODES.TIRAMISU) arrayOf(Manifest.permission.POST_NOTIFICATIONS) else null
+    Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS -> null
+}
 
 /**
  * Whether the phone may refuse [access] behind its "restricted settings", until the user allows them in the app info —
@@ -48,7 +68,7 @@ val CALL_PERMISSIONS = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.pe
 internal fun mayBeRestricted(access: Access, sdk: Int, packageSource: Int?): Boolean {
     if (packageSource == null || packageSource == PackageInstaller.PACKAGE_SOURCE_STORE) return false
     return when (access) {
-        Access.CALLS, Access.BACKGROUND -> false
+        Access.CALLS, Access.BACKGROUND, Access.ALERTS -> false
         Access.SCREEN -> sdk >= Build.VERSION_CODES.VANILLA_ICE_CREAM
         Access.NOTIFICATIONS -> sdk >= Build.VERSION_CODES.TIRAMISU
     }

@@ -15,8 +15,12 @@ internal data class AccessText(
     @StringRes val refused: Int? = null,
 )
 
-/** Exhaustive on purpose: a new access does not compile until it says why it is asked and how it is granted. */
-internal fun accessText(access: Access): AccessText = when (access) {
+/**
+ * Exhaustive on purpose: a new access does not compile until it says why it is asked and how it is granted. [phoneAsks]:
+ * the phone's dialog will show — false for [Access.ALERTS] before Android 13, or once granted and the notifications
+ * turned off or down since, or the full-screen ones: then only the settings can (review of 2026-11-03, R-03, R-04).
+ */
+internal fun accessText(access: Access, phoneAsks: Boolean = true): AccessText = when (access) {
     Access.CALLS -> AccessText(
         R.string.access_calls_title,
         R.string.access_calls_why,
@@ -32,4 +36,9 @@ internal fun accessText(access: Access): AccessText = when (access) {
     )
     Access.NOTIFICATIONS ->
         AccessText(R.string.access_notifications_title, R.string.access_notifications_why, R.string.access_notifications_how)
+    Access.ALERTS -> if (phoneAsks) {
+        AccessText(R.string.access_alerts_title, R.string.access_alerts_why, R.string.access_alerts_how, R.string.access_alerts_refused)
+    } else {
+        AccessText(R.string.access_alerts_title, R.string.access_alerts_why, R.string.access_alerts_how_settings)
+    }
 }

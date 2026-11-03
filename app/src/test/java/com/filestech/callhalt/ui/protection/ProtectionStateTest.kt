@@ -10,10 +10,10 @@ class ProtectionStateTest {
     @Test
     fun `the missing accesses come in the order of the activation, whatever was granted first`() {
         assertThat(state(granted = emptySet()).missing)
-            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS).inOrder()
+            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND, Access.NOTIFICATIONS, Access.ALERTS).inOrder()
         // Notification access granted alone (the phone's settings, before the app was opened): the calls still come first.
         assertThat(state(granted = setOf(Access.NOTIFICATIONS)).missing)
-            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND).inOrder()
+            .containsExactly(Access.CALLS, Access.SCREEN, Access.BACKGROUND, Access.ALERTS).inOrder()
         assertThat(state(granted = setOf(Access.CALLS)).missing.first()).isEqualTo(Access.SCREEN)
     }
 
@@ -23,7 +23,7 @@ class ProtectionStateTest {
      */
     @Test
     fun `out of the phone's sleep before the notification access`() {
-        val asleep = state(granted = setOf(Access.CALLS, Access.SCREEN))
+        val asleep = state(granted = setOf(Access.CALLS, Access.SCREEN, Access.ALERTS))
         assertThat(asleep.missing).containsExactly(Access.BACKGROUND, Access.NOTIFICATIONS).inOrder()
     }
 

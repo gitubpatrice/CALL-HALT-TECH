@@ -32,6 +32,13 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   le texte est oublié aussitôt, jamais gardé, jamais envoyé. Des notifications de toute autre appli, elle ne lit ni
   le titre ni le texte. L'écran d'activation ouvre pour lui la page des réglages du téléphone : vous seul pouvez
   l'accorder.
+- **Notifications** (`POST_NOTIFICATIONS`, et `USE_FULL_SCREEN_INTENT`) : si le téléphone empêche l'écran STOP de
+  s'afficher, l'appli vous prévient par une notification qui l'ouvre ; téléphone verrouillé ou écran éteint, elle
+  l'ouvre aussitôt, tant que le téléphone le lui permet (un réglage d'Android, « notifications plein écran », peut le
+  retirer). C'est la seule notification qu'elle envoie. Elle dit ce qui vient d'arriver (un code reçu, une demande de
+  votre banque) — l'écran STOP le dit aussi, par-dessus l'écran verrouillé — mais ni le numéro qui appelle, ni le
+  code, ni le nom de votre banque. À partir d'Android 13, le téléphone vous demande votre accord ; vous pouvez le
+  retirer dans les réglages de notifications de l'appli.
 
 Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
 comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien.

@@ -34,6 +34,9 @@ class StopDisplay @Inject constructor() {
     /** Called by [StopActivity] with request [id], as soon as it holds it. */
     fun shown(id: Long) = lastShown.update { maxOf(it, id) }
 
+    /** True if request [id] — or a later one, shown in its place — got through already. */
+    fun isShown(id: Long): Boolean = lastShown.value >= id
+
     /** True once request [id] — or a later one, shown in its place — got through within [within]. */
     suspend fun awaitShown(id: Long, within: Duration): Boolean =
         withTimeoutOrNull(within) { lastShown.first { it >= id } } != null

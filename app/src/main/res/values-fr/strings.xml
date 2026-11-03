@@ -29,6 +29,7 @@
     <string name="access_screen_title">L\'écran STOP devant les autres applis</string>
     <string name="access_background_title">Active même quand vous ne l\'ouvrez pas</string>
     <string name="access_notifications_title">Demandes de votre banque et codes reçus</string>
+    <string name="access_alerts_title">Alerte si l\'écran STOP est bloqué</string>
     <string name="access_granted">Autorisé</string>
     <string name="access_missing">Non autorisé</string>
 
@@ -44,6 +45,10 @@
     <string name="access_background_refused">Si le téléphone n\'a rien demandé, ou si vous avez refusé : touchez «\u00A0Ouvrir les réglages\u00A0», puis la batterie, et choisissez «\u00A0Sans restriction\u00A0» (sur un Samsung : «\u00A0Non restreinte\u00A0»).</string>
     <string name="access_notifications_why">Pour que l\'appli voie quand votre banque vous demande de valider une opération, et quand un code arrive par SMS. De chaque notification, elle lit l\'appli qui l\'envoie et son type ; de celles de votre appli SMS, aussi le dernier message, sans le garder ni l\'envoyer.</string>
     <string name="access_notifications_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'accès, confirmez, puis revenez ici.</string>
+    <string name="access_alerts_why">Certains téléphones empêchent l\'écran STOP de s\'afficher. L\'appli vous prévient alors par une notification, qui l\'ouvre. Elle n\'envoie aucune autre notification.</string>
+    <string name="access_alerts_how">Le téléphone va vous demander d\'autoriser l\'appli «\u00A0à vous envoyer des notifications\u00A0» : touchez «\u00A0Autoriser\u00A0».</string>
+    <string name="access_alerts_refused">Si le téléphone ne pose plus la question, ouvrez les réglages, et activez les notifications de l\'appli.</string>
+    <string name="access_alerts_how_settings">Le téléphone ne laisse pas l\'appli vous alerter à l\'écran. Ouvrez les réglages : activez ses notifications, et celles en plein écran ; puis touchez «\u00A0Écran STOP bloqué\u00A0» et laissez-le s\'afficher en haut de l\'écran, pas en silencieux.</string>
     <string name="access_allow">Autoriser</string>
     <string name="access_open_settings">Ouvrir les réglages</string>
     <string name="access_later">Plus tard</string>
@@ -58,6 +63,9 @@
 
     <!-- Écran STOP -->
     <string name="stop_title">STOP</string>
+    <string name="stop_notification_text">%1$s Touchez ici et lisez l\'écran STOP avant de faire quoi que ce soit.</string>
+    <string name="stop_channel_name">Écran STOP bloqué</string>
+    <string name="stop_channel_description">Quand le téléphone empêche l\'écran STOP de s\'afficher : une notification qui l\'ouvre.</string>
     <string name="stop_on_call">Vous êtes au téléphone.</string>
     <string name="stop_call_ended">Votre appel vient de se terminer.</string>
     <string name="stop_trigger_code">Vous venez de recevoir un code.</string>
