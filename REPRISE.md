@@ -241,6 +241,9 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
   langue : une consigne mal traduite ferait faire l'inverse.
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid
   oui ; DataStore 1.3.0 fusionné, AGP 9.5.0 reporté à la prochaine montée de tout le portefeuille.
+- **Un Xiaomi, à emprunter dix minutes** (Patrice n'en a pas, 2026-11-03), avant la publication : y refaire l'essai du
+  2026-11-03 (l'écran STOP lancé pendant un appel, puis la notification de repli, D-024). C'est là que le blocage est
+  attendu (P-21), et le seul cas du repli non mesuré. À défaut : un service de téléphones à distance (payant).
 - Facultatif : la recherche de marque sur TMview (Union européenne) ; la calibration de GPT Luna
   (moins de 0,10 $) pour savoir s'il trouve autant que Sol.
 
