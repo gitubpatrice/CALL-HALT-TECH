@@ -51,6 +51,9 @@ object AccessSettings {
     /** The app info: where a permission the phone no longer asks for is granted, and the restricted settings allowed. */
     fun appInfo(context: Context): List<Intent> = fallbacks(context)
 
+    /** Where the user frees some space, when the app can no longer save (docs/ARCHITECTURE.md, P-10). Not an access. */
+    fun storage(): List<Intent> = listOf(Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS), Intent(Settings.ACTION_SETTINGS))
+
     /**
      * Opens the first page this phone has. [context] must be the activity's: started without a new task, the page
      * goes back to the app with the Back key, and the phone's settings, if already open, cannot swallow it (measured:

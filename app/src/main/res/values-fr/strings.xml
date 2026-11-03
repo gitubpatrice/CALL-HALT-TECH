@@ -12,6 +12,9 @@
     <string name="home_on_detail_call_only">Pendant un appel téléphonique, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou une demande de validation Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Elle ne voit pas tout, ni les appels par Internet (WhatsApp…) : même sans écran STOP, la règle ci-dessous reste vraie.</string>
     <string name="home_off">La protection est désactivée.</string>
+    <string name="home_weakened">Protection affaiblie</string>
+    <string name="home_weakened_detail">L\'appli n\'arrive plus à enregistrer ce qu\'elle voit. Elle vous protège encore, mais si le téléphone l\'arrête pendant un appel, elle ne saura plus que vous étiez au téléphone. Le téléphone est peut-être plein\u00A0: libérez de la place, puis revenez ici. S\'il en a, redémarrez-le.</string>
+    <string name="home_open_storage">Ouvrir le stockage du téléphone</string>
     <string name="home_unsupported">Ce téléphone ne permet pas la protection : Android n\'y laisse aucune appli s\'afficher devant les autres (téléphone «\u00A0Android Go\u00A0»).</string>
     <plurals name="home_missing">
         <item quantity="one">Il manque %1$d autorisation.</item>

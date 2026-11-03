@@ -12,9 +12,27 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-03, début d'après-midi — pause demandée par Patrice)
+## Reprendre ici (2026-11-03, après-midi)
 
-**Le 2026-11-03, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
+**Après la pause : P-10 fait** (la panne du stockage sur l'accueil). Tant que l'appli n'arrive plus à enregistrer,
+l'accueil dit « **Protection affaiblie** » (Patrice : ces deux mots, sans verbe ; « le reste ça va »), la cause
+probable (le téléphone plein) et « Ouvrir le stockage du téléphone » (sur le S24 FE : la « Gestion du stockage » de
+Samsung, mesuré). À chaque retour sur l'accueil, l'appli réessaie d'écrire : le message disparaît dès que ça repasse.
+Mesuré sur le S24 FE (base remplacée par un dossier, puis rendue). Relecture (`relectures/2026-11-03-claude-stockage.md`) :
+aucun constat de sécurité ; l'essai ne faisait que lire, un stockage passé en lecture seule passait pour sain →
+corrigé, avec test et contrôle négatif. Au passage, un test sur téléphone qui dépendait de l'état laissé par une mesure
+(l'accès aux notifications déjà accordé) part maintenant d'un état propre.
+
+**Question posée à Patrice, en attente** : les deux autres états en forme courte aussi (« Protection activée »,
+« Protection désactivée ») ? Sans réponse, ils restent « La protection est activée. » / « … désactivée. ».
+
+**Décision demandée à Patrice pour P-19** (le repli quand l'écran STOP ne passe pas) : une notification urgente qui
+ouvre l'écran STOP demande, depuis Android 13, l'autorisation d'envoyer des notifications, donc une **5ᵉ étape
+d'activation** (« vous prévenir si l'écran STOP ne peut pas s'afficher ») et une autorisation de plus dans la politique
+de confidentialité. Recommandation de Claude : oui (le STOP bloqué est aujourd'hui invisible ; sans l'étape, le repli
+ne marche que jusqu'à Android 12). Non mesurable ici : un Xiaomi, là où le blocage est attendu.
+
+**Le 2026-11-03 au matin, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
 #22) :
 
 - **L'activation comme un utilisateur** (P-3) : ancienne version désinstallée, nouvelle installée depuis un fichier
@@ -51,7 +69,7 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
   (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
-**Prochaine étape** : la panne du stockage sur l'accueil (P-10), le repli par notification (P-19) ; puis, de P-21,
+**Prochaine étape** (P-10 fait l'après-midi, ci-dessus) : le repli par notification (P-19) ; puis, de P-21,
 l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
 plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
 
@@ -143,7 +161,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, le **repli par notification** quand le STOP ne passe pas (P-19), et la liste « avant toute publication »
   ci-dessus.
-- Vérifications : 298 tests sur ordinateur, 19 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 299 tests sur ordinateur, 22 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

@@ -11,6 +11,7 @@ import com.filestech.callhalt.platform.debug.MeasureNotificationListener
 import com.filestech.callhalt.platform.notification.NotificationListener
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -26,6 +27,11 @@ class AccessCheckerOnDeviceTest {
     private val checker = AndroidAccessChecker(context)
     private val listener = component<NotificationListener>()
 
+    /**
+     * Before each test as well: an access left granted on the device (a measurement, the app installed by hand) made the
+     * second listener's test fail (measured on the Android 16 emulator, 2026-11-03).
+     */
+    @Before
     @After
     fun takeBack() {
         shell("cmd deviceidle whitelist -${context.packageName}")

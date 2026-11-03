@@ -34,7 +34,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!--
-        The phone's settings pages the activation opens: seen here so that platform/access/AccessSettings can send the
+        The phone's settings pages the app opens: seen here so that platform/access/AccessSettings can send the
         user to the SYSTEM's own, never to an app that declares the same action. Not a permission: these names only.
     -->
     <queries>
@@ -58,6 +58,10 @@
         <intent>
             <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />
             <data android:scheme="package" />
+        </intent>
+        <!-- Not an access: where the home screen sends the user to free some space (docs/ARCHITECTURE.md, P-10). -->
+        <intent>
+            <action android:name="android.settings.INTERNAL_STORAGE_SETTINGS" />
         </intent>
         <intent>
             <action android:name="android.settings.SETTINGS" />

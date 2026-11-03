@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -31,7 +32,9 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.filestech.callhalt.R
 import com.filestech.callhalt.platform.access.Access
+import com.filestech.callhalt.platform.access.AccessSettings
 import com.filestech.callhalt.ui.protection.ProtectionState
+import com.filestech.callhalt.ui.protection.ProtectionStatus
 import com.filestech.callhalt.ui.protection.ProtectionViewModel
 import com.filestech.callhalt.ui.protection.accessText
 import com.filestech.callhalt.ui.theme.brandButtonColors
@@ -39,8 +42,8 @@ import com.filestech.callhalt.ui.theme.brandButtonColors
 /**
  * The home screen: the state of the protection (docs/ARCHITECTURE.md, D-022), read from the phone each time the app
  * comes to the front — on only when every access is granted, and then it says what it watches, no more (a protection
- * app that looks active while it is not would be worse than none). Then the rule, and the STOP demonstration
- * (PROJET.md, § 4.9).
+ * app that looks active while it is not would be worse than none); weakened while storage fails (P-10). Then the rule,
+ * and the STOP demonstration (PROJET.md, § 4.9).
  */
 @Composable
 fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: ProtectionViewModel = hiltViewModel()) {
@@ -72,7 +75,7 @@ fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: Protect
 
 @Composable
 private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
-    val on = state.phoneCanProtect && state.missing.isEmpty()
+    val on = state.status == ProtectionStatus.ON
     val colors = if (on) {
         CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -87,24 +90,44 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
     Card(colors = colors, modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = stringResource(if (on) R.string.home_on else R.string.home_off),
+                text = stringResource(
+                    when (state.status) {
+                        ProtectionStatus.ON -> R.string.home_on
+                        ProtectionStatus.WEAKENED -> R.string.home_weakened
+                        ProtectionStatus.OFF, ProtectionStatus.UNSUPPORTED -> R.string.home_off
+                    },
+                ),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.semantics { heading() },
             )
-            if (on) {
-                Text(text = watched(state.afterCallMinutes), style = MaterialTheme.typography.bodyLarge)
-                Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
-            } else if (!state.phoneCanProtect) {
+            when (state.status) {
+                ProtectionStatus.ON -> {
+                    Text(text = watched(state.afterCallMinutes), style = MaterialTheme.typography.bodyLarge)
+                    Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
+                }
+                ProtectionStatus.WEAKENED -> {
+                    val context = LocalContext.current
+                    Text(text = stringResource(R.string.home_weakened_detail), style = MaterialTheme.typography.bodyLarge)
+                    Button(
+                        onClick = { AccessSettings.open(context, AccessSettings.storage()) },
+                        colors = brandButtonColors(),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = stringResource(R.string.home_open_storage), modifier = Modifier.padding(vertical = 8.dp))
+                    }
+                }
                 // No button: it would lead to a settings page with no switch.
-                Text(text = stringResource(R.string.home_unsupported), style = MaterialTheme.typography.bodyLarge)
-            } else {
-                Text(
-                    text = pluralStringResource(R.plurals.home_missing, state.missing.size, state.missing.size),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Button(onClick = onActivate, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
-                    Text(text = stringResource(R.string.home_activate), modifier = Modifier.padding(vertical = 8.dp))
+                ProtectionStatus.UNSUPPORTED ->
+                    Text(text = stringResource(R.string.home_unsupported), style = MaterialTheme.typography.bodyLarge)
+                ProtectionStatus.OFF -> {
+                    Text(
+                        text = pluralStringResource(R.plurals.home_missing, state.missing.size, state.missing.size),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Button(onClick = onActivate, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
+                        Text(text = stringResource(R.string.home_activate), modifier = Modifier.padding(vertical = 8.dp))
+                    }
                 }
             }
         }

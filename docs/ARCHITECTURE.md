@@ -283,7 +283,9 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   ce point : n'arrêter que l'appui d'une demande arrivée **avant** le début de l'appel en cours.
 - **P-7** — L'état réel de l'appel, interrogé en direct par le capteur téléphonique, contre l'état mémorisé.
   Trois défauts qu'il fermera, aujourd'hui écrits et non corrigés :
-  - le processus démarré après une panne de stockage ne voit pas l'appel (relecture du 2026-11-01, D2) ;
+  - le processus démarré après une panne de stockage ne voit pas l'appel (relecture du 2026-11-01, D2). Et si la
+    base se répare, il y réécrit son état, parti de rien : les appels qu'elle gardait et qu'il n'a jamais lus sont
+    effacés (au signal suivant, et depuis P-10 dès le retour à l'accueil ; relecture du 2026-11-03, n° 1) ;
   - une fin d'appel manquée n'est bornée que par le plafond de 8 h. **Mesuré le 2026-11-02 (émulateur
     Android 16)** : un appareil éteint en plein appel ne reçoit aucun état d'appel au redémarrage. L'appel reste
     « en cours » dans la mémoire, et une demande bancaire de l'utilisateur lui-même, sans appel, a montré un
@@ -307,8 +309,17 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
   sans usage (Android 11+), hibernation (Android 12+) ; `PackageManagerCompat.getUnusedAppRestrictionsStatus`
   dit les deux derniers. **Les accès sont faits le 2026-11-02 (D-022)** : l'accueil dit chacun, relu à chaque
   retour au premier plan, donc aussi une permission retirée faute d'usage ; l'hibernation épargne une appli dont
-  l'écouteur est actif (§ 6) ; une appli jamais ouverte n'a pas pu être activée. **Restent** : la panne du stockage
-  (D3), et prévenir sans que l'utilisateur ouvre l'appli (fiche, § 9.2, idée 5 : le proche).
+  l'écouteur est actif (§ 6) ; une appli jamais ouverte n'a pas pu être activée. **La panne du stockage est faite le
+  2026-11-03** (D3) : tant que le magasin échoue (`RoomDetectorStore.failing`), l'accueil dit « Protection affaiblie »
+  (Patrice), la cause probable (le téléphone plein) et un bouton vers la page de stockage du téléphone (sur le S24 FE,
+  la « Gestion du stockage » de Samsung, mesuré). Seulement une fois les accès tous accordés : un problème à la fois,
+  comme l'activation. À chaque retour au premier plan, le magasin réessaie (`check`) : il réécrit l'état qu'il n'a pas
+  pu garder, sinon celui qu'il vient de lire — une écriture, pas une lecture seule, qu'un stockage passé en lecture
+  seule laisserait passer (relecture du 2026-11-03) ; l'ouverture de la base en fait partie (une migration manquante
+  échoue là). Le message disparaît dès que l'écriture repasse, sans attendre un signal. **Limite** : un téléphone plein
+  n'est pas toujours vu, réécrire les mêmes lignes peut ne demander aucune place nouvelle ; l'accueil dit alors
+  « activée » jusqu'au premier signal dont l'écriture échoue. Mesuré sur le S24 FE (la base remplacée par un dossier, puis rendue). **Reste** : prévenir sans que
+  l'utilisateur ouvre l'appli (fiche, § 9.2, idée 5 : le proche).
 - **P-11** — Élaguer le journal (durée de conservation) ; dédoublonner l'avertissement « appli de prise en
   main installée » hors appel, qu'une diffusion répétée ferait écrire plusieurs fois (D8). **Atteignable depuis
   le capteur des notifications** (relecture de sécurité du 2026-11-02, faible) : une appli qui imite le canal

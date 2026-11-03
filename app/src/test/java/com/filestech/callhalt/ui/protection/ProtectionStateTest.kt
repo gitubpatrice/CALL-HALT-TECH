@@ -32,5 +32,16 @@ class ProtectionStateTest {
         assertThat(state(granted = Access.entries.toSet()).missing).isEmpty()
     }
 
-    private fun state(granted: Set<Access>) = ProtectionState(granted, mayBeRestricted = emptySet(), afterCallMinutes = 15)
+    /** Storage failing (P-10): never "on", and said only once the accesses, which the user can grant here, are all there. */
+    @Test
+    fun `storage failing weakens the protection, the accesses first`() {
+        assertThat(state(granted = Access.entries.toSet()).status).isEqualTo(ProtectionStatus.ON)
+        assertThat(state(granted = Access.entries.toSet(), storageFailing = true).status).isEqualTo(ProtectionStatus.WEAKENED)
+        assertThat(state(granted = setOf(Access.CALLS), storageFailing = true).status).isEqualTo(ProtectionStatus.OFF)
+        assertThat(state(granted = Access.entries.toSet(), storageFailing = true, phoneCanProtect = false).status)
+            .isEqualTo(ProtectionStatus.UNSUPPORTED)
+    }
+
+    private fun state(granted: Set<Access>, storageFailing: Boolean = false, phoneCanProtect: Boolean = true) =
+        ProtectionState(granted, mayBeRestricted = emptySet(), afterCallMinutes = 15, phoneCanProtect, storageFailing)
 }

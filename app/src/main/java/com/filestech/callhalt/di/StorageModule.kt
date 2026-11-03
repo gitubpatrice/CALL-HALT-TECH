@@ -31,8 +31,8 @@ object StorageModule {
     /**
      * No `fallbackToDestructiveMigration`, ever: a missing migration must never erase the journal a
      * relative relies on. It throws instead — caught by a migration test before any release, and at run time
-     * by RoomDetectorStore, which then decides from memory; that degraded state must show on the protection
-     * status screen (docs/ARCHITECTURE.md, P-10). Migrations are additive only (D-004).
+     * by RoomDetectorStore, which then decides from memory; the home screen says the protection is weakened
+     * (docs/ARCHITECTURE.md, P-10). Migrations are additive only (D-004).
      */
     @Provides
     @Singleton
