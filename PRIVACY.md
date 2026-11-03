@@ -17,6 +17,10 @@ change that adds it to the app, and the build checks the app asks for nothing el
 - **Answer phone calls** (`ANSWER_PHONE_CALLS`): only to end the call when you press "Hang up", or "Hang up
   and call my bank", on the STOP screen. Without it, neither button is shown during a call. The app never
   answers or places a call by itself: "call my bank" opens the phone's dialler, and you press call.
+- **Ask to run in the background without restriction** (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`): only to show the
+  phone's own question, "Let app always run in background?", during the activation. A protection app is hardly ever
+  opened, and phones put the apps nobody opens to sleep; asleep, it would see nothing. This permission reads nothing;
+  you answer, and you can take it back in the app's battery settings.
 - **Notification access** (granted in the phone's settings; not a permission): to see your banking app ask you
   to approve an operation, and a validation code arrive by SMS. Of each notification on the phone, the app reads
   which app posted it and on which channel (the identifier the posting app gives a kind of notification). It

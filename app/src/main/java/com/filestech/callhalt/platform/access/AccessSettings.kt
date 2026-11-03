@@ -1,5 +1,6 @@
 package com.filestech.callhalt.platform.access
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
@@ -23,6 +24,16 @@ object AccessSettings {
      */
     fun screen(context: Context): List<Intent> =
         listOf(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, packageUri(context))) + fallbacks(context)
+
+    /**
+     * The phone's own dialog, "Let app always run in background?": one touch, where the app info takes three (its battery
+     * page, then "Unrestricted"). Then the app info, where it is granted if the dialog was refused. Lint warns that the
+     * Play Store keeps this dialog to some kinds of apps: this one is published on F-Droid (D-016), and its core function
+     * stops without it (measured on the S24 FE, D-023).
+     */
+    @SuppressLint("BatteryLife")
+    fun background(context: Context): List<Intent> =
+        listOf(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, packageUri(context))) + fallbacks(context)
 
     /** From Android 11, the app's own page; before, the list of the apps that asked. */
     fun notifications(context: Context): List<Intent> = buildList {

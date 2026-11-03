@@ -18,6 +18,11 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   « Raccrocher », ou « Raccrocher et appeler ma banque », dans l'écran STOP. Sans elle, aucun de ces deux
   boutons n'apparaît pendant un appel. L'appli ne décroche et ne passe jamais d'appel d'elle-même : « appeler
   ma banque » ouvre le clavier du téléphone, et c'est vous qui appelez.
+- **Demander à fonctionner en arrière-plan sans restriction** (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`) : seulement
+  pour afficher, pendant l'activation, la question du téléphone « Toujours autoriser en arrière-plan ? ». Une appli de
+  protection, on ne l'ouvre presque jamais, et le téléphone endort les applis qu'on n'ouvre pas ; endormie, elle ne
+  verrait plus rien. Cette permission ne lit rien ; c'est vous qui répondez, et vous pouvez revenir en arrière dans
+  les réglages de batterie de l'appli.
 - **Accès aux notifications** (accordé dans les réglages du téléphone ; ce n'est pas une permission) : voir
   l'appli de votre banque vous demander de valider une opération, et un code de validation arriver par SMS. De
   chaque notification du téléphone, l'appli lit l'appli qui l'a envoyée et son canal (l'identifiant que cette

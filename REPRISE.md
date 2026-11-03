@@ -33,16 +33,26 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
   ordinaire, écran éteint 8 min → reçu en 1 s. **🔴 Veille profonde de Samsung : la protection est sourde** (appli tuée,
   écouteur délié en moins de 2 min). L'accueil le dit (accès lu refusé), mais rallumer l'interrupteur ne répare pas :
   Samsung le remet à « éteint ». Seule la sortie de la veille profonde répare (« Applis jamais mises en veille » : reçu
-  en 1 s, écran éteint). **Décidé (Patrice, « ok »)** : reconnaître ce cas, dire comment en sortir, et une étape
-  « jamais mise en veille » dans l'activation sur Samsung.
+  en 1 s, écran éteint).
+- **✅ Construit (D-023, Patrice : « ok pour tous bien sûr »)** : une 4ᵉ étape, « **Active même quand vous ne l'ouvrez
+  pas** », pour tous les téléphones, avant l'accès aux notifications : le dialogue du téléphone met l'appli en « Non
+  restreinte », ce qui la sort de la veille profonde et l'écarte des listes de mise en veille de Samsung (contrôle
+  négatif : en « Optimisée », elle y réapparaît). Mesuré sur le S24 : Samsung demande « Arrêter optimisation utilisation
+  batterie ? » (« OK »), pas les mots d'Android d'origine — le texte ne les cite donc plus ; l'exemption survit à une
+  mise à jour. « Passer cette étape » après un refus (relecture : sinon l'accès aux notifications devenait inaccessible).
+  Nouvelle permission `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (ne lit rien), dans la garde CI et la politique de
+  confidentialité.
 - **Les mots de l'accueil** (Patrice) : « La protection est **activée** » (« en marche, ça ne se dit pas ») et « La
-  protection est **désactivée** » (au lieu de « ne fonctionne pas ») ; les 5 langues en miroir.
+  protection est **désactivée** » (au lieu de « ne fonctionne pas ») ; les titres des accès sans verbe ni article
+  (« Quand vous êtes au téléphone », « L'écran STOP devant les autres applis », « Active même quand vous ne l'ouvrez
+  pas », « Demandes de votre banque et codes reçus ») ; les 5 langues en miroir.
 - **Question de Patrice** : « Raccrocher et appeler ma banque » s'affiche même quand on n'est pas au téléphone avec sa
   banque. Réponse : voulu, l'opération visée est bancaire quel que soit le rôle joué ; un code SMS non bancaire
   (WhatsApp…) rend le bouton inutile mais pas nuisible. Gardé, décision ci-dessus.
 
-**Prochaine étape** : P-21 côté code (la veille de Samsung reconnue et expliquée, l'étape « jamais mise en veille »,
-l'écouteur relié ou non sur l'accueil) ; puis la panne du stockage (P-10) et le repli par notification (P-19).
+**Prochaine étape** : la panne du stockage sur l'accueil (P-10), le repli par notification (P-19) ; puis, de P-21,
+l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
+plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
 
 ## Le 2026-11-02
 
@@ -128,7 +138,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, le **repli par notification** quand le STOP ne passe pas (P-19), et la liste « avant toute publication »
   ci-dessus.
-- Vérifications : 297 tests sur ordinateur, 18 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 298 tests sur ordinateur, 19 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

@@ -22,9 +22,10 @@
     <string name="home_try_stop">Essayer l\'écran STOP</string>
 
     <!-- Les accès -->
-    <string name="access_calls_title">Savoir quand vous êtes au téléphone</string>
-    <string name="access_screen_title">Afficher l\'écran STOP devant les autres applis</string>
-    <string name="access_notifications_title">Voir les demandes de votre banque et les codes reçus</string>
+    <string name="access_calls_title">Quand vous êtes au téléphone</string>
+    <string name="access_screen_title">L\'écran STOP devant les autres applis</string>
+    <string name="access_background_title">Active même quand vous ne l\'ouvrez pas</string>
+    <string name="access_notifications_title">Demandes de votre banque et codes reçus</string>
     <string name="access_granted">Autorisé</string>
     <string name="access_missing">Non autorisé</string>
 
@@ -35,11 +36,15 @@
     <string name="access_calls_refused">Si le téléphone ne pose plus la question, ouvrez les réglages, puis «\u00A0Autorisations\u00A0», «\u00A0Téléphone\u00A0», et choisissez «\u00A0Autoriser\u00A0».</string>
     <string name="access_screen_why">Pour que l\'écran STOP passe devant l\'appli de votre banque, au bon moment.</string>
     <string name="access_screen_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'autorisation, puis revenez ici.</string>
+    <string name="access_background_why">Pour que le téléphone ne mette pas l\'appli en veille. Une appli de protection, on ne l\'ouvre presque jamais, et le téléphone endort les applis qu\'on n\'ouvre pas : endormie, elle ne voit plus rien. Elle ne consomme presque pas de batterie : elle n\'agit que quand un appel ou une notification arrive.</string>
+    <string name="access_background_how">Le téléphone va vous demander si l\'appli peut toujours fonctionner en arrière-plan, ou d\'arrêter d\'optimiser sa batterie : acceptez, avec «\u00A0Autoriser\u00A0» ou «\u00A0OK\u00A0» selon le téléphone.</string>
+    <string name="access_background_refused">Si le téléphone n\'a rien demandé, ou si vous avez refusé : touchez «\u00A0Ouvrir les réglages\u00A0», puis la batterie, et choisissez «\u00A0Sans restriction\u00A0» (sur un Samsung : «\u00A0Non restreinte\u00A0»).</string>
     <string name="access_notifications_why">Pour que l\'appli voie quand votre banque vous demande de valider une opération, et quand un code arrive par SMS. De chaque notification, elle lit l\'appli qui l\'envoie et son type ; de celles de votre appli SMS, aussi le dernier message, sans le garder ni l\'envoyer.</string>
     <string name="access_notifications_how">Le téléphone ouvre ses réglages. Si une liste s\'affiche, touchez «\u00A0Call Halt Tech\u00A0». Activez l\'accès, confirmez, puis revenez ici.</string>
     <string name="access_allow">Autoriser</string>
     <string name="access_open_settings">Ouvrir les réglages</string>
     <string name="access_later">Plus tard</string>
+    <string name="access_skip">Passer cette étape</string>
 
     <!-- Paramètres restreints -->
     <string name="restricted_title">Si le téléphone refuse</string>

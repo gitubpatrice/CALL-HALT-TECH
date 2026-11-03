@@ -56,7 +56,11 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
 
-    val access = state.missing.firstOrNull()
+    // Passed once refused: the notification access still comes next. Without it no bank request and no code is seen, and
+    // a phone may refuse its battery dialog for good (review of 2026-11-03, 1). The home screen still says it is
+    // missing, and the next activation asks for it again.
+    var backgroundPassed by rememberSaveable { mutableStateOf(false) }
+    val access = state.missing.firstOrNull { it != Access.BACKGROUND || !backgroundPassed }
     if (access == null) {
         LaunchedEffect(Unit) { onDone() }
         return
@@ -69,12 +73,20 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
             mayBeRestricted = access in state.mayBeRestricted,
             onAnswered = viewModel::refresh,
             onLater = onDone,
+            onPass = if (access == Access.BACKGROUND) ({ backgroundPassed = true }) else null,
         )
     }
 }
 
+/** [onPass], for a step the others do not need: offered in place of "Later" once the phone refused it. */
 @Composable
-private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () -> Unit, onLater: () -> Unit) {
+private fun AccessStep(
+    access: Access,
+    mayBeRestricted: Boolean,
+    onAnswered: () -> Unit,
+    onLater: () -> Unit,
+    onPass: (() -> Unit)?,
+) {
     val context = LocalContext.current
     val text = accessText(access)
     // The phone stops showing its dialog once refused twice (or "don't ask again"), and the request then answers
@@ -86,7 +98,8 @@ private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () 
         onAnswered()
         if (results.values.any { granted -> !granted }) refused = true
     }
-    val asksInApp = access == Access.CALLS
+    // The phone asks these with a dialog of its own: "Allow" here, and after a refusal, the settings as well.
+    val phoneAsks = text.refused != null
 
     Surface(modifier = Modifier.fillMaxSize()) {
         // The texts scroll; the buttons stay at the bottom, in sight whatever the size of the font — the way through the
@@ -114,33 +127,41 @@ private fun AccessStep(access: Access, mayBeRestricted: Boolean, onAnswered: () 
                 )
                 Text(text = stringResource(text.why), style = MaterialTheme.typography.bodyLarge)
                 Text(text = stringResource(text.how), style = MaterialTheme.typography.bodyLarge)
-                if (asksInApp && refused) {
-                    Text(text = stringResource(R.string.access_calls_refused), style = MaterialTheme.typography.bodyLarge)
+                if (refused) {
+                    text.refused?.let { Text(text = stringResource(it), style = MaterialTheme.typography.bodyLarge) }
                 }
                 if (mayBeRestricted) RestrictedSettingsHelp()
             }
             Button(
                 onClick = {
-                    if (asksInApp) ask.launch(CALL_PERMISSIONS) else AccessSettings.open(context, settingsPages(access, context))
+                    if (access == Access.CALLS) {
+                        ask.launch(CALL_PERMISSIONS)
+                    } else {
+                        // A dialog of the settings answers nothing back: back here with the access still missing, it
+                        // was refused, or never shown.
+                        if (phoneAsks) refused = true
+                        AccessSettings.open(context, settingsPages(access, context))
+                    }
                 },
                 colors = brandButtonColors(),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = stringResource(if (asksInApp) R.string.access_allow else R.string.access_open_settings),
+                    text = stringResource(if (phoneAsks) R.string.access_allow else R.string.access_open_settings),
                     modifier = Modifier.padding(vertical = 8.dp),
                 )
             }
             when {
-                asksInApp && refused -> SecondButton(R.string.access_open_settings) {
+                phoneAsks && refused -> SecondButton(R.string.access_open_settings) {
                     AccessSettings.open(context, AccessSettings.appInfo(context))
                 }
                 mayBeRestricted -> SecondButton(R.string.restricted_open_app_info) {
                     AccessSettings.open(context, AccessSettings.appInfo(context))
                 }
             }
-            TextButton(onClick = onLater, modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(R.string.access_later))
+            val pass = onPass?.takeIf { refused }
+            TextButton(onClick = pass ?: onLater, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(if (pass != null) R.string.access_skip else R.string.access_later))
             }
         }
     }
@@ -183,5 +204,6 @@ private fun RestrictedSettingsHelp() {
 private fun settingsPages(access: Access, context: Context): List<Intent> = when (access) {
     Access.CALLS -> AccessSettings.appInfo(context)
     Access.SCREEN -> AccessSettings.screen(context)
+    Access.BACKGROUND -> AccessSettings.background(context)
     Access.NOTIFICATIONS -> AccessSettings.notifications(context)
 }

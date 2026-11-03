@@ -5,9 +5,9 @@ import android.content.pm.PackageInstaller
 import android.os.Build
 
 /**
- * What the protection needs from the phone, in the order the activation asks for it (docs/ARCHITECTURE.md, D-022).
- * Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a STOP
- * that can show.
+ * What the protection needs from the phone, in the order the activation asks for it (docs/ARCHITECTURE.md, D-022,
+ * D-023). Each one is of use only with the ones before it: a STOP needs a call to be seen, and a bank's request needs a
+ * STOP that can show.
  */
 enum class Access {
     /** When a call starts and ends, and "Hang up" ([CALL_PERMISSIONS]). */
@@ -15,6 +15,15 @@ enum class Access {
 
     /** The STOP screen started from the background, in front of the banking app (SYSTEM_ALERT_WINDOW, D-006). */
     SCREEN,
+
+    /**
+     * Never put to sleep: the app is exempt from the phone's battery optimisation. A protection app is hardly ever
+     * opened, and phones put the apps nobody opens to sleep — on Samsung, the deep sleep kills the app and takes the
+     * notification access back (measured on the S24 FE, 2026-11-03, D-023). Exempt, it is in none of Samsung's sleep
+     * lists, and leaves the deep sleep if it was in it. Before [NOTIFICATIONS]: in deep sleep, the phone turns that
+     * access back off until the app is out of it.
+     */
+    BACKGROUND,
 
     /** The bank's requests and the codes received by SMS, seen in their notifications (D-019, D-021). */
     NOTIFICATIONS,
@@ -39,7 +48,7 @@ val CALL_PERMISSIONS = arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.pe
 internal fun mayBeRestricted(access: Access, sdk: Int, packageSource: Int?): Boolean {
     if (packageSource == null || packageSource == PackageInstaller.PACKAGE_SOURCE_STORE) return false
     return when (access) {
-        Access.CALLS -> false
+        Access.CALLS, Access.BACKGROUND -> false
         Access.SCREEN -> sdk >= Build.VERSION_CODES.VANILLA_ICE_CREAM
         Access.NOTIFICATIONS -> sdk >= Build.VERSION_CODES.TIRAMISU
     }

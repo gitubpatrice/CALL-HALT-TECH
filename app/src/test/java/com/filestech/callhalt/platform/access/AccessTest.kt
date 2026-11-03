@@ -23,8 +23,11 @@ class AccessTest {
     }
 
     @Test
-    fun `the phone's permission dialog is never restricted`() {
-        assertThat(mayBeRestricted(Access.CALLS, Build.VERSION_CODES.BAKLAVA, PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE)).isFalse()
+    fun `the phone's own dialogs are never restricted`() {
+        listOf(Access.CALLS, Access.BACKGROUND).forEach { access ->
+            assertThat(mayBeRestricted(access, Build.VERSION_CODES.BAKLAVA, PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE))
+                .isFalse()
+        }
     }
 
     @Test
