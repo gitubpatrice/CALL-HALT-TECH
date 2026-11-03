@@ -12,9 +12,10 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-03, fin de matinée)
+## Reprendre ici (2026-11-03, début d'après-midi — pause demandée par Patrice)
 
-**Le 2026-11-03, sur le S24 FE avec Patrice** (et le S9) :
+**Le 2026-11-03, sur le S24 FE avec Patrice** (et le S9), deux PR fusionnées (#22, #23 ; #21 fermée, remplacée par
+#22) :
 
 - **L'activation comme un utilisateur** (P-3) : ancienne version désinstallée, nouvelle installée depuis un fichier
   (Read Files Tech, source `LOCAL_FILE`). Play Protect demande une analyse, puis « Cette appli semble sûre ».
@@ -53,6 +54,10 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 **Prochaine étape** : la panne du stockage sur l'accueil (P-10), le repli par notification (P-19) ; puis, de P-21,
 l'écouteur relié ou non sur l'accueil (cas non mesurés : applis de nettoyage, autres fabricants). À observer sur
 plusieurs jours sur le S24 : l'appli en « Non restreinte » n'est jamais mise en veille.
+
+**État des téléphones à la pause** : S24 FE = version de test de `4dc03b3` (installée par adb), les 4 accès accordés,
+« Non restreinte », seul le vrai écouteur actif (celui de mesure coupé), `POST_NOTIFICATIONS` accordée pour la demande
+factice ; laissée active pour l'observation. S9 = version de test du matin, accès aux notifications retiré.
 
 ## Le 2026-11-02
 
