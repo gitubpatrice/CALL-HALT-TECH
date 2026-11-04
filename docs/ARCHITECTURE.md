@@ -453,9 +453,30 @@ appli installée par APK, jusqu'à « Autoriser les paramètres restreints » da
     faite le 2026-11-03 (D-025) : lue, réparée à l'ouverture, dite sur l'accueil — ce qui couvre aussi les cas non
     mesurés (applis de nettoyage, autres fabricants). **Reste** : si une appli en « Non restreinte » échappe à la mise
     en veille automatique de Samsung sur plusieurs jours ;
-  - **Android Go** : aucun accès à l'affichage par-dessus à partir d'Android 10 (documentation d'Android Go) ; l'accueil
-    le dit sans proposer l'activation (`AccessChecker.phoneCanProtect`, `isLowRamDevice`). **Non mesuré** : ni
-    téléphone ni image Go ici.
+  - **Android Go** (mémoire réduite, `isLowRamDevice`) : ✅ **lu dans AOSP et mesuré le 2026-11-04**, corrigé. La règle
+    d'avant (« aucun accès à l'affichage par-dessus à partir d'Android 10 », d'après la documentation d'Android Go)
+    refusait la protection à tout téléphone Go. **Lu dans AOSP** :
+    - **Android 10** : le système refuse tout écouteur de notifications (`NotificationManagerService.canUseManagedServices`,
+      sauf appli nommée par le fabricant), et les Réglages refusent l'affichage par-dessus ;
+    - **Android 11 à 13** : les écouteurs sont permis (la règle a disparu), mais la liste « superposition » que l'appli
+      ouvre affiche « non disponible » (`ManageApplications.onCreateView`, `Utils.isSystemAlertWindowEnabled`) ;
+    - **Android 14 et après** : les Réglages envoient cette liste vers leur nouvelle page (`ManageApplications.onAttach`
+      → SPA, `SETTINGS_ENABLE_SPA` vrai par défaut, lu dans `FeatureFlagUtils` 14, 15 et 16) avant ce contrôle, et la
+      nouvelle page (`DisplayOverOtherApps.kt`) ne regarde pas la mémoire.
+
+    **Mesuré** sur l'émulateur Android 16 passé en mémoire réduite (`debug.force_low_ram`, puis redémarrage d'Android
+    seul) : l'ancienne règle affichait « Ce téléphone ne permet pas la protection » ; pourtant l'interrupteur était là,
+    accordé depuis l'écran ; pendant un appel, un code a ouvert le STOP depuis l'arrière-plan
+    (`BAL_ALLOW_SAW_PERMISSION`), et l'écouteur de notifications a été relié. **Corrigé** : la protection est refusée à
+    un téléphone Go avant Android 14 seulement (`Access.phoneCanProtect`, test et contrôle négatif) ; après, l'accueil
+    propose l'activation (mesuré). Le texte affiché reste juste là où il l'est. **Relecture du 2026-11-04** : la
+    frontière vérifiée dans AOSP 14 (`ManageApplications.onAttach`, lignes 304-311, déjà là) ; aucun autre blocage de
+    la mémoire réduite sous 14 à 16 (démarrage d'activité en arrière-plan, exemption de l'affichage par-dessus,
+    notifications plein écran, liaison de l'écouteur : cherché dans une douzaine de fichiers du système). 14 et 15
+    lus seulement, 16 mesuré. **Restent** : un vrai téléphone Go — un fabricant peut couper la nouvelle page des
+    Réglages (le drapeau est réglable), l'étape montrerait alors une page sans interrupteur ; et sur 1 à 2 Go, le
+    système tue les processus plus tôt (`lmkd`), ce que l'émulateur ne reproduit pas ; de 11 à 13, la protection par
+    la seule notification de repli (D-024), que l'appli ne propose pas — une décision pour Patrice.
 
   Et, latent : l'accueil ignore le réglage « protection activée » (`ProtectionSettings.enabled`), que le moteur
   respecte ; rien ne l'écrit aujourd'hui. L'écran des réglages devra le montrer.

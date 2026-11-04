@@ -49,8 +49,24 @@ longue ; l'escroc doit rappeler, et cet appel est protégé. **Mesuré** sur l'�
 propres) et sur le **Galaxy S9** (Android 10, par le menu d'arrêt : Samsung refuse cette commande à `adb`). La piste
 notée dans D-020 (l'heure de mort du processus) ne marche pas : mesuré, Android n'en garde rien. Relecture
 (`relectures/2026-11-04-claude-extinction.md`) : aucun constat de sécurité ; le compromis, écrit, et trois tests
-ajoutés. **Prochaine étape** : la suite de la liste « avant toute publication » ci-dessous ; **P-11 attend Patrice**
-(combien de temps garder le journal : la politique de confidentialité le dira).
+ajoutés.
+
+**Android Go (P-21) : la règle était fausse à partir d'Android 14.** L'appli disait « Ce téléphone ne permet pas la
+protection » à tout téléphone Go (peu de mémoire), d'après la documentation d'Android. Lu dans les sources d'Android,
+puis mesuré sur l'émulateur Android 16 passé en mémoire réduite : à partir d'Android 14, les réglages laissent
+accorder l'affichage par-dessus, et l'écran STOP s'ouvre pendant un appel. L'appli refuse désormais la protection à un
+téléphone Go avant Android 14 seulement ; après, elle propose l'activation. Relecture
+(`relectures/2026-11-04-claude-android-go.md`) : la frontière vérifiée, aucun autre blocage trouvé. **Reste à mesurer**
+sur un vrai téléphone Go.
+
+**Ce qui attend Patrice** :
+- **P-11** : combien de temps garder le journal (la politique de confidentialité le dira) ;
+- **Android Go de 11 à 13** : l'écouteur de notifications y est permis, mais pas l'affichage par-dessus. La
+  notification de repli (D-024) pourrait y protéger à moitié : écran verrouillé, le STOP s'ouvre seul ; déverrouillé,
+  il faut toucher la notification. Aujourd'hui l'appli dit « ne permet pas la protection ». Faut-il proposer cette
+  protection réduite ?
+
+**Prochaine étape** : la suite de la liste « avant toute publication » ci-dessous.
 
 ## Le 2026-11-03, après-midi
 
@@ -186,7 +202,7 @@ L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai 
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
 **Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
-P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15 ; la source
+P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, un vrai téléphone Android Go), P-3 (Android 15 ; la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
 (95/100, D-016).
