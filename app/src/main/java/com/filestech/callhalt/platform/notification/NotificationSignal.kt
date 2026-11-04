@@ -1,8 +1,8 @@
 package com.filestech.callhalt.platform.notification
 
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
-import java.time.Instant
 
 /**
  * The notification channels on which a banking app asks to approve an operation (docs/ARCHITECTURE.md, D-019).
@@ -36,10 +36,10 @@ sealed interface SmsMessage {
 /**
  * What a notification posted by [packageName] on [channelId] is to the engine, if anything: a banking app's request,
  * by its channel; or, when it comes from the default SMS app ([sms] then non-null), a validation code. Stamped [at],
- * the phone's clock at reception (Signal's contract). The package goes to the journal: which app it came from. Of
+ * the phone's clocks at reception (Signal's contract). The package goes to the journal: which app it came from. Of
  * the text, nothing is kept.
  */
-fun notificationSignal(packageName: String, channelId: String?, sms: SmsMessage?, at: Instant): SensitiveAction? {
+fun notificationSignal(packageName: String, channelId: String?, sms: SmsMessage?, at: Moment): SensitiveAction? {
     val kind = when {
         channelId in BANK_REQUEST_CHANNELS -> SensitiveActionKind.BANK_VALIDATION_REQUEST
         sms == SmsMessage.Masked -> SensitiveActionKind.CODE_MESSAGE

@@ -13,6 +13,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
+import com.filestech.callhalt.platform.PhoneClock
 import com.filestech.callhalt.platform.SensorQueue
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -44,6 +45,8 @@ class NotificationListener : NotificationListenerService() {
     /** Cheap to build: a channel and one coroutine. */
     @Inject lateinit var queue: SensorQueue
 
+    @Inject lateinit var clock: PhoneClock
+
     /** Resolved in the queue, never at injection time: it reaches the database (Agenda Tech, audit F2). */
     @Inject lateinit var processSignal: Provider<ProcessSignalUseCase>
 
@@ -68,10 +71,10 @@ class NotificationListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        // The phone's clock at reception: the time every signal carries (Signal's contract).
-        val at = Instant.now()
+        // The phone's clocks at reception: the time every signal carries (Signal's contract).
+        val at = clock.now()
         val channel = sbn.notification.channelId
-        val sms = if (channel !in BANK_REQUEST_CHANNELS && sbn.packageName == defaultSmsApp()) latestSms(sbn, at) else null
+        val sms = if (channel !in BANK_REQUEST_CHANNELS && sbn.packageName == defaultSmsApp()) latestSms(sbn, at.wall) else null
         val signal = notificationSignal(sbn.packageName, channel, sms?.message, at) ?: return
         if (signal.kind == SensitiveActionKind.CODE_MESSAGE && sms != null && isRepost(sbn.key, sms.sentAtMillis)) return
         // The kind and the app, never the text.

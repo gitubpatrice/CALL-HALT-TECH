@@ -6,6 +6,7 @@ import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.PhoneRestarted
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
@@ -46,7 +47,7 @@ class DetectionEngine {
             is StopAnswered -> onStopAnswered(state, signal, settings)
             is StopNotShown -> Evaluation(
                 state = state.copy(pendingStops = state.pendingStops - signal.trigger),
-                journal = listOf(JournalEntry.NotShown(signal.at, signal.trigger)),
+                journal = listOf(JournalEntry.NotShown(signal.at.wall, signal.trigger)),
             )
         }
 
@@ -56,7 +57,9 @@ class DetectionEngine {
         // conference): the scam began with the first one, whose start time the window must keep.
         val sameConversation = current != null && CallWindow.inProgress(current, signal.at)
         // A start the ENDED call already covers is that call's, repeated or delivered late (the phone-state
-        // broadcast comes twice): taken as new, it would revive the call for hours (GPT review, 6).
+        // broadcast comes twice): taken as new, it would revive the call for hours (GPT review, 6). Stamped at
+        // reception on the uptime, in arrival order, only a sensor breaking Signal's contract could send one; a
+        // civil clock set back between two calls no longer makes the second look like a repeat (P-13).
         val repeatOfEnded = current?.endedAt?.let { signal.at.isBefore(it) } == true
         if (sameConversation || repeatOfEnded) return Evaluation(state)
 
@@ -81,22 +84,30 @@ class DetectionEngine {
         val belongsToThisCall = current != null && current.isActive &&
             !signal.at.isBefore(current.startedAt.minus(SIGNAL_CLOCK_TOLERANCE))
         if (current == null || !belongsToThisCall) return Evaluation(state)
-        // Within the tolerance, an end stamped before the start is clamped to it.
-        val ended = current.copy(endedAt = maxOf(signal.at, current.startedAt))
+        // Within the tolerance, an end stamped before the start is clamped to it. Past the cap, the call is a missed
+        // end, not a call (CallWindow): an end that comes later — a missed call's, hours after — closes it at the cap,
+        // and opens no after-call window (review of 2026-11-04, M2).
+        val cap = current.startedAt.plus(CallWindow.MAX_TRACKED_CALL)
+        val ended = current.copy(endedAt = if (signal.at.isAfter(cap)) cap else maxOf(signal.at, current.startedAt))
         return Evaluation(state.copy(calls = state.calls + (signal.channel to ended)))
     }
 
     /**
-     * No call survives a restart, nor any screen. A call still in progress when the phone restarted ended by then at
-     * the latest: its end is set to the restart — the after-call window runs from there, the protective side of an
-     * end nobody saw — and a call the 8-hour cap already closed is left closed, not revived. The screens shown
-     * before it are gone: their triggers are re-armed. Tracked whatever the settings, like every call.
+     * No call survives a restart, nor any screen (D-020). Every call of an earlier boot — by the boot's count, whatever
+     * the civil clock says — is carried into this one, to be measured from here on on this boot's uptime (P-13). One
+     * still in progress ends when the restart cut it, at the latest — the after-call window runs from there, the
+     * protective side of an end nobody saw — unless the 8-hour cap had closed it: it is closed at the cap, not revived.
+     * An ended one keeps what was left of its window. That gap is measured once, here, on the civil clock, the only one
+     * two boots share; set back while the phone was off, it counts as no time at all, the protective side again. A call
+     * of THIS boot — the restart reported again after a process death, later — is left as it is. The screens shown
+     * before the restart are gone: their triggers are re-armed. Tracked whatever the settings, like every call.
      */
     private fun onPhoneRestarted(state: DetectorState, signal: PhoneRestarted): Evaluation {
+        val restart = signal.at
         val calls = state.calls.mapValues { (_, call) ->
-            if (CallWindow.inProgress(call, signal.at)) call.copy(endedAt = signal.at) else call
+            if (call.startedAt.isOfEarlierBootThan(restart)) call.carriedOver(restart) else call
         }
-        val pendingStops = state.pendingStops.filterValues { shownAt -> !shownAt.isBefore(signal.at) }
+        val pendingStops = state.pendingStops.filterValues { shownAt -> !shownAt.isOfEarlierBootThan(restart) }
         return Evaluation(state.copy(calls = calls, pendingStops = pendingStops))
     }
 
@@ -129,7 +140,7 @@ class DetectionEngine {
         }
         return Evaluation(
             state = state.copy(pendingStops = state.pendingStops + (signal.kind to signal.at)),
-            journal = listOf(JournalEntry.Stop(signal.at, signal.kind, signal.source, call.counterpart)),
+            journal = listOf(JournalEntry.Stop(signal.at.wall, signal.kind, signal.source, call.counterpart)),
             decisions = decisions,
         )
     }
@@ -138,7 +149,7 @@ class DetectionEngine {
         when (signal.kind) {
             SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> Evaluation(
                 state = state,
-                journal = listOf(JournalEntry.Warning(signal.at, WarningReason.REMOTE_CONTROL_INSTALLED)),
+                journal = listOf(JournalEntry.Warning(signal.at.wall, WarningReason.REMOTE_CONTROL_INSTALLED)),
                 decisions = listOf(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED)),
             )
             // Outside a call these are ordinary: the user pays, checks the account, gets a code.
@@ -169,7 +180,11 @@ class DetectionEngine {
         }
         return Evaluation(
             state = state.copy(longCallWarned = state.longCallWarned + reached.map { it.channel }),
-            journal = if (reached.isEmpty()) emptyList() else listOf(JournalEntry.Warning(signal.at, WarningReason.LONG_CALL_WITH_UNKNOWN)),
+            journal = if (reached.isEmpty()) {
+                emptyList()
+            } else {
+                listOf(JournalEntry.Warning(signal.at.wall, WarningReason.LONG_CALL_WITH_UNKNOWN))
+            },
             decisions = decisions,
         )
     }
@@ -184,7 +199,7 @@ class DetectionEngine {
         }
         return Evaluation(
             state = state.copy(pendingStops = state.pendingStops - signal.trigger),
-            journal = listOf(JournalEntry.Answer(signal.at, signal.trigger, signal.choice)),
+            journal = listOf(JournalEntry.Answer(signal.at.wall, signal.trigger, signal.choice)),
             decisions = decisions,
         )
     }
@@ -202,4 +217,30 @@ class DetectionEngine {
          */
         val SIGNAL_CLOCK_TOLERANCE: Duration = Duration.ofSeconds(5)
     }
+}
+
+/** A call of an earlier boot, carried into the one [restart] reported (see `onPhoneRestarted`). */
+private fun CallSession.carriedOver(restart: Moment): CallSession {
+    val end = endedAt
+    return when {
+        end == null -> {
+            val cut = cutBy(restart)
+            val cap = startedAt.plus(CallWindow.MAX_TRACKED_CALL)
+            copy(endedAt = if (startedAt.until(cut) > CallWindow.MAX_TRACKED_CALL) cap else cut)
+        }
+        end.isBefore(restart) -> copy(endedAt = restart.minus(end.until(restart).coerceAtLeast(Duration.ZERO)))
+        else -> this
+    }
+}
+
+/**
+ * When the restart cut this call, at the latest. [restart] is when the app's process started, which can be hours after
+ * the phone did. If the phone itself switched on after the call began — its start, the uptime's zero, is after the
+ * call's on the civil clock — the call was cut before that, when it went off: the end is placed there (review of
+ * 2026-11-04, M1). Otherwise Android alone restarted, its uptime running on from before the call, or the civil clock
+ * was set back: only the restart bounds it.
+ */
+private fun CallSession.cutBy(restart: Moment): Moment {
+    val phoneStart = restart.uptime?.let { restart.minus(it.sinceBoot) } ?: return restart
+    return if (phoneStart.wall.isBefore(startedAt.wall)) restart else phoneStart
 }

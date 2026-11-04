@@ -9,6 +9,7 @@ import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -18,12 +19,15 @@ import com.filestech.callhalt.domain.port.RestartSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
 
 class ProcessSignalUseCaseTest {
 
-    private val t0: Instant = Instant.parse("2026-11-01T10:00:00Z")
+    private val t0 = Moment(Instant.parse("2026-11-01T10:00:00Z"))
+
+    private fun Moment.plusSeconds(seconds: Long) = plus(Duration.ofSeconds(seconds))
 
     /** A saved contact: the call asks for no long-call wake-up, so the executor is first called for the STOP. */
     private val contact = Counterpart.Number("+33698765432", inContacts = true)
@@ -135,8 +139,8 @@ class ProcessSignalUseCaseTest {
 
     /** A source that reports [unreported] until recorded, and remembers what the engine held when it was. */
     private class FakeRestarts(private val store: MemoryStore) : RestartSource {
-        var unreported: Instant? = null
-        val callEndedWhenRecorded = mutableListOf<Instant?>()
+        var unreported: Moment? = null
+        val callEndedWhenRecorded = mutableListOf<Moment?>()
 
         override suspend fun unreported(): Restart? = unreported?.let { at ->
             Restart(at) {

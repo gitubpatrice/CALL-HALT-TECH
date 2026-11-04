@@ -8,14 +8,15 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.Signal
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
+import com.filestech.callhalt.platform.PhoneClock
 import com.filestech.callhalt.platform.SensorQueue
 import com.filestech.callhalt.platform.queueAsync
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,13 +43,15 @@ class DebugSignalReceiver : BroadcastReceiver() {
 
     @Inject lateinit var processSignal: Provider<ProcessSignalUseCase>
 
+    @Inject lateinit var clock: PhoneClock
+
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != ACTION) return
-        val signal = signal(intent, Instant.now()) ?: return
+        val signal = signal(intent, clock.now()) ?: return
         queueAsync(queue, reason = "debug signal ${signal::class.simpleName}") { processSignal.get()(signal) }
     }
 
-    private fun signal(intent: Intent, at: Instant): Signal? = when (intent.getStringExtra(EXTRA_CALL)) {
+    private fun signal(intent: Intent, at: Moment): Signal? = when (intent.getStringExtra(EXTRA_CALL)) {
         "START" -> CallStarted(at, CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden)
         "END" -> CallEnded(at, CallChannel.CELLULAR)
         else -> SensitiveActionKind.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_KIND) }

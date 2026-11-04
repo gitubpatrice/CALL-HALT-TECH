@@ -4,7 +4,8 @@ import java.time.Instant
 
 /**
  * What the journal keeps (PROJET.md, § 4.8): what happened, when, and what the user chose — readable on
- * the phone by the relative who looks after its owner.
+ * the phone by the relative who looks after its owner. Read by people, it keeps the civil time of each
+ * signal ([Moment.wall]), not the uptime the engine decides on.
  */
 sealed interface JournalEntry {
     val at: Instant

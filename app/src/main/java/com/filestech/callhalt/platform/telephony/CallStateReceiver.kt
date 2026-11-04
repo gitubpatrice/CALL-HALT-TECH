@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import com.filestech.callhalt.platform.PhoneClock
 import com.filestech.callhalt.platform.SensorQueue
 import com.filestech.callhalt.platform.queueAsync
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -29,14 +29,16 @@ class CallStateReceiver : BroadcastReceiver() {
     /** Cheap to build: a channel and one coroutine. */
     @Inject lateinit var queue: SensorQueue
 
+    @Inject lateinit var clock: PhoneClock
+
     /** Resolved in the queue, never at injection time: it reaches the database (see [queueAsync]). */
     @Inject lateinit var sensor: Provider<CallStateSensor>
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED) return
         val state = PhoneState.fromExtra(intent.getStringExtra(TelephonyManager.EXTRA_STATE)) ?: return
-        // The phone's clock at reception: the time every signal carries (Signal's contract).
-        val at = Instant.now()
+        // The phone's clocks at reception: the time every signal carries (Signal's contract).
+        val at = clock.now()
         // Debug builds only: which SIM, for the dual-SIM measurement (docs/ARCHITECTURE.md, § 6). Never the number.
         Timber.d("PHONE_STATE %s, subscription %d", state, intent.getIntExtra(SubscriptionManager.EXTRA_SUBSCRIPTION_INDEX, -1))
         queueAsync(queue, reason = "phone state ${state.name}") { sensor.get().onPhoneState(state, at) }

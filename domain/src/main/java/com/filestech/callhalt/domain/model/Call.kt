@@ -1,7 +1,5 @@
 package com.filestech.callhalt.domain.model
 
-import java.time.Instant
-
 /**
  * How a call reaches the phone. A VOIP call (WhatsApp, Signal, Telegram…) is invisible to the telephony
  * stack: it is tracked only if an adapter can see it (docs/ARCHITECTURE.md, open point P-4).
@@ -33,8 +31,8 @@ data class CallSession(
     val channel: CallChannel,
     val direction: CallDirection,
     val counterpart: Counterpart,
-    val startedAt: Instant,
-    val endedAt: Instant? = null,
+    val startedAt: Moment,
+    val endedAt: Moment? = null,
 ) {
     init {
         require(endedAt == null || !endedAt.isBefore(startedAt)) { "A call cannot end before it starts." }

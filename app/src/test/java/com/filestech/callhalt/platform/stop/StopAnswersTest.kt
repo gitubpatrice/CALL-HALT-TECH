@@ -3,18 +3,21 @@ package com.filestech.callhalt.platform.stop
 import com.filestech.callhalt.domain.detection.DetectionEngine
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
+import com.filestech.callhalt.platform.FakePhoneClock
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.SensorQueue
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 /** An answer is carried out — the call ended when it must be — and reaches the engine's journal through the queue. */
 class StopAnswersTest {
@@ -94,7 +97,9 @@ class StopAnswersTest {
         AndroidDecisionExecutor { true },
     )
 
-    private fun TestScope.answers() = StopAnswers(SensorQueue(backgroundScope), { processSignal }, calls)
+    private val clock = FakePhoneClock(Moment(Instant.EPOCH))
+
+    private fun TestScope.answers() = StopAnswers(SensorQueue(backgroundScope), { processSignal }, calls, clock)
 
     private fun request(onCall: Boolean) = StopRequest(1, SensitiveActionKind.CODE_MESSAGE, onCall, CallChannel.CELLULAR)
 

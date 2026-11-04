@@ -11,10 +11,12 @@ import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.Signal
+import com.filestech.callhalt.domain.model.Uptime
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -23,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -34,7 +37,11 @@ class RoomDetectorStoreTest {
 
     private lateinit var database: CallHaltDatabase
     private val engine = DetectionEngine()
-    private val t0: Instant = Instant.parse("2026-11-01T10:00:00Z")
+
+    /** On both clocks: the uptime columns go through the real database too (P-13). */
+    private val t0 = Moment(Instant.parse("2026-11-01T10:00:00Z"), Uptime(4, Duration.ofHours(1)))
+
+    private fun Moment.plusSeconds(seconds: Long) = plus(Duration.ofSeconds(seconds))
 
     @Before
     fun openDatabase() {
@@ -68,7 +75,12 @@ class RoomDetectorStoreTest {
         val journal = database.detectorDao().journal().first().mapNotNull(DetectorMapping::journalEntry)
 
         assertThat(journal).containsExactly(
-            JournalEntry.Stop(t0.plusSeconds(120), SensitiveActionKind.BANK_VALIDATION_REQUEST, "com.example.bank", Counterpart.Hidden),
+            JournalEntry.Stop(
+                t0.plusSeconds(120).wall,
+                SensitiveActionKind.BANK_VALIDATION_REQUEST,
+                "com.example.bank",
+                Counterpart.Hidden,
+            ),
         )
     }
 

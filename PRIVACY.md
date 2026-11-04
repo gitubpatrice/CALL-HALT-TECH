@@ -50,7 +50,9 @@ On this phone only, in the app's private storage:
 
 - its settings;
 - the memory of its detector: for the latest call only, when it started and ended, and whether it was
-  incoming or outgoing — never the number; and the last call state the phone reported;
+  incoming or outgoing — never the number; and the last call state the phone reported. Its times are kept twice: by
+  the phone's clock, and as the time since the phone started, with Android's count of its starts — so that a clock
+  set back or forward changes nothing;
 - a journal of the alerts it shows: when, why, which app the request or the code came from (its package name, such
   as `com.credit_coop.android.mobilebanking`), and what was chosen — never the text of a message. A request or a
   code outside a call, or after the minutes that follow one, is not kept.

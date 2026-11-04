@@ -4,6 +4,7 @@ import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Moment
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -11,7 +12,7 @@ import java.time.Instant
 
 class CallWindowTest {
 
-    private val t0: Instant = Instant.parse("2026-11-01T10:00:00Z")
+    private val t0 = Moment(Instant.parse("2026-11-01T10:00:00Z"))
     private val window: Duration = Duration.ofMinutes(15)
 
     private fun call(channel: CallChannel, startMinute: Long, endMinute: Long? = null) = CallSession(
@@ -46,8 +47,8 @@ class CallWindowTest {
 
         assertThat(CallWindow.inProgress(live, t0)).isTrue()
         assertThat(CallWindow.inProgress(live, t0.plus(CallWindow.MAX_TRACKED_CALL))).isTrue()
-        assertThat(CallWindow.inProgress(live, t0.plus(CallWindow.MAX_TRACKED_CALL).plusSeconds(1))).isFalse()
-        assertThat(CallWindow.inProgress(live, t0.minusSeconds(1))).isFalse()
+        assertThat(CallWindow.inProgress(live, t0.plus(CallWindow.MAX_TRACKED_CALL).plus(Duration.ofSeconds(1)))).isFalse()
+        assertThat(CallWindow.inProgress(live, t0.minus(Duration.ofSeconds(1)))).isFalse()
         assertThat(CallWindow.inProgress(call(CallChannel.CELLULAR, 0, 1), t0)).isFalse()
     }
 
