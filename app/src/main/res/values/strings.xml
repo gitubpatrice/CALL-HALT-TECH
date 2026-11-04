@@ -32,10 +32,11 @@
     <string name="home_weakened">Protection weakened</string>
     <string name="home_weakened_detail">The app can no longer save what it sees. It still protects you, but if the phone stops it during a call, it will no longer know you were on the phone. The phone may be full: free up some space, then come back here. If it has some, restart it.</string>
     <string name="home_weakened_alerts">If the phone prevents the STOP screen from showing, the app will not be able to warn you.</string>
+    <string name="home_weakened_screen">On this phone, the STOP screen cannot show by itself: the app will warn you with an alert.</string>
     <string name="home_not_listening">The app no longer receives the notifications — the phone has probably stopped it: it does not see your bank\'s requests or the codes you receive. If this message stays, open the settings, turn the access of Call Halt Tech off, then on again.</string>
     <string name="home_open_storage">Open the phone\'s storage</string>
-    <!-- An "Android Go" phone (low memory) before Android 14 grants no app the display over the others (Access.kt, phoneCanProtect). -->
-    <string name="home_unsupported">This phone cannot run the protection: on it, Android lets no app show in front of the others (an “Android Go” phone).</string>
+    <!-- An "Android Go" phone (low memory) on Android 10: no notification listener, no display over the others (Access.kt, phoneSupport). From 11 to 13, home_weakened_screen; from 14, the full protection. -->
+    <string name="home_unsupported">This phone cannot run the protection: on it, Android lets no app see the notifications, nor show in front of the others (an “Android Go” phone).</string>
     <plurals name="home_missing">
         <item quantity="one">%1$d permission is missing.</item>
         <item quantity="other">%1$d permissions are missing.</item>

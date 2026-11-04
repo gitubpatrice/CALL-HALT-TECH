@@ -7,6 +7,7 @@ import com.filestech.callhalt.data.store.RoomDetectorStore
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessChecker
+import com.filestech.callhalt.platform.access.PhoneSupport
 import com.filestech.callhalt.platform.notification.ListenerConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -26,8 +27,8 @@ data class ProtectionState(
     /** The accesses the phone may refuse until the user allows the restricted settings ([AccessChecker.mayBeRestricted]). */
     val mayBeRestricted: Set<Access>,
     val afterCallMinutes: Long,
-    /** [AccessChecker.phoneCanProtect]: when false, nothing is asked — the phone would refuse the STOP screen. */
-    val phoneCanProtect: Boolean = true,
+    /** [AccessChecker.support]: [PhoneSupport.NONE], nothing is asked; [PhoneSupport.ALERT_ONLY], the STOP by its notification. */
+    val support: PhoneSupport = PhoneSupport.FULL,
     /** [RoomDetectorStore.failing]: the protection still decides, but forgets the call if the phone stops the app (P-10). */
     val storageFailing: Boolean = false,
     /** [AccessChecker.applicable]: the accesses this phone has, in the activation's order. */
@@ -41,13 +42,17 @@ data class ProtectionState(
     /** In the order the activation asks for them. */
     val missing: List<Access> = applicable.filterNot { it in granted }
 
-    /** The first problem only, as the activation asks for one access at a time: the accesses before the storage. */
+    /**
+     * The first problem only, as the activation asks for one access at a time: the accesses before the storage. Where the
+     * STOP comes by its notification alone ([PhoneSupport.ALERT_ONLY]), that notification is no fallback: without it, off.
+     */
     val status: ProtectionStatus = when {
-        !phoneCanProtect -> ProtectionStatus.UNSUPPORTED
-        missing.any { it != Access.ALERTS } -> ProtectionStatus.OFF
+        support == PhoneSupport.NONE -> ProtectionStatus.UNSUPPORTED
+        missing.any { it != Access.ALERTS || support == PhoneSupport.ALERT_ONLY } -> ProtectionStatus.OFF
         !listening -> ProtectionStatus.NOT_LISTENING
         Access.ALERTS in missing -> ProtectionStatus.NO_ALERT
         storageFailing -> ProtectionStatus.STORAGE_FAILING
+        support == PhoneSupport.ALERT_ONLY -> ProtectionStatus.ALERT_ONLY
         else -> ProtectionStatus.ON
     }
 }
@@ -64,6 +69,13 @@ enum class ProtectionStatus {
 
     /** Weakened: storage fails (P-10). */
     STORAGE_FAILING,
+
+    /**
+     * Weakened: every access granted, on a phone where no app may show in front of the others — the STOP comes by its
+     * notification: on a phone asleep or locked, the screen it opens is there when the phone is woken; on a phone in use,
+     * a touch away (D-030, measured; Patrice, 2026-11-04: "ok fais le").
+     */
+    ALERT_ONLY,
 
     /** Off in fact: every access granted, but the phone keeps the listener unbound (D-025). */
     NOT_LISTENING,
@@ -86,7 +98,7 @@ class ProtectionViewModel @Inject constructor(
 
     private val read = MutableStateFlow(readAccesses())
     private val mayBeRestricted = Access.entries.filterTo(mutableSetOf(), accesses::mayBeRestricted)
-    private val phoneCanProtect = accesses.phoneCanProtect()
+    private val support = accesses.support()
 
     /** True once the listener was found unbound, asked to bind, and still unbound ([checkListener]). */
     private val unbound = MutableStateFlow(false)
@@ -140,7 +152,7 @@ class ProtectionViewModel @Inject constructor(
             read.granted,
             mayBeRestricted,
             afterCallMinutes,
-            phoneCanProtect,
+            support,
             storageFailing,
             read.applicable,
             listening,

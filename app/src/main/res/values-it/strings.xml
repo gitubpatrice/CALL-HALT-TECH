@@ -16,9 +16,10 @@
     <string name="home_weakened">Protezione indebolita</string>
     <string name="home_weakened_detail">L\'app non riesce più a salvare ciò che vede. La protegge ancora, ma se il telefono la chiude durante una chiamata, non saprà più che era al telefono. Forse il telefono è pieno: liberi un po\' di spazio, poi torni qui. Se lo spazio c\'è, lo riavvii.</string>
     <string name="home_weakened_alerts">Se il telefono impedisce alla schermata STOP di comparire, l\'app non potrà avvisarLa.</string>
+    <string name="home_weakened_screen">Su questo telefono la schermata STOP non può comparire da sola: l\'app Le mostrerà invece un avviso.</string>
     <string name="home_not_listening">L\'app non riceve più le notifiche — probabilmente il telefono l\'ha chiusa: non vede le richieste della Sua banca né i codici ricevuti. Se questo messaggio resta, apra le impostazioni, disattivi l\'accesso di Call Halt Tech e poi lo riattivi.</string>
     <string name="home_open_storage">Aprire la memoria del telefono</string>
-    <string name="home_unsupported">Questo telefono non consente la protezione: Android non vi lascia comparire nessuna app sopra le altre (un telefono «Android Go»).</string>
+    <string name="home_unsupported">Questo telefono non consente la protezione: Android non permette a nessuna app di vedere le notifiche né di comparire sopra le altre (un telefono «Android Go»).</string>
     <plurals name="home_missing">
         <item quantity="one">Manca %1$d autorizzazione.</item>
         <item quantity="many">Mancano %1$d autorizzazioni.</item>

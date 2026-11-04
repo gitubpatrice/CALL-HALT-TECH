@@ -21,18 +21,18 @@ import javax.inject.Singleton
 interface AccessChecker {
     fun granted(): Set<Access>
 
-    /** The accesses this phone has, in [Access]'s order: [Access.AUTOSTART] on a Xiaomi only. */
+    /**
+     * The accesses this phone has, in [Access]'s order: [Access.AUTOSTART] on a Xiaomi only; no [Access.SCREEN] on a
+     * phone that grants it to no app ([PhoneSupport.ALERT_ONLY]) — asking would send the user to a page with no switch,
+     * again and again (general review of 2026-11-02, 6).
+     */
     fun applicable(): List<Access>
 
     /** See [mayBeRestricted]. */
     fun mayBeRestricted(access: Access): Boolean
 
-    /**
-     * False on a phone that can never be protected: an "Android Go" one (low memory) before Android 14 — see
-     * `phoneCanProtect(lowRam, sdk)` in Access.kt. Asking would send the user to a page with no switch, again and again
-     * (general review of 2026-11-02, 6).
-     */
-    fun phoneCanProtect(): Boolean
+    /** How far this phone can run the protection: an "Android Go" one (low memory) before Android 14, less — see [phoneSupport]. */
+    fun support(): PhoneSupport
 }
 
 @Singleton
@@ -41,19 +41,30 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
     /** Fixed for an install: read once. */
     private val packageSource: Int? by lazy(::readPackageSource)
 
+    /** Fixed for a phone: read once. */
+    private val support: PhoneSupport by lazy {
+        phoneSupport(
+            lowRam = context.getSystemService(ActivityManager::class.java)?.isLowRamDevice == true,
+            sdk = Build.VERSION.SDK_INT,
+        )
+    }
+
     override fun granted(): Set<Access> = Access.entries.filterTo(mutableSetOf(), ::isGranted)
 
     override fun applicable(): List<Access> {
         val xiaomi = Miui.autostartAllowed(context) != null
-        return Access.entries.filter { it != Access.AUTOSTART || xiaomi }
+        return Access.entries.filter { access ->
+            when (access) {
+                Access.AUTOSTART -> xiaomi
+                Access.SCREEN -> support != PhoneSupport.ALERT_ONLY
+                else -> true
+            }
+        }
     }
 
     override fun mayBeRestricted(access: Access): Boolean = mayBeRestricted(access, Build.VERSION.SDK_INT, packageSource)
 
-    override fun phoneCanProtect(): Boolean = phoneCanProtect(
-        lowRam = context.getSystemService(ActivityManager::class.java)?.isLowRamDevice == true,
-        sdk = Build.VERSION.SDK_INT,
-    )
+    override fun support(): PhoneSupport = support
 
     private fun isGranted(access: Access): Boolean = when (access) {
         Access.CALLS -> CALL_PERMISSIONS.all { permission ->

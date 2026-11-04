@@ -1,6 +1,7 @@
 package com.filestech.callhalt.ui.protection
 
 import com.filestech.callhalt.platform.access.Access
+import com.filestech.callhalt.platform.access.PhoneSupport
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -39,8 +40,30 @@ class ProtectionStateTest {
         assertThat(state(granted = Access.entries.toSet(), storageFailing = true).status)
             .isEqualTo(ProtectionStatus.STORAGE_FAILING)
         assertThat(state(granted = setOf(Access.CALLS), storageFailing = true).status).isEqualTo(ProtectionStatus.OFF)
-        assertThat(state(granted = Access.entries.toSet(), storageFailing = true, phoneCanProtect = false).status)
+        assertThat(state(granted = Access.entries.toSet(), storageFailing = true, support = PhoneSupport.NONE).status)
             .isEqualTo(ProtectionStatus.UNSUPPORTED)
+    }
+
+    /**
+     * D-030: on a phone where no app may show in front of the others, the STOP comes by its notification alone — weakened
+     * once everything else is granted, and OFF without the notification, which is no fallback there. The accesses and the
+     * storage are said first, as elsewhere.
+     */
+    @Test
+    fun `where the STOP comes by its notification alone, it is weakened, and off without it`() {
+        val goPhone = Access.entries - Access.AUTOSTART - Access.SCREEN
+        fun go(granted: Set<Access>, storageFailing: Boolean = false, listening: Boolean = true) =
+            state(granted, storageFailing, PhoneSupport.ALERT_ONLY, goPhone, listening)
+
+        assertThat(go(goPhone.toSet()).status).isEqualTo(ProtectionStatus.ALERT_ONLY)
+        assertThat(go(goPhone.toSet()).missing).isEmpty()
+        assertThat(go(goPhone.toSet() - Access.ALERTS).status).isEqualTo(ProtectionStatus.OFF)
+        assertThat(go(goPhone.toSet() - Access.ALERTS).missing).containsExactly(Access.ALERTS)
+        assertThat(go(goPhone.toSet() - Access.CALLS).status).isEqualTo(ProtectionStatus.OFF)
+        assertThat(go(goPhone.toSet(), storageFailing = true).status).isEqualTo(ProtectionStatus.STORAGE_FAILING)
+        assertThat(go(goPhone.toSet(), listening = false).status).isEqualTo(ProtectionStatus.NOT_LISTENING)
+        // The display over the others is never asked there: not one of the accesses.
+        assertThat(go(emptySet()).missing).doesNotContain(Access.SCREEN)
     }
 
     /**
@@ -80,14 +103,14 @@ class ProtectionStateTest {
     private fun state(
         granted: Set<Access>,
         storageFailing: Boolean = false,
-        phoneCanProtect: Boolean = true,
+        support: PhoneSupport = PhoneSupport.FULL,
         applicable: List<Access> = Access.entries - Access.AUTOSTART,
         listening: Boolean = true,
     ) = ProtectionState(
         granted,
         mayBeRestricted = emptySet(),
         afterCallMinutes = 15,
-        phoneCanProtect,
+        support,
         storageFailing,
         applicable,
         listening,
