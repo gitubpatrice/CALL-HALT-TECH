@@ -39,7 +39,9 @@ change that adds it to the app, and the build checks the app asks for nothing el
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
 installed on this phone — by a store, or from a file. It keeps nothing of it. On a Xiaomi phone, it reads in the same
 way whether the phone lets it "start automatically", to ask for that setting only if it is missing; and it knows whether
-its own notification access is at work, to say so on the home screen.
+its own notification access is at work, to say so on the home screen. When the phone switches off or restarts, Android
+tells the apps that are running: the app then records the end of the call in progress, if any, and nothing else about
+the shutdown.
 
 The manifest also carries a line Android's own library adds for the app's internal use
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`); it gives no access to anything.
