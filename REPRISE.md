@@ -14,6 +14,21 @@ dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même
 
 ## Reprendre ici (2026-11-04)
 
+**Le soir (Patrice : « tu peux reprendre, par contre je n'ai pas de téléphone avec Android Go »)** : aucun téléphone
+branché, tout sur émulateurs.
+- **Android Go** : plus de « vrai téléphone Go » à attendre ; tout est mesuré sur émulateurs en mémoire réduite, et
+  c'est écrit comme une limite (P-21). **Android 12 Go mesuré** (le seul de 11 à 13 qui manquait) : comme 11 et 13.
+- **P-3, Android 15 mesuré** : installée depuis un fichier, Android y bloque l'affichage par-dessus et l'accès aux
+  notifications, comme sous 16 ; l'aide de l'appli mène au déblocage, puis tout s'accorde, et un code pendant un appel
+  ouvre le STOP. **Une impasse trouvée et corrigée** : à une appli installée depuis un fichier, Android 14 et 15 ne
+  donnent pas d'office l'autorisation plein écran (Android 16, si) ; après « Autoriser » à l'étape 5, le bouton
+  redemandait une permission déjà accordée, et rien ne se passait. L'étape relit maintenant ses permissions, et
+  propose « Ouvrir les réglages », qui ouvre la page « plein écran » de l'appli : mesuré sous 14 et 15 jusqu'à
+  « Protection activée ». Une installation par F-Droid n'est pas mesurée.
+- **P-3, Android 11 mesuré** : parcours complet, « Protection activée ». **Le compteur d'étapes corrigé** : il
+  finissait sur « Étape 4 sur 5 » sur tout téléphone avant Android 13 (le S9 ; « 5 sur 6 » sur un Xiaomi comme le
+  Redmi) ; il compte désormais les étapes de l'activation elle-même (« 1 sur 4 » à « 4 sur 4 », mesuré).
+
 **Le S24 FE, un jour après** : l'appli est restée éveillée (redémarré dans la nuit, processus vivant, écouteur relié,
 toujours exemptée de la veille) ; l'écouteur de mesure, resté autorisé, a été retiré. L'observation continue.
 
@@ -56,8 +71,8 @@ protection » à tout téléphone Go (peu de mémoire), d'après la documentatio
 puis mesuré sur l'émulateur Android 16 passé en mémoire réduite : à partir d'Android 14, les réglages laissent
 accorder l'affichage par-dessus, et l'écran STOP s'ouvre pendant un appel. L'appli refuse désormais la protection à un
 téléphone Go avant Android 14 seulement ; après, elle propose l'activation. Relecture
-(`relectures/2026-11-04-claude-android-go.md`) : la frontière vérifiée, aucun autre blocage trouvé. **Reste à mesurer**
-sur un vrai téléphone Go.
+(`relectures/2026-11-04-claude-android-go.md`) : la frontière vérifiée, aucun autre blocage trouvé. Aucun vrai
+téléphone Go (Patrice n'en a pas) : limite déclarée, P-21.
 
 **P-11 fait (D-029) : le journal garde chaque ligne 14 mois, et 10 000 lignes au plus** (Patrice : « fais ce qu'il y
 a de mieux »). Le journal montre qu'un appel était en cours, ou venait de finir, quand une opération a été demandée :
@@ -75,8 +90,8 @@ refusé par Android ; pendant un appel, un code fait paraître l'alerte en haut 
 écran éteint, le STOP est là dès qu'on le rallume. L'activation ne demande plus l'affichage par-dessus sur ces
 téléphones, et l'accueil dit « Protection affaiblie » — « Sur ce téléphone, l'écran STOP ne peut pas s'afficher de
 lui-même : l'appli vous préviendra par une alerte. » **Au passage, sur tout téléphone** : sans l'affichage par-dessus,
-l'alerte part tout de suite au lieu d'attendre 5 s (mesuré : 0,2 s). Restent : Android 12 (lu, pas mesuré), un vrai
-téléphone Go.
+l'alerte part tout de suite au lieu d'attendre 5 s (mesuré : 0,2 s). Android 12 mesuré le soir
+(ci-dessus) ; aucun vrai téléphone Go : limite déclarée.
 
 **Prochaine étape** : la suite de la liste « avant toute publication » ci-dessous.
 
@@ -214,7 +229,7 @@ L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai 
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
 **Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement),
-P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, un vrai téléphone Android Go), P-3 (Android 15 ; la source
+P-21 (la mise en veille de Samsung sur plusieurs jours : en observation sur le S24), P-3 (la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
 (95/100, D-016).
@@ -252,7 +267,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 337 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 344 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
