@@ -30,6 +30,17 @@ interface DetectorDao {
     @Insert
     suspend fun insertJournal(rows: List<JournalEntryEntity>)
 
+    /** The lines older than [before] (epoch milliseconds): past their time ([JournalRetention]). */
+    @Query("DELETE FROM journal_entry WHERE at < :before")
+    suspend fun deleteJournalBefore(before: Long)
+
+    /**
+     * All but the [keep] lines written last. The id is the order of writing (AUTOINCREMENT, never reused), whatever the
+     * civil clock said; fewer lines than that, the subquery is NULL and nothing goes.
+     */
+    @Query("DELETE FROM journal_entry WHERE id <= (SELECT id FROM journal_entry ORDER BY id DESC LIMIT 1 OFFSET :keep)")
+    suspend fun keepLastJournal(keep: Int)
+
     /** Newest first; the id breaks ties between entries written in the same millisecond. */
     @Query("SELECT * FROM journal_entry ORDER BY at DESC, id DESC")
     fun journal(): Flow<List<JournalEntryEntity>>

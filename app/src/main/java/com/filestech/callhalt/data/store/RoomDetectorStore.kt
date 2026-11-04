@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import java.time.Clock
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
@@ -37,6 +39,8 @@ import kotlin.coroutines.cancellation.CancellationException
 @Singleton
 class RoomDetectorStore @Inject constructor(
     private val database: CallHaltDatabase,
+    /** For the journal's retention alone ([JournalRetention]); the engine decides on the signals' own clocks. */
+    private val clock: Clock,
 ) : DetectorStore {
 
     private val mutex = Mutex()
@@ -94,6 +98,7 @@ class RoomDetectorStore @Inject constructor(
                 database.withTransaction {
                     val dao = database.detectorDao()
                     writeState(dao, base(dao))
+                    prune(dao)
                 }
                 saved()
             } catch (cancelled: CancellationException) {
@@ -117,6 +122,17 @@ class RoomDetectorStore @Inject constructor(
     private suspend fun write(dao: DetectorDao, evaluation: Evaluation) {
         writeState(dao, evaluation.state)
         dao.insertJournal(evaluation.journal.map(DetectorMapping::journalRow))
+        prune(dao)
+    }
+
+    /**
+     * The journal kept to its time and its bound ([JournalRetention]), in the transaction that writes: at every signal,
+     * and at every check. A civil clock set back deletes nothing; set forward by more than [JournalRetention.MONTHS], it
+     * deletes lines that were not that old — the clock is wrong for everything else too (docs/ARCHITECTURE.md, D-029).
+     */
+    private suspend fun prune(dao: DetectorDao) {
+        dao.deleteJournalBefore(JournalRetention.cutoff(ZonedDateTime.now(clock)).toEpochMilli())
+        dao.keepLastJournal(JournalRetention.MAX_LINES)
     }
 
     private suspend fun writeState(dao: DetectorDao, state: DetectorState) {

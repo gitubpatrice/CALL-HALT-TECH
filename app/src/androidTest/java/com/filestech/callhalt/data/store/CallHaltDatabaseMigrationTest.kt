@@ -18,8 +18,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneOffset
 
 /**
  * The migrations, replayed from the committed schemas (app/schemas): 1 → 2 adds the uptime beside each time the engine
@@ -71,7 +73,7 @@ class CallHaltDatabaseMigrationTest {
                 Moment(STARTED.plusSeconds(120), Uptime(9, Duration.ofHours(3))),
                 SensitiveActionKind.BANK_VALIDATION_REQUEST,
             )
-            val decisions = RoomDetectorStore(database).apply { state ->
+            val decisions = RoomDetectorStore(database, Clock.fixed(STARTED.plusSeconds(120), ZoneOffset.UTC)).apply { state ->
                 DetectionEngine().process(state, code, ProtectionSettings())
             }
 
