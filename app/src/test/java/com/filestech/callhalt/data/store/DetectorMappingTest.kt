@@ -6,18 +6,24 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.model.Uptime
 import com.filestech.callhalt.domain.model.WarningReason
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.Duration
 import java.time.Instant
 
 class DetectorMappingTest {
 
     private val t0: Instant = Instant.parse("2026-11-01T10:00:00Z")
+
+    /** [seconds] after t0, 90 minutes after boot 5 — on both clocks (P-13). */
+    private fun moment(seconds: Long) = Moment(t0.plusSeconds(seconds), Uptime(5, Duration.ofMinutes(90).plusSeconds(seconds)))
 
     private val fullState = DetectorState(
         calls = mapOf(
@@ -25,17 +31,19 @@ class DetectorMappingTest {
                 CallChannel.CELLULAR,
                 CallDirection.INCOMING,
                 Counterpart.Number("+33612345678", inContacts = false),
-                startedAt = t0,
-                endedAt = t0.plusSeconds(600),
+                startedAt = moment(0),
+                // Carried over at a restart: in the next boot's time, before it began (DetectionEngine).
+                endedAt = Moment(t0.plusSeconds(600), Uptime(6, Duration.ofSeconds(-30))),
             ),
+            // Written before the uptime was kept (schema 1): the civil time alone.
             CallChannel.VOIP to CallSession(
                 CallChannel.VOIP,
                 CallDirection.UNKNOWN,
                 Counterpart.Unreadable,
-                startedAt = t0.plusSeconds(60),
+                startedAt = Moment(t0.plusSeconds(60)),
             ),
         ),
-        pendingStops = mapOf(SensitiveActionKind.CODE_MESSAGE to t0.plusSeconds(120)),
+        pendingStops = mapOf(SensitiveActionKind.CODE_MESSAGE to moment(120)),
         longCallWarned = setOf(CallChannel.CELLULAR),
     )
 
@@ -55,7 +63,7 @@ class DetectorMappingTest {
     @Test
     fun `a hidden caller survives the round trip`() {
         val hidden = DetectorState(
-            calls = mapOf(CallChannel.CELLULAR to CallSession(CallChannel.CELLULAR, CallDirection.OUTGOING, Counterpart.Hidden, t0)),
+            calls = mapOf(CallChannel.CELLULAR to CallSession(CallChannel.CELLULAR, CallDirection.OUTGOING, Counterpart.Hidden, moment(0))),
         )
 
         assertThat(roundTrip(hidden)).isEqualTo(hidden)
@@ -71,16 +79,31 @@ class DetectorMappingTest {
         assertThat(state.calls.keys).containsExactly(CallChannel.VOIP)
     }
 
+    /** Before its start on the clock that decides: the uptime within one boot, the civil time without it. */
     @Test
     fun `a row ending before it starts is dropped instead of crashing`() {
-        val corrupted = DetectorMapping.callRows(fullState).first().let { it.copy(endedAt = it.startedAt - 1) }
+        val sameBoot = CallSession(CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden, moment(0), moment(60))
+        val row = DetectorMapping.callRows(DetectorState(calls = mapOf(CallChannel.CELLULAR to sameBoot))).single()
+        val onTheUptime = row.copy(endedSinceBoot = checkNotNull(row.startedSinceBoot) - 1)
+        val onTheCivilClock = row.copy(endedAt = row.startedAt - 1, startedBoot = null, endedBoot = null)
 
-        assertThat(DetectorMapping.toState(listOf(corrupted), emptyList()).calls).isEmpty()
+        assertThat(DetectorMapping.toState(listOf(onTheUptime), emptyList()).calls).isEmpty()
+        assertThat(DetectorMapping.toState(listOf(onTheCivilClock), emptyList()).calls).isEmpty()
+        // The civil clock set back during the call: an end "before" the start on it alone is still the call's.
+        assertThat(DetectorMapping.toState(listOf(row.copy(endedAt = row.startedAt - 1)), emptyList()).calls).hasSize(1)
+    }
+
+    @Test
+    fun `an uptime with one of its two columns missing reads as none`() {
+        val row = DetectorMapping.stopRows(fullState).single().copy(shownSinceBoot = null)
+
+        assertThat(DetectorMapping.toState(emptyList(), listOf(row)).pendingStops.values.single())
+            .isEqualTo(Moment(t0.plusSeconds(120)))
     }
 
     @Test
     fun `a pending stop with an unknown trigger is dropped`() {
-        val state = DetectorMapping.toState(emptyList(), listOf(PendingStopEntity("SOMETHING_ELSE", 0)))
+        val state = DetectorMapping.toState(emptyList(), listOf(PendingStopEntity("SOMETHING_ELSE", 0, null, null)))
 
         assertThat(state.pendingStops).isEmpty()
     }

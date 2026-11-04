@@ -9,7 +9,7 @@ import java.time.Instant
 
 class ModelInvariantsTest {
 
-    private val t0: Instant = Instant.parse("2026-11-01T10:00:00Z")
+    private val t0 = Moment(Instant.parse("2026-11-01T10:00:00Z"))
 
     @Test
     fun `the default settings are the protective ones`() {
@@ -38,7 +38,13 @@ class ModelInvariantsTest {
     @Test
     fun `a call cannot end before it starts`() {
         assertThrows<IllegalArgumentException> {
-            CallSession(CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Hidden, startedAt = t0, endedAt = t0.minusSeconds(1))
+            CallSession(
+                CallChannel.CELLULAR,
+                CallDirection.INCOMING,
+                Counterpart.Hidden,
+                startedAt = t0,
+                endedAt = t0.minus(Duration.ofSeconds(1)),
+            )
         }
     }
 

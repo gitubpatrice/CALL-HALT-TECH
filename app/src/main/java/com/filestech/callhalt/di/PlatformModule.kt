@@ -1,7 +1,7 @@
 package com.filestech.callhalt.di
 
-import com.filestech.callhalt.platform.AndroidBootReader
-import com.filestech.callhalt.platform.BootReader
+import com.filestech.callhalt.platform.AndroidPhoneClock
+import com.filestech.callhalt.platform.PhoneClock
 import com.filestech.callhalt.platform.access.AccessChecker
 import com.filestech.callhalt.platform.access.AndroidAccessChecker
 import com.filestech.callhalt.platform.stop.ActivityStopLauncher
@@ -25,7 +25,7 @@ abstract class PlatformModule {
     abstract fun callControl(impl: TelecomCallControl): CallControl
 
     @Binds
-    abstract fun bootReader(impl: AndroidBootReader): BootReader
+    abstract fun phoneClock(impl: AndroidPhoneClock): PhoneClock
 
     @Binds
     abstract fun accessChecker(impl: AndroidAccessChecker): AccessChecker

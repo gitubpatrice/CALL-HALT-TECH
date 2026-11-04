@@ -155,7 +155,7 @@ kotlin {
 
 // Room schema export — the dedicated plugin owns room.schemaLocation; do NOT also pass it through
 // `ksp { arg(...) }`. Schemas land in schemas/<db-class-fqcn>/<version>.json and are COMMITTED: they are
-// what a migration test replays (App Manager Tech). Version 1 stays editable until a first APK ships.
+// what a migration test replays (App Manager Tech). From version 2 (P-13), every change is a migration.
 room {
     schemaDirectory("$projectDir/schemas")
 }
@@ -191,6 +191,17 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
 
+    // A version constraint, not a new dependency: room-testing reads the exported schemas with
+    // kotlinx-serialization 1.8.1 or later, and the instrumented tests run against the APP's library versions —
+    // 1.7.3, pulled by navigation-compose. On an older one, App Manager Tech's migration tests all died on an
+    // AbstractMethodError (Galaxy S9, 2026-10-08). It raises a version the app already carries, in the safe
+    // direction: a newer runtime runs code generated for an older one.
+    constraints {
+        implementation(libs.kotlinx.serialization.core) {
+            because("room-testing 2.8.5 needs kotlinx-serialization 1.8.1 in the instrumented tests")
+        }
+    }
+
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
@@ -204,4 +215,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.room.testing)
 }

@@ -3,8 +3,8 @@ package com.filestech.callhalt.domain.port
 import com.filestech.callhalt.domain.detection.DetectorState
 import com.filestech.callhalt.domain.detection.Evaluation
 import com.filestech.callhalt.domain.model.Decision
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
-import java.time.Instant
 
 /**
  * The settings as the engine needs them, read fresh for each signal. An implementation that cannot read
@@ -18,19 +18,22 @@ fun interface SettingsSource {
 /**
  * The phone's restarts, as far as the engine has not been told of them — asked before EVERY signal.
  *
- * A restart reported is the CURRENT boot: it ends only the calls that started before it, which cannot be in progress
- * any more, and reporting it twice changes nothing. So in doubt (a boot never seen, a memory failing) it is reported,
+ * A restart reported is the CURRENT boot: it ends only the calls of earlier boots, which cannot be in progress any
+ * more, and reporting it twice changes nothing. So in doubt (a boot never seen, a memory failing) it is reported,
  * and it stops being reported only once the engine has committed it ([Restart.record]): staying silent instead would
  * leave the call it cut "in progress", and absorb the next real call into it (review of 2026-11-02). An
- * implementation that cannot tell when the phone booted answers null. Nothing here throws.
+ * implementation that cannot count the phone's boots answers null. Nothing here throws.
  */
 fun interface RestartSource {
     /** The current boot, unless it was already recorded. */
     suspend fun unreported(): Restart?
 }
 
-/** The phone booted at [at]; [record] once the engine has committed it, so that it is not reported again. */
-class Restart(val at: Instant, val record: suspend () -> Unit)
+/**
+ * The phone restarted, by [at] at the latest (see [com.filestech.callhalt.domain.model.PhoneRestarted]); [record] once
+ * the engine has committed it, so that it is not reported again.
+ */
+class Restart(val at: Moment, val record: suspend () -> Unit)
 
 /**
  * Where the detector's memory lives. An implementation MUST:

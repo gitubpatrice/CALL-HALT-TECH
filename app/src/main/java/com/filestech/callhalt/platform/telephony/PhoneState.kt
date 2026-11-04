@@ -6,8 +6,8 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.Signal
-import java.time.Instant
 
 /**
  * The phone's call state, as the PHONE_STATE broadcast names it ([TelephonyManager.EXTRA_STATE]). Each name IS the
@@ -41,7 +41,7 @@ enum class PhoneState {
  * The number needs READ_CALL_LOG, not requested at this step: the counterpart is [Counterpart.Unreadable], which
  * the long-call reminder does not count as unknown (docs/ARCHITECTURE.md, § 6).
  */
-fun callSignal(previous: PhoneState?, current: PhoneState, at: Instant): Signal? = when (current) {
+fun callSignal(previous: PhoneState?, current: PhoneState, at: Moment): Signal? = when (current) {
     PhoneState.RINGING -> null
     PhoneState.OFFHOOK -> CallStarted(at, CallChannel.CELLULAR, direction(previous), Counterpart.Unreadable)
     PhoneState.IDLE -> CallEnded(at, CallChannel.CELLULAR)

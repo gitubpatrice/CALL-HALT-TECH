@@ -1,9 +1,9 @@
 package com.filestech.callhalt.platform.telephony
 
 import com.filestech.callhalt.domain.model.CallEnded
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import timber.log.Timber
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +15,7 @@ class CallStateSensor @Inject constructor(
     private val events: CallEvents,
 ) {
     /** Called from the [com.filestech.callhalt.platform.SensorQueue] only, one state at a time, in arrival order. */
-    suspend fun onPhoneState(current: PhoneState, at: Instant) {
+    suspend fun onPhoneState(current: PhoneState, at: Moment) {
         val previous = memory.swap(current)
         val signal = callSignal(previous, current, at)
         // Debug builds only (no tree in release). The signal's TYPE, never the signal: once the number is read,

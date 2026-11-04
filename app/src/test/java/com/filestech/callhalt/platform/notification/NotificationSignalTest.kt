@@ -8,6 +8,7 @@ import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -104,7 +105,7 @@ class NotificationSignalTest {
         post(at(31))
         assertThat(shown.map { it.trigger }).containsExactly(SensitiveActionKind.BANK_VALIDATION_REQUEST)
         assertThat(store.journal).containsExactly(
-            JournalEntry.Stop(at(30), SensitiveActionKind.BANK_VALIDATION_REQUEST, CREDIT_COOP, Counterpart.Unreadable),
+            JournalEntry.Stop(at(30).wall, SensitiveActionKind.BANK_VALIDATION_REQUEST, CREDIT_COOP, Counterpart.Unreadable),
         )
     }
 
@@ -139,11 +140,11 @@ class NotificationSignalTest {
         processSignal(CallStarted(at(0), CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable))
     }
 
-    private suspend fun post(at: Instant) {
+    private suspend fun post(at: Moment) {
         processSignal(checkNotNull(notificationSignal(CREDIT_COOP, "securpass_id", sms = null, at)))
     }
 
-    private fun at(seconds: Long): Instant = T0.plusSeconds(seconds)
+    private fun at(seconds: Long) = Moment(T0.plusSeconds(seconds))
 
     private companion object {
         const val CREDIT_COOP = "com.credit_coop.android.mobilebanking"

@@ -54,7 +54,9 @@ Sur ce téléphone seulement, dans l'espace privé de l'appli :
 
 - ses réglages ;
 - la mémoire de son détecteur : pour le dernier appel seulement, quand il a commencé et fini, et s'il était
-  entrant ou sortant — jamais le numéro ; et le dernier état d'appel signalé par le téléphone ;
+  entrant ou sortant — jamais le numéro ; et le dernier état d'appel signalé par le téléphone. Ses heures sont gardées
+  deux fois : à l'horloge du téléphone, et en temps écoulé depuis son démarrage, avec le compte de ses démarrages que
+  tient Android — une horloge reculée ou avancée n'y change ainsi rien ;
 - un journal des alertes affichées : quand, pourquoi, de quelle appli venait la demande ou le code (son nom de
   paquet, comme `com.credit_coop.android.mobilebanking`), et ce qui a été choisi — jamais le texte d'un message.
   Une demande ou un code hors appel, ou au-delà des minutes qui en suivent un, n'est pas gardé.

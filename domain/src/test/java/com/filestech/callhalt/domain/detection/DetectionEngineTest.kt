@@ -8,6 +8,7 @@ import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.PhoneRestarted
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
@@ -33,7 +34,7 @@ class DetectionEngineTest {
     private val unknownNumber = Counterpart.Number("+33612345678", inContacts = false)
     private val contact = Counterpart.Number("+33698765432", inContacts = true)
 
-    private fun at(minutes: Long, seconds: Long = 0): Instant = t0.plus(Duration.ofMinutes(minutes).plusSeconds(seconds))
+    private fun at(minutes: Long, seconds: Long = 0) = Moment(t0.plus(Duration.ofMinutes(minutes).plusSeconds(seconds)))
 
     private fun callStarted(
         minutes: Long = 0,
@@ -65,7 +66,7 @@ class DetectionEngineTest {
             val stop = steps.lastStops().single()
             assertThat(stop.trigger).isEqualTo(kind)
             assertThat(stop.call.startedAt).isEqualTo(at(0))
-            assertThat(steps.last().journal).containsExactly(JournalEntry.Stop(at(3), kind, "test", unknownNumber))
+            assertThat(steps.last().journal).containsExactly(JournalEntry.Stop(at(3).wall, kind, "test", unknownNumber))
         }
 
         @Test
@@ -215,7 +216,7 @@ class DetectionEngineTest {
                 action(SensitiveActionKind.CODE_MESSAGE, minutes = 1, seconds = 20),
             )
 
-            assertThat(steps[2].journal).containsExactly(JournalEntry.NotShown(at(1), SensitiveActionKind.CODE_MESSAGE))
+            assertThat(steps[2].journal).containsExactly(JournalEntry.NotShown(at(1).wall, SensitiveActionKind.CODE_MESSAGE))
             assertThat(steps[2].decisions).isEmpty()
             assertThat(steps.lastStops()).hasSize(1)
         }
@@ -229,7 +230,7 @@ class DetectionEngineTest {
             )
 
             assertThat(steps.last().journal)
-                .containsExactly(JournalEntry.Answer(at(1, 30), SensitiveActionKind.CODE_MESSAGE, StopChoice.HANG_UP))
+                .containsExactly(JournalEntry.Answer(at(1, 30).wall, SensitiveActionKind.CODE_MESSAGE, StopChoice.HANG_UP))
             assertThat(steps.last().state.pendingStops).isEmpty()
         }
 
@@ -244,7 +245,7 @@ class DetectionEngineTest {
             )
 
             assertThat(steps[2].journal)
-                .containsExactly(JournalEntry.Answer(at(1, 5), SensitiveActionKind.BANK_VALIDATION_REQUEST, StopChoice.LEFT))
+                .containsExactly(JournalEntry.Answer(at(1, 5).wall, SensitiveActionKind.BANK_VALIDATION_REQUEST, StopChoice.LEFT))
             assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
         }
     }
@@ -290,7 +291,7 @@ class DetectionEngineTest {
             val steps = run(action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 0))
 
             assertThat(steps.last().decisions).containsExactly(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED))
-            assertThat(steps.last().journal).containsExactly(JournalEntry.Warning(at(0), WarningReason.REMOTE_CONTROL_INSTALLED))
+            assertThat(steps.last().journal).containsExactly(JournalEntry.Warning(at(0).wall, WarningReason.REMOTE_CONTROL_INSTALLED))
         }
 
         @Test
@@ -328,7 +329,7 @@ class DetectionEngineTest {
                 Decision.ShowWarning(WarningReason.LONG_CALL_WITH_UNKNOWN),
                 Decision.NotifyGuardian(GuardianEvent.LongCallWithUnknown),
             )
-            assertThat(steps[1].journal).containsExactly(JournalEntry.Warning(at(10), WarningReason.LONG_CALL_WITH_UNKNOWN))
+            assertThat(steps[1].journal).containsExactly(JournalEntry.Warning(at(10).wall, WarningReason.LONG_CALL_WITH_UNKNOWN))
             assertThat(steps[2].decisions).isEmpty()
         }
 
@@ -424,6 +425,30 @@ class DetectionEngineTest {
             assertThat(steps[1].decisions).isEmpty()
             assertThat(steps[2].state.calls.getValue(CallChannel.CELLULAR).startedAt).isEqualTo(at(max + 2))
         }
+
+        /**
+         * Review of 2026-11-04 (M2): a missed call's end, hours after the cap, ended the lost call there and opened a
+         * 15-minute window on a call that was not one — a false STOP on the user's own code.
+         */
+        @Test
+        fun `an end that comes after the maximum closes the call at it, and opens no window`() {
+            val max = CallWindow.MAX_TRACKED_CALL.toMinutes()
+            val steps = run(
+                callStarted(),
+                CallEnded(at(max + 60), CallChannel.CELLULAR),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = max + 61),
+            )
+
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(at(max))
+            assertThat(steps[2].decisions).isEmpty()
+            // Within the maximum, the end is the call's own: its window opens (the negative control).
+            val withinCap = run(
+                callStarted(),
+                CallEnded(at(max - 1), CallChannel.CELLULAR),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = max),
+            )
+            assertThat(withinCap.lastStops()).hasSize(1)
+        }
     }
 
     /** Measured on Android 16 (2026-11-02): a phone switched off mid-call reports no call state when it boots. */
@@ -457,7 +482,8 @@ class DetectionEngineTest {
                 action(SensitiveActionKind.CODE_MESSAGE, minutes = max + 61),
             )
 
-            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isNull()
+            // Closed at the cap, where its window is long over.
+            assertThat(steps[1].state.calls.getValue(CallChannel.CELLULAR).endedAt).isEqualTo(at(max))
             assertThat(steps[2].decisions).isEmpty()
         }
 

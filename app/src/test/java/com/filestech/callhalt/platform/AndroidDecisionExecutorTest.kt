@@ -5,6 +5,7 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.WarningReason
 import com.google.common.truth.Truth.assertThat
@@ -16,9 +17,9 @@ import java.time.Instant
 /** The executor's contract (Ports.kt): every STOP first; it throws only when a STOP did not reach the user. */
 class AndroidDecisionExecutorTest {
 
-    private val call = CallSession(CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable, Instant.EPOCH)
+    private val call = CallSession(CallChannel.CELLULAR, CallDirection.INCOMING, Counterpart.Unreadable, Moment(Instant.EPOCH))
     private val stop = Decision.ShowStop(SensitiveActionKind.CODE_MESSAGE, call)
-    private val others = listOf(Decision.ScheduleTick(Instant.EPOCH), Decision.ShowWarning(WarningReason.LONG_CALL_WITH_UNKNOWN))
+    private val others = listOf(Decision.ScheduleTick(Moment(Instant.EPOCH)), Decision.ShowWarning(WarningReason.LONG_CALL_WITH_UNKNOWN))
 
     @Test
     fun `a STOP that reached the front is a success`() = runTest {

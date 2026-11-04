@@ -1,7 +1,5 @@
 package com.filestech.callhalt.domain.model
 
-import java.time.Instant
-
 /** What the engine wants done. The app carries it out AFTER the state and the journal are committed. */
 sealed interface Decision {
     /** The full-screen interruption. Its words follow [trigger], and whether [call] is still going on or just ended. */
@@ -14,7 +12,7 @@ sealed interface Decision {
     data class NotifyGuardian(val event: GuardianEvent) : Decision
 
     /** Wake the engine with a [Tick] at [at], so that a reminder due during a quiet call fires on time. */
-    data class ScheduleTick(val at: Instant) : Decision
+    data class ScheduleTick(val at: Moment) : Decision
 }
 
 enum class WarningReason { REMOTE_CONTROL_INSTALLED, LONG_CALL_WITH_UNKNOWN }

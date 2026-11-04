@@ -5,7 +5,9 @@ import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
+import com.filestech.callhalt.domain.model.Uptime
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -104,23 +107,37 @@ class CallStateSensorTest {
     }
 
     /**
-     * The known limit, written down (review of 2026-11-02, M1; fixed by P-13, a monotonic clock): the wall clock
-     * steps back between two calls, and the second call's start, stamped before the first one's end, is taken for
-     * a repeat of the first. The after-call window of the first still covers the second's first 15 minutes.
+     * The limit found by the review of 2026-11-02 (M1), closed by P-13: the civil clock steps back between two calls,
+     * and the second call's start, stamped before the first one's end, was taken for a repeat of the first. On the
+     * uptime, the second call comes after; on the civil clock alone — a phone that does not count its boots — it is
+     * still lost, and the after-call window of the first covers only the second's first 15 minutes.
      */
     @Test
-    fun `a clock stepped back between two calls loses the second, the known limit`() = runTest {
+    fun `a clock stepped back between two calls - the second is tracked, on the uptime`() = runTest {
+        feed(PhoneState.IDLE, PhoneState.OFFHOOK, PhoneState.IDLE, uptime = true) // call 1 ends at 2 s
+        // Call 2, three seconds after on the uptime, stamped 1 s by a civil clock set back.
+        sensor.onPhoneState(PhoneState.OFFHOOK, Moment(T0.plusSeconds(1), uptime(seconds = 5)))
+        assertThat(store.state.calls.getValue(CallChannel.CELLULAR).isActive).isTrue()
+    }
+
+    @Test
+    fun `a clock stepped back between two calls - on the civil clock alone, the second is lost`() = runTest {
         feed(PhoneState.IDLE, PhoneState.OFFHOOK, PhoneState.IDLE) // call 1 ends at 2 s
         sensor.onPhoneState(PhoneState.OFFHOOK, at(1)) // call 2, stamped 1 s by a clock set back
         assertThat(store.state.calls.getValue(CallChannel.CELLULAR).isActive).isFalse()
     }
 
-    /** Feeds [states] one second apart, from [from] seconds after T0. */
-    private suspend fun feed(vararg states: PhoneState, from: Long = 0) {
-        states.forEachIndexed { index, state -> sensor.onPhoneState(state, at(from + index)) }
+    /** Feeds [states] one second apart, from [from] seconds after T0 — on the civil clock alone, or with the uptime. */
+    private suspend fun feed(vararg states: PhoneState, from: Long = 0, uptime: Boolean = false) {
+        states.forEachIndexed { index, state ->
+            val seconds = from + index
+            sensor.onPhoneState(state, if (uptime) Moment(T0.plusSeconds(seconds), uptime(seconds)) else at(seconds))
+        }
     }
 
-    private fun at(seconds: Long): Instant = T0.plusSeconds(seconds)
+    private fun at(seconds: Long) = Moment(T0.plusSeconds(seconds))
+
+    private fun uptime(seconds: Long) = Uptime(boot = 3, sinceBoot = Duration.ofSeconds(3_600 + seconds))
 
     private companion object {
         val T0: Instant = Instant.parse("2026-11-02T09:00:00Z")

@@ -12,7 +12,24 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-03, après-midi)
+## Reprendre ici (2026-11-04)
+
+**Le S24 FE, un jour après** : l'appli est restée éveillée (redémarré dans la nuit, processus vivant, écouteur relié,
+toujours exemptée de la veille) ; l'écouteur de mesure, resté autorisé, a été retiré. L'observation continue.
+
+**P-13 fait (D-026) : deux horloges dans chaque signal.** L'heure du téléphone se règle (par l'utilisateur, par le
+réseau) : reculée pendant un appel, un code qui suivait paraissait le précéder, et le STOP était manqué ; d'autres
+réglages faisaient perdre un appel, ou laissaient un appel fantôme après un redémarrage. Chaque signal porte désormais
+aussi le temps écoulé depuis le démarrage du téléphone, que personne ne règle, avec le numéro du démarrage : le moteur
+décide sur lui. Quand l'heure est juste, rien ne change pour l'utilisateur. La base passe en version 2 (une migration
+qui n'ajoute que des colonnes, testée). **Mesuré sur l'émulateur Android 16** : heure reculée d'une heure en plein
+appel, un code → STOP ; un redémarrage d'Android seul (sans le téléphone) — laissé « à vérifier » par D-020 — fait
+avancer le compteur de démarrages et laisse le temps écoulé continuer, ce que le moteur prend en compte ; un vrai
+redémarrage en plein appel ferme l'appel à l'allumage du téléphone. Relecture (`relectures/2026-11-04-claude-horloge.md`) :
+aucun constat de sécurité ; deux défauts réels corrigés, dont un faux STOP que ce changement introduisait. **Trouvé en
+mesurant : P-22** (une écriture récente peut être perdue à une coupure de courant), la prochaine étape.
+
+## Le 2026-11-03, après-midi
 
 **Après la pause : P-10 fait** (la panne du stockage sur l'accueil). Tant que l'appli n'arrive plus à enregistrer,
 l'accueil dit « **Protection affaiblie** » (Patrice : ces deux mots, sans verbe ; « le reste ça va »), la cause
@@ -145,10 +162,11 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-13 (horloge monotone), HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
+**Avant toute publication** : P-22 (une écriture perdue à une coupure de courant), HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
-du redémarrage), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
+de l'allumage du téléphone), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
+observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
 (95/100, D-016).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
@@ -184,7 +202,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 304 tests sur ordinateur, 23 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 323 tests sur ordinateur, 25 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -194,7 +212,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-022, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-21 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-026, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 

@@ -22,11 +22,13 @@ composeBom              = "2026.09.00"
 # --- Persistence (docs/ARCHITECTURE.md, D-004): Room for the detector state and the journal, written in
 # one transaction; DataStore for the settings. Room at App Manager Tech's version; DataStore 1.3.0 since
 # Dependabot #1 (2026-11-01), green in CI — a library, used by the settings alone, not the build chain.
-# The first migration test brings room-testing AND, as App Manager Tech does, a kotlinx-serialization 1.8.1
-# version constraint: room-testing reads the schemas with it, and instrumented tests run against the app's
-# library versions (App Manager Tech, 2026-10-08: AbstractMethodError in every migration test).
+# The first migration test (P-13, schema 2) brings room-testing AND, as App Manager Tech does, a
+# kotlinx-serialization version constraint: room-testing reads the schemas with 1.8.1 or later, instrumented
+# tests run against the app's library versions, and the app resolved 1.7.3 (App Manager Tech, 2026-10-08:
+# AbstractMethodError in every migration test). App Manager Tech's number.
 room                    = "2.8.5"
 datastore               = "1.3.0"
+kotlinxSerialization    = "1.12.0"
 
 # --- Hilt ---
 hilt                    = "2.60.1"
@@ -68,6 +70,9 @@ compose-material3                       = { group = "androidx.compose.material3"
 room-runtime                            = { group = "androidx.room",                   name = "room-runtime",                      version.ref = "room" }
 room-ktx                                = { group = "androidx.room",                   name = "room-ktx",                          version.ref = "room" }
 room-compiler                           = { group = "androidx.room",                   name = "room-compiler",                     version.ref = "room" }
+room-testing                            = { group = "androidx.room",                   name = "room-testing",                      version.ref = "room" }
+# A version constraint only (app/build.gradle.kts), never declared as a dependency.
+kotlinx-serialization-core              = { group = "org.jetbrains.kotlinx",           name = "kotlinx-serialization-core",        version.ref = "kotlinxSerialization" }
 datastore-preferences                   = { group = "androidx.datastore",              name = "datastore-preferences",             version.ref = "datastore" }
 
 hilt-android                            = { group = "com.google.dagger",               name = "hilt-android",                      version.ref = "hilt" }

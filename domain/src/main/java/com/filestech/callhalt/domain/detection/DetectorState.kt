@@ -2,8 +2,8 @@ package com.filestech.callhalt.domain.detection
 
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.CallSession
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveActionKind
-import java.time.Instant
 
 /**
  * Everything the engine remembers between two signals. It must survive the process: Android kills the
@@ -18,7 +18,7 @@ data class DetectorState(
      * signals shows one screen, not five; an ANSWER re-arms the trigger at once, so that "it did not
      * work, validate again" is stopped a second time.
      */
-    val pendingStops: Map<SensitiveActionKind, Instant> = emptyMap(),
+    val pendingStops: Map<SensitiveActionKind, Moment> = emptyMap(),
     /** Channels whose current call already had its long-call reminder: one reminder per call. */
     val longCallWarned: Set<CallChannel> = emptySet(),
 ) {

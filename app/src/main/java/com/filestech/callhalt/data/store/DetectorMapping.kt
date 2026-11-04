@@ -6,9 +6,12 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.JournalEntry
+import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.model.Uptime
 import com.filestech.callhalt.domain.model.WarningReason
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -32,7 +35,7 @@ internal object DetectorMapping {
         return DetectorState(
             calls = sessions.associate { (call, _) -> call.channel to call },
             pendingStops = stops.mapNotNull { row ->
-                enumOrNull<SensitiveActionKind>(row.trigger)?.let { it to Instant.ofEpochMilli(row.shownAt) }
+                enumOrNull<SensitiveActionKind>(row.trigger)?.let { it to moment(row.shownAt, row.shownBoot, row.shownSinceBoot) }
             }.toMap(),
             longCallWarned = sessions.filter { (_, warned) -> warned }.map { (call, _) -> call.channel }.toSet(),
         )
@@ -47,14 +50,20 @@ internal object DetectorMapping {
                 counterpartKind = kind,
                 counterpartNumber = number,
                 counterpartInContacts = inContacts,
-                startedAt = call.startedAt.toEpochMilli(),
-                endedAt = call.endedAt?.toEpochMilli(),
+                startedAt = call.startedAt.wall.toEpochMilli(),
+                endedAt = call.endedAt?.wall?.toEpochMilli(),
                 longCallWarned = call.channel in state.longCallWarned,
+                startedBoot = call.startedAt.uptime?.boot,
+                startedSinceBoot = call.startedAt.uptime?.sinceBoot?.toMillis(),
+                endedBoot = call.endedAt?.uptime?.boot,
+                endedSinceBoot = call.endedAt?.uptime?.sinceBoot?.toMillis(),
             )
         }
 
     fun stopRows(state: DetectorState): List<PendingStopEntity> =
-        state.pendingStops.map { (trigger, shownAt) -> PendingStopEntity(trigger.name, shownAt.toEpochMilli()) }
+        state.pendingStops.map { (trigger, shownAt) ->
+            PendingStopEntity(trigger.name, shownAt.wall.toEpochMilli(), shownAt.uptime?.boot, shownAt.uptime?.sinceBoot?.toMillis())
+        }
 
     fun journalRow(entry: JournalEntry): JournalEntryEntity = when (entry) {
         is JournalEntry.Stop -> {
@@ -107,8 +116,8 @@ internal object DetectorMapping {
         val channel = enumOrNull<CallChannel>(channel)
         val direction = enumOrNull<CallDirection>(direction)
         val counterpart = counterpartOf(counterpartKind, counterpartNumber, counterpartInContacts)
-        val started = Instant.ofEpochMilli(startedAt)
-        val ended = endedAt?.let(Instant::ofEpochMilli)
+        val started = moment(startedAt, startedBoot, startedSinceBoot)
+        val ended = endedAt?.let { moment(it, endedBoot, endedSinceBoot) }
         return when {
             channel == null || direction == null || counterpart == null -> null
             // An end before its start is a corrupted row (the domain refuses to build it): dropped.
@@ -134,3 +143,9 @@ internal object DetectorMapping {
     private inline fun <reified E : Enum<E>> enumOrNull(name: String?): E? =
         enumValues<E>().firstOrNull { it.name == name }
 }
+
+/** The uptime needs both its columns: one without the other reads as none, and the civil time decides (P-13). */
+private fun moment(wallMillis: Long, boot: Int?, sinceBootMillis: Long?) = Moment(
+    Instant.ofEpochMilli(wallMillis),
+    if (boot == null || sinceBootMillis == null) null else Uptime(boot, Duration.ofMillis(sinceBootMillis)),
+)

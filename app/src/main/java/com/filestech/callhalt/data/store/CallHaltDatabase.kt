@@ -1,5 +1,6 @@
 package com.filestech.callhalt.data.store
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
@@ -10,8 +11,10 @@ import androidx.room.RoomDatabase
  */
 @Database(
     entities = [CallSessionEntity::class, PendingStopEntity::class, JournalEntryEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    // 1 → 2: the uptime columns (P-13), nullable, added as they are — CallHaltDatabaseMigrationTest.
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 abstract class CallHaltDatabase : RoomDatabase() {
 

@@ -5,6 +5,7 @@ import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
+import com.filestech.callhalt.domain.model.Moment
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
@@ -56,6 +57,6 @@ class PhoneStateTest {
     }
 
     private companion object {
-        val AT: Instant = Instant.parse("2026-11-02T09:00:00Z")
+        val AT = Moment(Instant.parse("2026-11-02T09:00:00Z"))
     }
 }
