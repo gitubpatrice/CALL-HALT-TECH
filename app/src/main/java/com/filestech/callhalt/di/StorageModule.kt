@@ -16,6 +16,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import java.time.Clock
 import javax.inject.Singleton
 
 @Module
@@ -26,6 +27,13 @@ object StorageModule {
     @Singleton
     @ApplicationScope
     fun applicationScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    /**
+     * The civil time, for the journal's retention (data/store/JournalRetention). Not for the engine: its signals carry the
+     * phone's clocks ([com.filestech.callhalt.platform.PhoneClock]).
+     */
+    @Provides
+    fun clock(): Clock = Clock.systemDefaultZone()
 
     /** Each commit on the disk, no destructive migration: [CallHaltDatabase.create] says why. */
     @Provides

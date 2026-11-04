@@ -57,7 +57,13 @@ On this phone only, in the app's private storage:
   set back or forward changes nothing;
 - a journal of the alerts it shows: when, why, which app the request or the code came from (its package name, such
   as `com.credit_coop.android.mobilebanking`), and what was chosen — never the text of a message. A request or a
-  code outside a call, or after the minutes that follow one, is not kept.
+  code outside a call, or after the minutes that follow one, is not kept. Each line is kept **14 months**, then
+  erased: the 13 months the law leaves you to contest a payment with your bank, counted from its debit, and one more
+  for a card debited at the end of the month — the journal shows that a call was in progress, or had just ended,
+  when it was asked for.
+  Never more than 10,000 lines: past that, the oldest go first.
+
+Uninstalling the app, or clearing its data in the phone's settings, erases all of it at once.
 
 Android backup and device-to-device transfer are **disabled** for this app: none of it leaves the phone.
 

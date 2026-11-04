@@ -59,14 +59,22 @@ téléphone Go avant Android 14 seulement ; après, elle propose l'activation. R
 (`relectures/2026-11-04-claude-android-go.md`) : la frontière vérifiée, aucun autre blocage trouvé. **Reste à mesurer**
 sur un vrai téléphone Go.
 
-**Ce qui attend Patrice** :
-- **P-11** : combien de temps garder le journal (la politique de confidentialité le dira) ;
-- **Android Go de 11 à 13** : l'écouteur de notifications y est permis, mais pas l'affichage par-dessus. La
-  notification de repli (D-024) pourrait y protéger à moitié : écran verrouillé, le STOP s'ouvre seul ; déverrouillé,
-  il faut toucher la notification. Aujourd'hui l'appli dit « ne permet pas la protection ». Faut-il proposer cette
-  protection réduite ?
+**P-11 fait (D-029) : le journal garde chaque ligne 14 mois, et 10 000 lignes au plus** (Patrice : « fais ce qu'il y
+a de mieux »). Le journal montre qu'un appel était en cours, ou venait de finir, quand une opération a été demandée :
+la preuve qu'une banque demande à qui la conteste. La loi laisse 13 mois à compter du débit pour contester (Code
+monétaire et financier, art. L133-24), et une carte à débit différé est débitée jusqu'à un mois après : 14 mois. Le
+plafond arrête une appli qui remplirait le journal. Élagué dans la transaction de chaque signal et au contrôle de
+l'accueil ; la politique de confidentialité le dit, avec l'effacement par la désinstallation. Tests sur téléphone avec
+contrôle négatif. Relecture : aucun constat élevé ni moyen. **Reste de P-11** : dédoublonner l'avertissement « appli
+de prise en main installée », à faire avec son capteur, qui n'existe pas encore.
 
-**Prochaine étape** : la suite de la liste « avant toute publication » ci-dessous.
+**Android Go de 11 à 13 : Patrice dit oui** (« ok fais le », 2026-11-04) à la protection réduite par la notification
+de repli (D-024), **si la mesure la confirme** : l'accueil dira « Protection affaiblie » — « Sur ce téléphone, l'écran
+STOP ne peut pas s'afficher de lui-même : l'appli vous préviendra par une alerte. » Mesure sur un émulateur Android 11
+passé en mémoire réduite, puis construction.
+
+**Prochaine étape** : Android Go de 11 à 13 (ci-dessus), puis la suite de la liste « avant toute publication »
+ci-dessous.
 
 ## Le 2026-11-03, après-midi
 
@@ -201,7 +209,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
+**Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), Android Go de 11 à 13 (la protection réduite),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, un vrai téléphone Android Go), P-3 (Android 15 ; la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -240,7 +248,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 332 tests sur ordinateur, 27 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 336 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -250,7 +258,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-028, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-029, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 
