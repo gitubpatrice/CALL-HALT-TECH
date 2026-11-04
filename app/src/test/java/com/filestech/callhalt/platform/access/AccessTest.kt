@@ -18,7 +18,7 @@ class AccessTest {
         // Measured: Android 14 grants "display over other apps" at once, Android 16 refuses it.
         assertThat(restricted(Build.VERSION_CODES.UPSIDE_DOWN_CAKE, file)).containsExactly(Access.NOTIFICATIONS)
         assertThat(restricted(Build.VERSION_CODES.BAKLAVA, file)).containsExactly(Access.SCREEN, Access.NOTIFICATIONS)
-        // Not measured: assumed, so that the help shows where it may be needed.
+        // Measured on 2026-11-04 (Android 15 emulator, installed from Files): both refused, as on Android 16.
         assertThat(restricted(Build.VERSION_CODES.VANILLA_ICE_CREAM, file)).containsExactly(Access.SCREEN, Access.NOTIFICATIONS)
     }
 

@@ -25,7 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -72,14 +74,16 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
         LaunchedEffect(Unit) { onDone() }
         return
     }
+    var shown by rememberSaveable { mutableStateOf(emptyList<Access>()) }
+    LaunchedEffect(access) { if (access !in shown) shown = shown + access }
+    val (step, steps) = activationStep(access, shown, state.missing, state.applicable)
     // A step of its own for each access: the next one starts at the top, not where the last one was scrolled to
     // (measured on Android 16), and with nothing remembered of it.
     key(access) {
         AccessStep(
             access = access,
-            // Of the accesses this phone has: no step for what does not apply to it (D-025, Xiaomi's autostart).
-            step = state.applicable.indexOf(access) + 1,
-            steps = state.applicable.size,
+            step = step,
+            steps = steps,
             mayBeRestricted = access in state.mayBeRestricted,
             onAnswered = viewModel::refresh,
             onLater = onDone,
@@ -90,6 +94,19 @@ fun ActivationScreen(onDone: () -> Unit, viewModel: ProtectionViewModel = hiltVi
             },
         )
     }
+}
+
+/**
+ * "Step [first] of [second]" for [current]: the steps of THIS activation — those [shown] before it, then it, then the
+ * accesses still [missing] after it, in the order of [applicable]. Not the accesses the phone granted already, which no
+ * step shows: before Android 13 the alert is granted by default, and the activation ended on "Step 4 of 5" (measured on
+ * the Android 11 emulator, 2026-11-04). Nor what does not apply to this phone (D-025, D-030).
+ */
+internal fun activationStep(current: Access, shown: List<Access>, missing: List<Access>, applicable: List<Access>): Pair<Int, Int> {
+    val step = shown.count { it != current } + 1
+    val position = applicable.indexOf(current)
+    // An access shown already and missing again after this one (taken back during the activation) is counted once.
+    return step to step + missing.count { it !in shown && applicable.indexOf(it) > position }
 }
 
 /** [onPass], for a step the others do not need: offered in place of "Later" once the phone refused it. */
@@ -105,9 +122,16 @@ private fun AccessStep(
 ) {
     val context = LocalContext.current
     // Null once all granted: an access still missing with them is fixed in the settings — the app's notifications turned
-    // off or down since (review of 2026-11-03, R-04). Asked again, the phone would answer "granted" without a dialog.
-    val permissions = runtimePermissions(access)?.takeUnless { asked ->
-        asked.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+    // off or down since (review of 2026-11-03, R-04), or the full-screen alerts never allowed (Android 15, installed from
+    // a file: measured). Asked again, the phone would answer "granted" without a dialog. Read again after each answer and
+    // each return to the front: when the access stays missing, nothing else redraws this step, and its button went on
+    // asking for what was granted — a step with no way out (measured on the Android 15 emulator, 2026-11-04).
+    var reads by remember { mutableIntStateOf(0) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { reads++ }
+    val permissions = remember(reads) {
+        runtimePermissions(access)?.takeUnless { asked ->
+            asked.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+        }
     }
     val text = accessText(access, phoneAsks = permissions != null)
     // The phone stops showing its dialog once refused twice (or "don't ask again"), and the request then answers
@@ -116,6 +140,7 @@ private fun AccessStep(
     // the dialog again and the settings (general review of 2026-11-02, 4). Saved across a rotation.
     var refused by rememberSaveable { mutableStateOf(false) }
     val ask = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
+        reads++
         onAnswered()
         if (results.values.any { granted -> !granted }) refused = true
     }

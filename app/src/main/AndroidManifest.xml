@@ -68,6 +68,10 @@
             <action android:name="android.settings.APP_NOTIFICATION_SETTINGS" />
         </intent>
         <intent>
+            <action android:name="android.settings.MANAGE_APP_USE_FULL_SCREEN_INTENT" />
+            <data android:scheme="package" />
+        </intent>
+        <intent>
             <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />
             <data android:scheme="package" />
         </intent>

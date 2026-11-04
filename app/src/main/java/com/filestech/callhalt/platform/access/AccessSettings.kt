@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import com.filestech.callhalt.platform.notification.NotificationListener
+import com.filestech.callhalt.platform.stop.StopNotifier
 import timber.log.Timber
 
 /**
@@ -51,10 +52,21 @@ object AccessSettings {
         addAll(fallbacks(context))
     }
 
-    /** The app's notification settings: where its notifications are turned on once the phone's dialog was refused. */
-    fun alerts(context: Context): List<Intent> = listOf(
-        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
-    ) + fallbacks(context)
+    /**
+     * The app's notification settings: where its notifications are turned on once the phone's dialog was refused. When
+     * the full-screen alerts alone are missing (Android 14+; not granted by default to an app installed from a file on
+     * Android 15, measured), their own page first, the most precise — the switch is also in the notification settings
+     * on Android 15 and 16 (measured), not known elsewhere.
+     */
+    fun alerts(context: Context): List<Intent> = buildList {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+            StopNotifier.canPost(context) && !StopNotifier.canOpenFullScreen(context)
+        ) {
+            add(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, packageUri(context)))
+        }
+        add(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName))
+        addAll(fallbacks(context))
+    }
 
     /** The app info: where a permission the phone no longer asks for is granted, and the restricted settings allowed. */
     fun appInfo(context: Context): List<Intent> = fallbacks(context)
