@@ -61,17 +61,21 @@ class AccessTest {
     }
 
     /**
-     * An "Android Go" phone (P-21, read in AOSP): before Android 14 its Settings refuse the display over the others (and
-     * Android 10 refuses every notification listener); from Android 14, the page the app opens grants it (measured on the
-     * Android 16 emulator in low-memory mode, the STOP shown from the background).
+     * An "Android Go" phone (P-21, D-030, read in AOSP and measured): Android 10 refuses every notification listener — nothing
+     * to watch; from 11 to 13 the listeners are allowed but Settings refuse the display over the others — the STOP by its
+     * notification (measured on the Android 11 emulator in low-memory mode); from 14, the page the app opens grants it
+     * (measured on the Android 16 emulator in low-memory mode, the STOP shown from the background).
      */
     @Test
-    fun `an Android Go phone can be protected from Android 14`() {
-        listOf(Build.VERSION_CODES.Q, Build.VERSION_CODES.R, Build.VERSION_CODES.S, Build.VERSION_CODES.TIRAMISU)
-            .forEach { sdk -> assertThat(phoneCanProtect(lowRam = true, sdk = sdk)).isFalse() }
+    fun `an Android Go phone - nothing on 10, the notification from 11 to 13, everything from 14`() {
+        assertThat(phoneSupport(lowRam = true, sdk = Build.VERSION_CODES.Q)).isEqualTo(PhoneSupport.NONE)
+        listOf(Build.VERSION_CODES.R, Build.VERSION_CODES.S, Build.VERSION_CODES.S_V2, Build.VERSION_CODES.TIRAMISU)
+            .forEach { sdk -> assertThat(phoneSupport(lowRam = true, sdk = sdk)).isEqualTo(PhoneSupport.ALERT_ONLY) }
         listOf(Build.VERSION_CODES.UPSIDE_DOWN_CAKE, Build.VERSION_CODES.VANILLA_ICE_CREAM, Build.VERSION_CODES.BAKLAVA)
-            .forEach { sdk -> assertThat(phoneCanProtect(lowRam = true, sdk = sdk)).isTrue() }
-        assertThat(phoneCanProtect(lowRam = false, sdk = Build.VERSION_CODES.Q)).isTrue()
+            .forEach { sdk -> assertThat(phoneSupport(lowRam = true, sdk = sdk)).isEqualTo(PhoneSupport.FULL) }
+        // Any other phone, whatever its Android.
+        listOf(Build.VERSION_CODES.Q, Build.VERSION_CODES.TIRAMISU, Build.VERSION_CODES.BAKLAVA)
+            .forEach { sdk -> assertThat(phoneSupport(lowRam = false, sdk = sdk)).isEqualTo(PhoneSupport.FULL) }
     }
 
     private fun restricted(sdk: Int, packageSource: Int?): List<Access> =

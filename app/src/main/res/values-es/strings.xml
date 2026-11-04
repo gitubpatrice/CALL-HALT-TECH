@@ -16,9 +16,10 @@
     <string name="home_weakened">Protección debilitada</string>
     <string name="home_weakened_detail">La app ya no consigue guardar lo que ve. Le sigue protegiendo, pero si el teléfono la cierra durante una llamada, ya no sabrá que estaba al teléfono. Quizá el teléfono esté lleno: libere espacio y vuelva aquí. Si tiene espacio, reinícielo.</string>
     <string name="home_weakened_alerts">Si el teléfono impide que aparezca la pantalla STOP, la app no podrá avisarle.</string>
+    <string name="home_weakened_screen">En este teléfono, la pantalla STOP no puede aparecer por sí sola: la app le mostrará un aviso en su lugar.</string>
     <string name="home_not_listening">La app ya no recibe las notificaciones — probablemente el teléfono la ha cerrado: no ve las solicitudes de su banco ni los códigos recibidos. Si este mensaje sigue, abra los ajustes, desactive el acceso de Call Halt Tech y vuelva a activarlo.</string>
     <string name="home_open_storage">Abrir el almacenamiento del teléfono</string>
-    <string name="home_unsupported">Este teléfono no permite la protección: Android no deja que ninguna app aparezca delante de las demás (un teléfono «Android Go»).</string>
+    <string name="home_unsupported">Este teléfono no permite la protección: Android no deja que ninguna app vea las notificaciones ni aparezca delante de las demás (un teléfono «Android Go»).</string>
     <plurals name="home_missing">
         <item quantity="one">Falta %1$d permiso.</item>
         <item quantity="many">Faltan %1$d permisos.</item>

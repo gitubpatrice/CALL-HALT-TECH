@@ -14,7 +14,10 @@ enum class Access {
     /** When a call starts and ends, and "Hang up" ([CALL_PERMISSIONS]). */
     CALLS,
 
-    /** The STOP screen started from the background, in front of the banking app (SYSTEM_ALERT_WINDOW, D-006). */
+    /**
+     * The STOP screen started from the background, in front of the banking app (SYSTEM_ALERT_WINDOW, D-006). Not on a
+     * phone that grants it to no app ([PhoneSupport.ALERT_ONLY]): the STOP comes by [ALERTS] there.
+     */
     SCREEN,
 
     /**
@@ -62,19 +65,42 @@ fun runtimePermissions(access: Access, sdk: Int = Build.VERSION.SDK_INT): Array<
     Access.SCREEN, Access.BACKGROUND, Access.AUTOSTART, Access.NOTIFICATIONS -> null
 }
 
+/** How far this phone can run the protection ([phoneSupport]). */
+enum class PhoneSupport {
+    /** The STOP screen in front of the other apps, and its notification when the phone blocks it. */
+    FULL,
+
+    /**
+     * No app may show in front of the others: the STOP comes by its notification alone (D-024) — on a phone asleep or
+     * locked, the screen it opens is there when the phone is woken; on a phone in use, a touch away (docs/ARCHITECTURE.md,
+     * D-030, measured).
+     */
+    ALERT_ONLY,
+
+    /** Nothing the app watches can reach it. */
+    NONE,
+}
+
 /**
- * Whether this phone can run the protection at all. False on an "Android Go" one (low memory, [lowRam]) before
- * Android 14 — read in AOSP on 2026-11-04 (docs/ARCHITECTURE.md, P-21):
- * - Android 10: the system refuses every notification listener (`NotificationManagerService.canUseManagedServices`,
- *   unless the manufacturer allows the app by name), and Settings refuses the display over the others;
- * - Android 11 to 13: listeners allowed, but the overlay list the app opens says "not available"
- *   (`ManageApplications`, `Utils.isSystemAlertWindowEnabled`);
- * - Android 14 on: Settings sends that list to its new page (`ManageApplications.onAttach` → SPA, on by default), which
- *   does not check the memory. Read for 14 and 15; measured on the Android 16 emulator in low-memory mode: the switch
- *   there, granted, and the STOP screen started from the background during a call. Saying "this phone cannot" there
- *   would leave a phone that can unprotected. A manufacturer turning that page off is not ruled out (P-21).
+ * What an "Android Go" phone (low memory, [lowRam]) allows — read in AOSP on 2026-11-04, measured (docs/ARCHITECTURE.md,
+ * P-21, D-030); any other phone, [PhoneSupport.FULL]:
+ * - Android 10: [PhoneSupport.NONE] — the system refuses every notification listener
+ *   (`NotificationManagerService.canUseManagedServices`, unless the manufacturer allows the app by name): neither the
+ *   bank's requests nor the codes can be seen;
+ * - Android 11 to 13: [PhoneSupport.ALERT_ONLY] — listeners allowed, but the overlay list the app opens says "not
+ *   available" (`ManageApplications`, `Utils.isSystemAlertWindowEnabled`). Measured on the Android 11 emulator in
+ *   low-memory mode: the notification access granted in Settings and bound, the overlay page "Feature not available",
+ *   the STOP screen blocked from the background, its notification shown at the top of the screen, a touch opens it;
+ * - Android 14 on: [PhoneSupport.FULL] — Settings sends that list to its new page (`ManageApplications.onAttach` → SPA,
+ *   on by default), which does not check the memory. Read for 14 and 15; measured on the Android 16 emulator in
+ *   low-memory mode: the switch there, granted, and the STOP screen started from the background during a call. A
+ *   manufacturer turning that page off is not ruled out (P-21).
  */
-internal fun phoneCanProtect(lowRam: Boolean, sdk: Int): Boolean = !lowRam || sdk >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+internal fun phoneSupport(lowRam: Boolean, sdk: Int): PhoneSupport = when {
+    !lowRam || sdk >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> PhoneSupport.FULL
+    sdk >= Build.VERSION_CODES.R -> PhoneSupport.ALERT_ONLY
+    else -> PhoneSupport.NONE
+}
 
 /**
  * Whether the phone may refuse [access] behind its "restricted settings", until the user allows them in the app info —

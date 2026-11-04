@@ -14,9 +14,10 @@
     <string name="home_weakened">Schutz geschwächt</string>
     <string name="home_weakened_detail">Die App kann nicht mehr speichern, was sie sieht. Sie schützt Sie weiterhin, aber wenn das Telefon sie während eines Anrufs beendet, weiß sie nicht mehr, dass Sie telefonieren. Vielleicht ist das Telefon voll: Geben Sie Speicherplatz frei und kommen Sie dann hierher zurück. Hat es genug Platz, starten Sie es neu.</string>
     <string name="home_weakened_alerts">Wenn das Telefon verhindert, dass der STOP-Bildschirm erscheint, kann die App Sie nicht warnen.</string>
+    <string name="home_weakened_screen">Auf diesem Telefon kann der STOP-Bildschirm nicht von selbst erscheinen: Die App zeigt Ihnen stattdessen eine Warnung.</string>
     <string name="home_not_listening">Die App empfängt keine Benachrichtigungen mehr — das Telefon hat sie wohl beendet: Sie sieht die Anfragen Ihrer Bank und die erhaltenen Codes nicht. Wenn diese Meldung bleibt, öffnen Sie die Einstellungen, schalten Sie den Zugriff von Call Halt Tech aus und wieder ein.</string>
     <string name="home_open_storage">Speicher des Telefons öffnen</string>
-    <string name="home_unsupported">Dieses Telefon erlaubt den Schutz nicht: Android lässt dort keine App vor anderen erscheinen (ein „Android Go“-Telefon).</string>
+    <string name="home_unsupported">Dieses Telefon erlaubt den Schutz nicht: Android lässt dort keine App die Benachrichtigungen sehen oder vor anderen erscheinen (ein „Android Go“-Telefon).</string>
     <plurals name="home_missing">
         <item quantity="one">%1$d Berechtigung fehlt.</item>
         <item quantity="other">%1$d Berechtigungen fehlen.</item>

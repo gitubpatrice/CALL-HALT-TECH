@@ -68,13 +68,17 @@ l'accueil ; la politique de confidentialité le dit, avec l'effacement par la d�
 contrôle négatif. Relecture : aucun constat élevé ni moyen. **Reste de P-11** : dédoublonner l'avertissement « appli
 de prise en main installée », à faire avec son capteur, qui n'existe pas encore.
 
-**Android Go de 11 à 13 : Patrice dit oui** (« ok fais le », 2026-11-04) à la protection réduite par la notification
-de repli (D-024), **si la mesure la confirme** : l'accueil dira « Protection affaiblie » — « Sur ce téléphone, l'écran
-STOP ne peut pas s'afficher de lui-même : l'appli vous préviendra par une alerte. » Mesure sur un émulateur Android 11
-passé en mémoire réduite, puis construction.
+**Android Go de 11 à 13 fait (D-030) : protégé par la notification du STOP seule** (Patrice : « ok fais le »). Avant,
+ces téléphones à petit prix, souvent ceux des personnes âgées, n'avaient aucune protection. **Mesuré sur deux émulateurs
+passés en mémoire réduite, Android 11 et Android 13** : l'accès aux notifications s'accorde, l'affichage par-dessus est
+refusé par Android ; pendant un appel, un code fait paraître l'alerte en haut de l'écran, et un toucher ouvre le STOP ;
+écran éteint, le STOP est là dès qu'on le rallume. L'activation ne demande plus l'affichage par-dessus sur ces
+téléphones, et l'accueil dit « Protection affaiblie » — « Sur ce téléphone, l'écran STOP ne peut pas s'afficher de
+lui-même : l'appli vous préviendra par une alerte. » **Au passage, sur tout téléphone** : sans l'affichage par-dessus,
+l'alerte part tout de suite au lieu d'attendre 5 s (mesuré : 0,2 s). Restent : Android 12 (lu, pas mesuré), un vrai
+téléphone Go.
 
-**Prochaine étape** : Android Go de 11 à 13 (ci-dessus), puis la suite de la liste « avant toute publication »
-ci-dessous.
+**Prochaine étape** : la suite de la liste « avant toute publication » ci-dessous.
 
 ## Le 2026-11-03, après-midi
 
@@ -209,7 +213,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), Android Go de 11 à 13 (la protection réduite),
+**Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, un vrai téléphone Android Go), P-3 (Android 15 ; la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
@@ -248,7 +252,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 336 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 337 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -258,7 +262,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-029, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-030, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 

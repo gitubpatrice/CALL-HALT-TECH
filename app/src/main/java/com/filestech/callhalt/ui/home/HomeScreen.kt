@@ -94,7 +94,8 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                 text = stringResource(
                     when (state.status) {
                         ProtectionStatus.ON -> R.string.home_on
-                        ProtectionStatus.NO_ALERT, ProtectionStatus.STORAGE_FAILING -> R.string.home_weakened
+                        ProtectionStatus.NO_ALERT, ProtectionStatus.STORAGE_FAILING, ProtectionStatus.ALERT_ONLY ->
+                            R.string.home_weakened
                         ProtectionStatus.OFF, ProtectionStatus.NOT_LISTENING, ProtectionStatus.UNSUPPORTED -> R.string.home_off
                     },
                 ),
@@ -111,6 +112,10 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                     Text(text = stringResource(R.string.home_weakened_alerts), style = MaterialTheme.typography.bodyLarge)
                     CardButton(R.string.home_activate, onActivate)
                 }
+                // No button: nothing the user can grant would do better on this phone (D-030). Not what it watches either:
+                // that text says the STOP screen shows, which it does not here by itself.
+                ProtectionStatus.ALERT_ONLY ->
+                    Text(text = stringResource(R.string.home_weakened_screen), style = MaterialTheme.typography.bodyLarge)
                 // The app asked the phone to bind it again already: turning the access off and on is what is left.
                 ProtectionStatus.NOT_LISTENING -> {
                     val context = LocalContext.current
