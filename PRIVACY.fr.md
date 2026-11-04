@@ -43,7 +43,9 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
 Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
 comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien. Sur un
 téléphone Xiaomi, elle lit de même si le téléphone lui permet de « démarrer automatiquement », pour ne demander ce réglage
-que s'il manque ; et elle sait si son propre accès aux notifications est en service, pour le dire sur l'accueil.
+que s'il manque ; et elle sait si son propre accès aux notifications est en service, pour le dire sur l'accueil. Quand le
+téléphone s'éteint ou redémarre, Android le dit aux applis qui tournent : l'appli note alors la fin de l'appel en cours,
+s'il y en a un, et rien d'autre de l'extinction.
 
 Le manifeste porte aussi une ligne ajoutée par une bibliothèque d'Android pour l'usage interne de l'appli
 (`DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`) ; elle ne donne accès à rien.

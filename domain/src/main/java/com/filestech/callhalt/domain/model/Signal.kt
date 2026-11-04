@@ -49,6 +49,15 @@ data class Tick(override val at: Moment) : Signal
 data class PhoneRestarted(override val at: Moment) : Signal
 
 /**
+ * The phone is switching off or restarting, cleanly: the power menu, a battery gone critical, an update (Android's
+ * ACTION_SHUTDOWN). Each call in progress ends at [at], and its after-call window runs from there — not from the next
+ * start, hours later perhaps, when the user's own bank requests would be stopped (docs/ARCHITECTURE.md, D-028). A call
+ * that lives on (Android's user space alone restarted) is reported again by the telephony: a new call. A power cut
+ * sends nothing: then [PhoneRestarted] places the end, as before.
+ */
+data class PhoneShuttingDown(override val at: Moment) : Signal
+
+/**
  * The STOP screen decided for [trigger] could not be shown at all. It re-arms the trigger at once —
  * otherwise the next attempt ("the code did not go through, read it again") would be absorbed as the same
  * burst of a screen nobody saw — and the journal says so: a STOP that did not happen must not read as one

@@ -8,6 +8,7 @@ import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
 import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.PhoneRestarted
+import com.filestech.callhalt.domain.model.PhoneShuttingDown
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -44,6 +45,10 @@ class DetectionEngine {
             is SensitiveAction -> onSensitiveAction(state, signal, settings)
             is Tick -> onTick(state, signal, settings)
             is PhoneRestarted -> onPhoneRestarted(state, signal)
+            // Each call in progress ends there, by the rule of an end heard — the cap included (D-028).
+            is PhoneShuttingDown -> Evaluation(
+                state.calls.keys.fold(state) { current, channel -> onCallEnded(current, CallEnded(signal.at, channel)).state },
+            )
             is StopAnswered -> onStopAnswered(state, signal, settings)
             is StopNotShown -> Evaluation(
                 state = state.copy(pendingStops = state.pendingStops - signal.trigger),
@@ -97,6 +102,7 @@ class DetectionEngine {
      * the civil clock says — is carried into this one, to be measured from here on on this boot's uptime (P-13). One
      * still in progress ends when the restart cut it, at the latest — the after-call window runs from there, the
      * protective side of an end nobody saw — unless the 8-hour cap had closed it: it is closed at the cap, not revived.
+     * Still in progress: the phone was cut off, or the app did not hear the shutdown that ends it ([PhoneShuttingDown]).
      * An ended one keeps what was left of its window. That gap is measured once, here, on the civil clock, the only one
      * two boots share; set back while the phone was off, it counts as no time at all, the protective side again. A call
      * of THIS boot — the restart reported again after a process death, later — is left as it is. The screens shown
