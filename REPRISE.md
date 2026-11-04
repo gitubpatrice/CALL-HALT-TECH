@@ -27,7 +27,18 @@ appel, un code → STOP ; un redémarrage d'Android seul (sans le téléphone) �
 avancer le compteur de démarrages et laisse le temps écoulé continuer, ce que le moteur prend en compte ; un vrai
 redémarrage en plein appel ferme l'appel à l'allumage du téléphone. Relecture (`relectures/2026-11-04-claude-horloge.md`) :
 aucun constat de sécurité ; deux défauts réels corrigés, dont un faux STOP que ce changement introduisait. **Trouvé en
-mesurant : P-22** (une écriture récente peut être perdue à une coupure de courant), la prochaine étape.
+mesurant : P-22** (une écriture récente peut être perdue à une coupure de courant), fait le même jour (ci-dessous).
+
+**P-22 fait (D-027) : chaque enregistrement est sur le disque avant que l'appli passe à la suite.** La base laissait
+Android décider quand écrire : une coupure nette (batterie qui lâche, redémarrage forcé) effaçait l'appel commencé
+quelques secondes avant, et avec lui le STOP « l'appel vient de se terminer » après le redémarrage. L'appli impose
+désormais son mode d'écriture. Il fallait l'imposer : sur le Galaxy S9, Samsung change les valeurs d'Android pour
+d'autres, moins sûres (mesuré par le nouveau test). **Mesuré sur l'émulateur Android 16** : appel validé puis coupure
+nette 10 s après, l'appel perdu avant, gardé après ; gardé aussi avec une coupure 1 s après ; au démarrage, un code
+reçu 36 s plus tard ouvre le STOP ; la mise à jour depuis l'ancienne version garde ce qu'elle avait écrit. Relecture
+(`relectures/2026-11-04-claude-ecriture.md`) : aucun constat de sécurité ; le constat principal, réfuté par la source
+de SQLite et par la mesure à 1 s. **Prochaine étape** : l'affinage de D-020 (l'heure de l'extinction, pour que la
+fenêtre de 15 min ne coure pas de l'allumage d'un téléphone éteint depuis des heures).
 
 ## Le 2026-11-03, après-midi
 
@@ -162,7 +173,7 @@ PR, chacune relue par un ou deux agents Claude (`relectures/`) :
 L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai appel et un code) est **faite le
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
-**Avant toute publication** : P-22 (une écriture perdue à une coupure de courant), HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
+**Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
 P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
 d'une installation par F-Droid), l'affinage de D-020 (l'heure de l'extinction : la fenêtre de 15 min court aujourd'hui
 de l'allumage du téléphone), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
@@ -202,7 +213,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
   proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 323 tests sur ordinateur, 25 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 323 tests sur ordinateur, 27 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -212,7 +223,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-026, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-027, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 
