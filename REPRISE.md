@@ -186,8 +186,8 @@ L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai 
 2026-11-03** (en tête de ce fichier). Le SMS de confirmation de la banque juste après un appel reste une piste (P-20).
 
 **Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement), P-11 (élaguer le journal),
-P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15, la source
-d'une installation par F-Droid), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
+P-21 (« en marche » sur la foi des accès : Xiaomi, écouteur pas relié, Android Go), P-3 (Android 15 ; la source
+d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
 (95/100, D-016).
 
