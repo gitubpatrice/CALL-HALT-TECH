@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.room.Room
 import com.filestech.callhalt.data.store.CallHaltDatabase
 import dagger.Module
 import dagger.Provides
@@ -28,16 +27,10 @@ object StorageModule {
     @ApplicationScope
     fun applicationScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    /**
-     * No `fallbackToDestructiveMigration`, ever: a missing migration must never erase the journal a
-     * relative relies on. It throws instead — caught by a migration test before any release, and at run time
-     * by RoomDetectorStore, which then decides from memory; the home screen says the protection is weakened
-     * (docs/ARCHITECTURE.md, P-10). Migrations are additive only (D-004).
-     */
+    /** Each commit on the disk, no destructive migration: [CallHaltDatabase.create] says why. */
     @Provides
     @Singleton
-    fun database(@ApplicationContext context: Context): CallHaltDatabase =
-        Room.databaseBuilder(context, CallHaltDatabase::class.java, CallHaltDatabase.NAME).build()
+    fun database(@ApplicationContext context: Context): CallHaltDatabase = CallHaltDatabase.create(context)
 
     /**
      * A corrupted settings file is replaced by an empty one, which reads as the PROTECTIVE defaults

@@ -173,7 +173,7 @@ class RoomDetectorStoreTest {
         // A folder where the file should be: SQLite cannot open it — for the store, the same as a migration missing.
         val context = ApplicationProvider.getApplicationContext<Context>()
         val blocked = File(context.cacheDir, "blocked.db").apply { mkdirs() }
-        val unopenable = Room.databaseBuilder(context, CallHaltDatabase::class.java, blocked.path).build()
+        val unopenable = CallHaltDatabase.create(context, blocked.path)
         try {
             val broken = RoomDetectorStore(unopenable)
             broken.check()

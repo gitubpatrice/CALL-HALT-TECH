@@ -1,6 +1,5 @@
 package com.filestech.callhalt.data.store
 
-import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -45,7 +44,7 @@ class CallHaltDatabaseMigrationTest {
         writeVersion1()
         helper.runMigrationsAndValidate(NAME, 2, true).close()
 
-        val database = Room.databaseBuilder(context, CallHaltDatabase::class.java, NAME).build()
+        val database = CallHaltDatabase.create(context, NAME)
         try {
             val dao = database.detectorDao()
             val state = DetectorMapping.toState(dao.callSessions(), dao.pendingStops())
@@ -66,7 +65,7 @@ class CallHaltDatabaseMigrationTest {
         writeVersion1()
         helper.runMigrationsAndValidate(NAME, 2, true).close()
 
-        val database = Room.databaseBuilder(context, CallHaltDatabase::class.java, NAME).build()
+        val database = CallHaltDatabase.create(context, NAME)
         try {
             val code = SensitiveAction(
                 Moment(STARTED.plusSeconds(120), Uptime(9, Duration.ofHours(3))),
