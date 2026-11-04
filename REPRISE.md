@@ -25,6 +25,11 @@ branché, tout sur émulateurs.
   redemandait une permission déjà accordée, et rien ne se passait. L'étape relit maintenant ses permissions, et
   propose « Ouvrir les réglages », qui ouvre la page « plein écran » de l'appli : mesuré sous 14 et 15 jusqu'à
   « Protection activée ». Une installation par F-Droid n'est pas mesurée.
+- **Samsung Messages mesuré sur le S24 FE** (avec Patrice) : réactivé et mis par défaut le temps du test, puis tout
+  remis comme avant. Un code reçu pendant un appel → l'écran STOP s'ouvre 60 ms après la notification. Conversation
+  ouverte, Samsung Messages n'affiche aucune notification : rien à lire (limite de toute lecture par notification ;
+  dans l'arnaque, la conversation est fermée). Pour SMS Tech, appris au passage : installée depuis un fichier, elle
+  ne peut reprendre le rôle d'appli SMS par défaut qu'avec ses paramètres restreints autorisés.
 - **P-3, Android 11 mesuré** : parcours complet, « Protection activée ». **Le compteur d'étapes corrigé** : il
   finissait sur « Étape 4 sur 5 » sur tout téléphone avant Android 13 (le S9 ; « 5 sur 6 » sur un Xiaomi comme le
   Redmi) ; il compte désormais les étapes de l'activation elle-même (« 1 sur 4 » à « 4 sur 4 », mesuré).
@@ -231,7 +236,7 @@ L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai 
 **Avant toute publication** : HyperOS (D-025 mesuré sur MIUI 12 seulement),
 P-21 (la mise en veille de Samsung sur plusieurs jours : en observation sur le S24), P-3 (la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
-observé), Samsung Messages (non mesuré), les deux SIM, la relecture des traductions par des natifs, les audits
+observé), les deux SIM (Patrice : « plus tard ce sera possible »), la relecture des traductions par des natifs, les audits
 (95/100, D-016).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
