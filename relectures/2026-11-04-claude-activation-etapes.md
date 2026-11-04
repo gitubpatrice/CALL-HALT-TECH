@@ -19,3 +19,15 @@
 
 **Bilan** : aucun constat élevé ; un moyen mesuré et corrigé (Android 14) ; trois défauts faibles corrigés, deux tests
 ajoutés.
+
+## Relecture de sécurité du même changement (après fusion, `801e2f2`)
+
+> Agent `android-code-quality-deep-dive`, axe sécurité, lecture statique ; 0 $ (sous-agent). Demandée par le contrôle de
+> fin de tour (le manifeste a changé).
+
+| N° | Constat | Verdict | Suite |
+|---|---|---|---|
+| 1 | L'entrée `<queries>` (la page « plein écran ») : une permission, une visibilité trop large, un effet sur la garde CI ? | **aucun** : des noms d'actions seulement, pas de `QUERY_ALL_PACKAGES` ; la garde ne lit que les permissions et les composants `BIND_*`, inchangés ; « zéro Internet » intact | — |
+| 2 | Une appli tierce à la place de la page des Réglages ? | **non** : `MATCH_SYSTEM_ONLY` puis `setPackage` du paquet système, comme les autres pages | — |
+| 2b | Bas, antérieur : le dernier repli d'`AccessSettings.open` lance la première page telle quelle, sans paquet, si AUCUNE page n'est servie par le système | réel en logique, **non exploitable en pratique** : la liste finit par les Réglages du téléphone (`ACTION_SETTINGS`, dans les `<queries>`) ; il faudrait un téléphone sans Réglages système ET une appli malveillante déclarant l'action, pour un écran d'instructions imité, sans donnée envoyée | **laissé** : le choix de la relecture du 2026-11-02 (un bouton qui ne fait rien serait pire) tient |
+| 3, 4 | `packageUri`, intents, données, l'étape qui relit ses permissions | **rien** | — |
