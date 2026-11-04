@@ -28,9 +28,9 @@ interface AccessChecker {
     fun mayBeRestricted(access: Access): Boolean
 
     /**
-     * False on a phone that can never grant [Access.SCREEN]: an "Android Go" one (low memory), where no app may display
-     * over the others from Android 10 (developer.android.com, Android Go; not measured: no such phone or image here).
-     * Asking would send the user to a page with no switch, again and again (general review of 2026-11-02, 6).
+     * False on a phone that can never be protected: an "Android Go" one (low memory) before Android 14 — see
+     * `phoneCanProtect(lowRam, sdk)` in Access.kt. Asking would send the user to a page with no switch, again and again
+     * (general review of 2026-11-02, 6).
      */
     fun phoneCanProtect(): Boolean
 }
@@ -50,8 +50,10 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
 
     override fun mayBeRestricted(access: Access): Boolean = mayBeRestricted(access, Build.VERSION.SDK_INT, packageSource)
 
-    override fun phoneCanProtect(): Boolean =
-        context.getSystemService(ActivityManager::class.java)?.isLowRamDevice != true
+    override fun phoneCanProtect(): Boolean = phoneCanProtect(
+        lowRam = context.getSystemService(ActivityManager::class.java)?.isLowRamDevice == true,
+        sdk = Build.VERSION.SDK_INT,
+    )
 
     private fun isGranted(access: Access): Boolean = when (access) {
         Access.CALLS -> CALL_PERMISSIONS.all { permission ->

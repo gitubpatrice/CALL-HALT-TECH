@@ -34,7 +34,7 @@
     <string name="home_weakened_alerts">If the phone prevents the STOP screen from showing, the app will not be able to warn you.</string>
     <string name="home_not_listening">The app no longer receives the notifications — the phone has probably stopped it: it does not see your bank\'s requests or the codes you receive. If this message stays, open the settings, turn the access of Call Halt Tech off, then on again.</string>
     <string name="home_open_storage">Open the phone\'s storage</string>
-    <!-- An "Android Go" phone (low memory) grants no app the display over the others (AccessChecker.phoneCanProtect). -->
+    <!-- An "Android Go" phone (low memory) before Android 14 grants no app the display over the others (Access.kt, phoneCanProtect). -->
     <string name="home_unsupported">This phone cannot run the protection: on it, Android lets no app show in front of the others (an “Android Go” phone).</string>
     <plurals name="home_missing">
         <item quantity="one">%1$d permission is missing.</item>

@@ -63,6 +63,20 @@ fun runtimePermissions(access: Access, sdk: Int = Build.VERSION.SDK_INT): Array<
 }
 
 /**
+ * Whether this phone can run the protection at all. False on an "Android Go" one (low memory, [lowRam]) before
+ * Android 14 — read in AOSP on 2026-11-04 (docs/ARCHITECTURE.md, P-21):
+ * - Android 10: the system refuses every notification listener (`NotificationManagerService.canUseManagedServices`,
+ *   unless the manufacturer allows the app by name), and Settings refuses the display over the others;
+ * - Android 11 to 13: listeners allowed, but the overlay list the app opens says "not available"
+ *   (`ManageApplications`, `Utils.isSystemAlertWindowEnabled`);
+ * - Android 14 on: Settings sends that list to its new page (`ManageApplications.onAttach` → SPA, on by default), which
+ *   does not check the memory. Read for 14 and 15; measured on the Android 16 emulator in low-memory mode: the switch
+ *   there, granted, and the STOP screen started from the background during a call. Saying "this phone cannot" there
+ *   would leave a phone that can unprotected. A manufacturer turning that page off is not ruled out (P-21).
+ */
+internal fun phoneCanProtect(lowRam: Boolean, sdk: Int): Boolean = !lowRam || sdk >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+
+/**
  * Whether the phone may refuse [access] behind its "restricted settings", until the user allows them in the app info —
  * measured on 2026-11-02 (docs/ARCHITECTURE.md, P-3), for an APK installed from a file: notification access from
  * Android 13 (Android 14 emulator, as documented), "display over other apps" too on Android 16, not on Android 14.

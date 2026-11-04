@@ -60,6 +60,20 @@ class AccessTest {
         }
     }
 
+    /**
+     * An "Android Go" phone (P-21, read in AOSP): before Android 14 its Settings refuse the display over the others (and
+     * Android 10 refuses every notification listener); from Android 14, the page the app opens grants it (measured on the
+     * Android 16 emulator in low-memory mode, the STOP shown from the background).
+     */
+    @Test
+    fun `an Android Go phone can be protected from Android 14`() {
+        listOf(Build.VERSION_CODES.Q, Build.VERSION_CODES.R, Build.VERSION_CODES.S, Build.VERSION_CODES.TIRAMISU)
+            .forEach { sdk -> assertThat(phoneCanProtect(lowRam = true, sdk = sdk)).isFalse() }
+        listOf(Build.VERSION_CODES.UPSIDE_DOWN_CAKE, Build.VERSION_CODES.VANILLA_ICE_CREAM, Build.VERSION_CODES.BAKLAVA)
+            .forEach { sdk -> assertThat(phoneCanProtect(lowRam = true, sdk = sdk)).isTrue() }
+        assertThat(phoneCanProtect(lowRam = false, sdk = Build.VERSION_CODES.Q)).isTrue()
+    }
+
     private fun restricted(sdk: Int, packageSource: Int?): List<Access> =
         Access.entries.filter { mayBeRestricted(it, sdk, packageSource) }
 }
