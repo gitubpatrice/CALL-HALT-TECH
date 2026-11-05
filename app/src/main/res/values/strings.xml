@@ -112,7 +112,7 @@
     <string name="stop_trigger_code">You have just received a code.</string>
     <string name="stop_trigger_bank_validation">Your bank\'s app is asking you to approve a transaction.</string>
     <string name="stop_trigger_bank_app">Your bank\'s app has just opened.</string>
-    <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone has just opened.</string>
+    <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone is running.</string>
     <string name="stop_trigger_remote_installed">An app that lets someone else see or control your phone has just been installed.</string>
     <string name="stop_rule_codes">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask for a code or to approve a transaction.</string>
     <string name="stop_rule_remote">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask you to install or open such an app.</string>

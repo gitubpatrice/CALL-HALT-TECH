@@ -27,8 +27,10 @@ change that adds it to the app, and the build checks the app asks for nothing el
   recognises a bank's request by that channel alone: today, the requests of Sécur'Pass (banks of the BPCE group).
   **Of your SMS app's notifications only**, it also reads the latest message, in memory, to tell whether it is a
   validation code ("Votre code de validation est …"); the text is forgotten at once, never stored, never sent.
-  Of every other app's notifications, it reads neither the title nor the text. The activation screen opens the
-  phone's settings page for it: only you can grant it.
+  Of the notifications of the remote-control apps of its list (AnyDesk, RustDesk…), it also notes whether each one
+  is new, never what it says: during a call, such an app at work opens the STOP screen. Of every other app's
+  notifications, it reads neither the title nor the text. The activation screen opens the phone's settings page
+  for it: only you can grant it.
 - **Notifications** (`POST_NOTIFICATIONS`, and `USE_FULL_SCREEN_INTENT`): if the phone prevents the STOP screen from
   showing, the app warns you with a notification that opens it; on a locked phone or a sleeping screen, it opens it at
   once, as long as the phone lets it (an Android setting, "full-screen notifications", can take that back). It says

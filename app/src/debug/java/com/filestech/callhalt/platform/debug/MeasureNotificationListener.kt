@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.provider.Telephony
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import com.filestech.callhalt.platform.install.REMOTE_CONTROL_APPS
 import timber.log.Timber
 
 /**
@@ -79,8 +80,12 @@ class MeasureNotificationListener : NotificationListenerService() {
         extras.getParcelableArray(Notification.EXTRA_MESSAGES).orEmpty().map { (it as? Bundle)?.getCharSequence("text") }
 
     private companion object {
-        /** The banking app measured on the S24 FE (Patrice's): Crédit Coopératif, BPCE group (Sécur'Pass). */
-        val MEASURED = setOf("com.credit_coop.android.mobilebanking")
+        /**
+         * The banking app measured on the S24 FE (Patrice's): Crédit Coopératif, BPCE group (Sécur'Pass). The
+         * remote-control apps (D-031), and the system's own notices, for their opening and their screen sharing.
+         */
+        val MEASURED = setOf("com.credit_coop.android.mobilebanking", "android", "com.android.systemui") +
+            REMOTE_CONTROL_APPS.keys
         val DIGIT = Regex("\\d")
     }
 }
