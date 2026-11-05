@@ -81,8 +81,10 @@
     <string name="stop_trigger_bank_app">Die App Ihrer Bank wurde gerade geöffnet.</string>
     <string name="stop_trigger_remote_opened">Eine App, mit der jemand anderes Ihr Telefon sehen oder steuern kann, läuft gerade.</string>
     <string name="stop_trigger_remote_installed">Eine App, mit der jemand anderes Ihr Telefon sehen oder steuern kann, wurde gerade installiert.</string>
+    <string name="stop_trigger_accessibility">Eine App hat gerade den Zugriff „Bedienungshilfen“ erhalten: Sie kann Ihren Bildschirm sehen und an Ihrer Stelle handeln.</string>
     <string name="stop_rule_codes">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie NIEMALS anrufen, um nach einem Code zu fragen oder um die Freigabe eines Auftrags zu bitten.</string>
     <string name="stop_rule_remote">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie NIEMALS anrufen, um Sie zu bitten, eine solche App zu installieren oder zu öffnen.</string>
+    <string name="stop_rule_accessibility">Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie NIEMALS anrufen, um Sie zu bitten, einen solchen Zugriff zu gewähren.</string>
     <string name="stop_spoofed_number">Die angezeigte Nummer oder der angezeigte Name beweist nichts: Ein Betrüger kann die echten anzeigen.</string>
     <string name="stop_ignore_warning">Wenn man Ihnen sagt, Sie sollen diesen Bildschirm ignorieren, ist das Betrug.</string>
     <string name="stop_advice_on_call">Legen Sie auf. Rufen Sie dann selbst eine Nummer an, die Sie kennen: die auf Ihrer Karte oder in einem Brief, nie die, die man Ihnen gibt.</string>

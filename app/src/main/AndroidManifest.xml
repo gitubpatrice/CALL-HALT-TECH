@@ -160,6 +160,21 @@
     </queries>
 
     <!--
+        The phone's own accessibility features (platform/accessibility/AccessibilityGrants, docs/ARCHITECTURE.md, D-033):
+        seen, to tell whether one turned on is preinstalled — then it is no app being given the access. The same list as
+        SYSTEM_ACCESSIBILITY_SUITES, kept equal by RemoteControlAppsTest.
+    -->
+    <queries>
+        <package android:name="com.google.android.marvin.talkback" />
+        <package android:name="com.google.android.apps.accessibility.voiceaccess" />
+        <package android:name="com.android.systemui.accessibility.accessibilitymenu" />
+        <package android:name="com.samsung.accessibility" />
+        <package android:name="com.samsung.android.accessibility.talkback" />
+        <package android:name="com.samsung.android.bixby.agent" />
+        <package android:name="com.sec.android.app.camera" />
+    </queries>
+
+    <!--
         No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
         on this phone (data_extraction_rules.xml for Android 12+, allowBackup for the older ones).
     -->

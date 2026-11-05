@@ -51,7 +51,9 @@ les autres applis du téléphone, et ne demande pas à les voir.
 Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
 comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien. Sur un
 téléphone Xiaomi, elle lit de même si le téléphone lui permet de « démarrer automatiquement », pour ne demander ce réglage
-que s'il manque ; et elle sait si son propre accès aux notifications est en service, pour le dire sur l'accueil. Quand le
+que s'il manque ; et elle sait si son propre accès aux notifications est en service, pour le dire sur l'accueil. Elle
+lit aussi la liste des services d'accessibilité activés que tient Android, sans permission : pendant un appel, une appli
+qui reçoit cet accès ouvre l'écran STOP ; elle n'en garde que le nom de paquet de l'appli, au journal. Quand le
 téléphone s'éteint ou redémarre, Android le dit aux applis qui tournent : l'appli note alors la fin de l'appel en cours,
 s'il y en a un, et rien d'autre de l'extinction.
 

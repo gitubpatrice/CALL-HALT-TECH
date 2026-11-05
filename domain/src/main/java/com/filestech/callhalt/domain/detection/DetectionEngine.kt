@@ -163,6 +163,8 @@ class DetectionEngine {
             SensitiveActionKind.BANK_VALIDATION_REQUEST,
             SensitiveActionKind.BANK_APP_OPENED,
             SensitiveActionKind.REMOTE_CONTROL_OPENED,
+            // The user's own choice outside a call: a screen reader, a switch access, an app he trusts.
+            SensitiveActionKind.ACCESSIBILITY_ENABLED,
             -> Evaluation(state)
         }
 

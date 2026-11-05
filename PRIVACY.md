@@ -47,7 +47,9 @@ apps, and does not ask to.
 
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
 installed on this phone — by a store, or from a file. It keeps nothing of it. On a Xiaomi phone, it reads in the same
-way whether the phone lets it "start automatically", to ask for that setting only if it is missing; and it knows whether
+way whether the phone lets it "start automatically", to ask for that setting only if it is missing. It also reads the
+list of the accessibility services turned on that Android keeps, no permission needed: during a call, an app given that
+access opens the STOP screen; of it the app keeps only the app's package name, in the journal. And it knows whether
 its own notification access is at work, to say so on the home screen. When the phone switches off or restarts, Android
 tells the apps that are running: the app then records the end of the call in progress, if any, and nothing else about
 the shutdown.

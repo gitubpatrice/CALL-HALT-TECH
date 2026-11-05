@@ -87,6 +87,12 @@ enum class SensitiveActionKind {
 
     /** A remote-control app was installed: warned about even outside a call (PROJET.md, § 4.4). */
     REMOTE_CONTROL_INSTALLED,
+
+    /**
+     * An app was just given the accessibility access: it can see the screen and act in the user's place — what a
+     * remote-control app needs to take the phone in hand, and a spying app to read codes (PROJET.md, § 9.2, idea 1).
+     */
+    ACCESSIBILITY_ENABLED,
 }
 
 enum class StopChoice {

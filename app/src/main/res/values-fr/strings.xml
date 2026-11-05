@@ -83,8 +83,10 @@
     <string name="stop_trigger_bank_app">L\'appli de votre banque vient de s\'ouvrir.</string>
     <string name="stop_trigger_remote_opened">Une appli qui permet à quelqu\'un d\'autre de voir ou de contrôler votre téléphone est en marche.</string>
     <string name="stop_trigger_remote_installed">Une appli qui permet à quelqu\'un d\'autre de voir ou de contrôler votre téléphone vient d\'être installée.</string>
+    <string name="stop_trigger_accessibility">Une appli vient de recevoir l\'accès «\u00A0accessibilité\u00A0» : elle peut voir votre écran et agir à votre place.</string>
     <string name="stop_rule_codes">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront JAMAIS pour vous demander un code ou de valider une opération.</string>
     <string name="stop_rule_remote">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront JAMAIS pour vous faire installer ou ouvrir une telle appli.</string>
+    <string name="stop_rule_accessibility">Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront JAMAIS pour vous faire donner un tel accès.</string>
     <string name="stop_spoofed_number">Le numéro ou le nom affiché ne prouve rien : un escroc peut afficher le vrai.</string>
     <string name="stop_ignore_warning">Si on vous dit d\'ignorer cet écran, c\'est une arnaque.</string>
     <string name="stop_advice_on_call">Raccrochez. Puis appelez vous-même un numéro que vous connaissez : celui de votre carte ou d\'un courrier, jamais celui qu\'on vous donne.</string>
