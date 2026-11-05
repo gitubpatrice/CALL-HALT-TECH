@@ -2,6 +2,7 @@ package com.filestech.callhalt.platform.notification
 
 import android.annotation.SuppressLint
 import android.app.LocaleManager
+import android.app.Notification
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -11,6 +12,8 @@ import android.os.SystemClock
 import android.provider.Telephony
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import com.filestech.callhalt.domain.model.Moment
+import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.PhoneClock
@@ -59,10 +62,16 @@ class NotificationListener : NotificationListenerService() {
     private var lastCode: Pair<String, Long>? = null
     private var maskedTextCache: Pair<LocaleList, String>? = null
 
+    /** The remote-control apps' notifications still shown (D-032): the process's, which outlives this listener. */
+    @Inject lateinit var remoteControl: RemoteControlNotices
+
     override fun onListenerConnected() {
         // Debug builds only (no tree in release): for the measurements, when the system binds the listener.
         Timber.d("Notification listener connected")
         connection.connected(true)
+        // What came while the listener was away came during the call perhaps (RemoteControlNotices.RECONNECTED_WITHIN).
+        val shown = shownNow() ?: return remoteControl.forget()
+        remoteControl.alreadyShown(shown.map { it.notice() }, clock.now()).forEach(::submit)
     }
 
     override fun onListenerDisconnected() {
@@ -73,13 +82,28 @@ class NotificationListener : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         // The phone's clocks at reception: the time every signal carries (Signal's contract).
         val at = clock.now()
+        val notice = sbn.notice()
+        val signal = if (remoteControl.watches(notice)) remoteControl.posted(notice, at) else bankRequestOrCode(sbn, at)
+        signal?.let(::submit)
+    }
+
+    private fun submit(signal: SensitiveAction) {
+        // The kind and the app, never the text.
+        Timber.d("%s from %s", signal.kind, signal.source)
+        queue.submit(reason = "notification ${signal.kind}") { processSignal.get()(signal) }
+    }
+
+    /** A banking app's request, by its channel; or a code, in the default SMS app's latest message. */
+    private fun bankRequestOrCode(sbn: StatusBarNotification, at: Moment): SensitiveAction? {
         val channel = sbn.notification.channelId
         val sms = if (channel !in BANK_REQUEST_CHANNELS && sbn.packageName == defaultSmsApp()) latestSms(sbn, at.wall) else null
-        val signal = notificationSignal(sbn.packageName, channel, sms?.message, at) ?: return
-        if (signal.kind == SensitiveActionKind.CODE_MESSAGE && sms != null && isRepost(sbn.key, sms.sentAtMillis)) return
-        // The kind and the app, never the text.
-        Timber.d("%s from %s", signal.kind, sbn.packageName)
-        queue.submit(reason = "notification ${signal.kind}") { processSignal.get()(signal) }
+        val signal = notificationSignal(sbn.packageName, channel, sms?.message, at)
+        val repost = signal?.kind == SensitiveActionKind.CODE_MESSAGE && sms != null && isRepost(sbn.key, sms.sentAtMillis)
+        return signal.takeUnless { repost }
+    }
+
+    override fun onNotificationRemoved(sbn: StatusBarNotification) {
+        remoteControl.removed(sbn.key)
     }
 
     /**
@@ -132,19 +156,7 @@ class NotificationListener : NotificationListenerService() {
         return entry.second
     }
 
-    // Not a change of the app's language: the phone's own, to read one framework text. No App Bundle is built (D-016).
-    @SuppressLint("AppBundleLocaleChanges")
-    private fun inLanguages(locales: LocaleList): Context {
-        val configuration = Configuration()
-        configuration.setLocales(locales)
-        return createConfigurationContext(configuration)
-    }
-
     private val maskedTextId: Int by lazy { frameworkStringId(MASKED_TEXT_RESOURCE) }
-
-    // A framework text Android does not publish: looked up by its name, 0 where the system has none.
-    @SuppressLint("DiscouragedApi")
-    private fun frameworkStringId(name: String): Int = Resources.getSystem().getIdentifier(name, "string", "android")
 
     private companion object {
         /** Its name in AOSP: in the framework strings of API 35 to 37, not 34; read in Android 16's resources. */
@@ -154,3 +166,31 @@ class NotificationListener : NotificationListenerService() {
         const val SMS_APP_LOOKUP_MS = 60_000L
     }
 }
+
+private fun StatusBarNotification.notice() = RemoteControlNotices.Notice(
+    packageName,
+    key,
+    postedAtMillis = postTime,
+    groupSummary = notification.flags and Notification.FLAG_GROUP_SUMMARY != 0,
+)
+
+// A catch-all, by design: the system refuses an unbound listener (SecurityException), and the listener must go on.
+@Suppress("TooGenericExceptionCaught")
+private fun NotificationListenerService.shownNow(): List<StatusBarNotification>? = try {
+    activeNotifications?.toList()
+} catch (failure: RuntimeException) {
+    Timber.w(failure, "Notifications shown unreadable")
+    null
+}
+
+// Not a change of the app's language: the phone's own, to read one framework text. No App Bundle is built (D-016).
+@SuppressLint("AppBundleLocaleChanges")
+private fun Context.inLanguages(locales: LocaleList): Context {
+    val configuration = Configuration()
+    configuration.setLocales(locales)
+    return createConfigurationContext(configuration)
+}
+
+// A framework text Android does not publish: looked up by its name, 0 where the system has none.
+@SuppressLint("DiscouragedApi")
+private fun frameworkStringId(name: String): Int = Resources.getSystem().getIdentifier(name, "string", "android")

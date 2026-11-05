@@ -29,7 +29,9 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   appli donne à un type de notification). Elle reconnaît une demande de la banque à ce seul canal : aujourd'hui,
   les demandes Sécur'Pass (banques du groupe BPCE). **Des seules notifications de votre appli SMS**, elle lit aussi
   le dernier message, en mémoire, pour savoir si c'est un code de validation (« Votre code de validation est … ») ;
-  le texte est oublié aussitôt, jamais gardé, jamais envoyé. Des notifications de toute autre appli, elle ne lit ni
+  le texte est oublié aussitôt, jamais gardé, jamais envoyé. Des notifications des applis de prise en main de sa
+  liste (AnyDesk, RustDesk…), elle note aussi si chacune est nouvelle, jamais ce qu'elle dit : pendant un appel, une
+  telle appli en marche ouvre l'écran STOP. Des notifications de toute autre appli, elle ne lit ni
   le titre ni le texte. L'écran d'activation ouvre pour lui la page des réglages du téléphone : vous seul pouvez
   l'accorder.
 - **Notifications** (`POST_NOTIFICATIONS`, et `USE_FULL_SCREEN_INTENT`) : si le téléphone empêche l'écran STOP de

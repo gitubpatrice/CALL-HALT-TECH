@@ -24,9 +24,19 @@ STOP pendant l'appel (0,5 s) et juste après, rien pour une mise à jour ni pour
 appel, notifications refusées sans rien casser. **Trois relectures Claude** : la liste juste ; deux renforcements
 faits ; trois défauts de mots corrigés (Patrice, les trois recommandations) — « voir ou contrôler », la règle du STOP
 « ne vous appelleront JAMAIS pour vous faire installer » (des banques allemandes font installer QuickSupport au client
-qui les appelle), et l'avertissement « Si vous ne l'avez pas installée de vous-même, désinstallez-la ». **Reste de la
-fonction 4** : l'ouverture d'une telle appli pendant un appel (`REMOTE_CONTROL_OPENED`). Puis le SMS au proche
-(fonction 7).
+qui les appelle), et l'avertissement « Si vous ne l'avez pas installée de vous-même, désinstallez-la ».
+
+**La seconde moitié le soir : une telle appli en marche pendant un appel (D-032, Patrice : « fais tout ce qu'il
+faut », « fais tous les tests nécessaires »).** Vue dans ses notifications, sans accès de plus : chaque nouvelle
+notification d'une appli de la liste (son partage démarré, une demande de connexion, une session établie) ouvre le
+STOP pendant un appel ou juste après — « … est en marche » (Patrice). **Mesuré avec une vraie session RustDesk**,
+pilotée depuis un second émulateur comme le ferait l'escroc : STOP au partage démarré, de nouveau à la demande de
+connexion, juste après l'appel ; rien hors appel ; l'écouteur relié en plein appel voit ce qui est venu pendant sa
+coupure. **P-15 mesuré** : l'escroc voit l'écran STOP noir, et un service d'accessibilité qui n'est pas un outil
+déclaré ne peut pas appuyer sur « Continuer » (contrôle positif fait). **Limite mesurée** : si la victime refuse les
+notifications de RustDesk, son partage marche sans notification, et rien n'est vu — d'où la suite décidée par
+Patrice : **un service d'accessibilité activé pendant un appel → STOP** (fiche, § 9.2, idée 1). Puis le SMS au
+proche (fonction 7).
 
 **Le S24 FE, deux jours après** : redémarré le matin du 2026-11-05, l'appli relancée dans la même seconde, en vie
 9 h 53 plus tard, écouteur relié, toujours exemptée de la veille. Débranché ensuite (absent d'`adb`).
@@ -289,10 +299,10 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
 - **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
-- Ce qui manque encore : l'**ouverture** d'une appli de prise en main pendant un appel (leur **installation** est
-  vue depuis le 2026-11-05, D-031), le **SMS au proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
+- Ce qui manque encore : un **service d'accessibilité activé** pendant un appel (les applis de prise en main,
+  installées ou en marche, sont vues depuis le 2026-11-05, D-031 et D-032), le **SMS au proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 356 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 371 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -302,7 +312,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-031, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-032, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 

@@ -82,7 +82,7 @@
     <string name="stop_trigger_code">Ha appena ricevuto un codice.</string>
     <string name="stop_trigger_bank_validation">L\'app della Sua banca Le chiede di confermare un\'operazione.</string>
     <string name="stop_trigger_bank_app">L\'app della Sua banca si è appena aperta.</string>
-    <string name="stop_trigger_remote_opened">Si è appena aperta un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono.</string>
+    <string name="stop_trigger_remote_opened">È in funzione un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono.</string>
     <string name="stop_trigger_remote_installed">È appena stata installata un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono.</string>
     <string name="stop_rule_codes">La Sua banca, la polizia, il fisco o la Sua assicurazione non La chiameranno MAI per chiederLe un codice o la conferma di un\'operazione.</string>
     <string name="stop_rule_remote">La Sua banca, la polizia, il fisco o la Sua assicurazione non La chiameranno MAI per chiederLe di installare o aprire un\'app del genere.</string>

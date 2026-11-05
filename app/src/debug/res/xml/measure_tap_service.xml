@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DEBUG BUILDS ONLY: the P-15 measuring service (platform/debug/MeasureTapService). What a remote-control app's
+    input service is to Android: gestures allowed, NOT a declared accessibility tool (isAccessibilityTool left out:
+    false by default, and read from API 31 only).
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canPerformGestures="true" />
