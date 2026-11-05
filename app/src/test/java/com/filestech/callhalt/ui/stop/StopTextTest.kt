@@ -10,7 +10,11 @@ import org.junit.jupiter.api.Test
 /** The STOP screen says what is true: where the user is, what just happened, the rule that matches it, what to do. */
 class StopTextTest {
 
-    private val remote = setOf(SensitiveActionKind.REMOTE_CONTROL_OPENED, SensitiveActionKind.REMOTE_CONTROL_INSTALLED)
+    private val remote = setOf(
+        SensitiveActionKind.REMOTE_CONTROL_OPENED,
+        SensitiveActionKind.REMOTE_CONTROL_INSTALLED,
+        SensitiveActionKind.ACCESSIBILITY_ENABLED,
+    )
 
     @Test
     fun `during a cellular call the app may end, it says so and offers to hang up first`() {
@@ -70,7 +74,11 @@ class StopTextTest {
     @Test
     fun `the rule matches the trigger`() {
         SensitiveActionKind.entries.forEach { trigger ->
-            val expected = if (trigger in remote) R.string.stop_rule_remote else R.string.stop_rule_codes
+            val expected = when (trigger) {
+                SensitiveActionKind.ACCESSIBILITY_ENABLED -> R.string.stop_rule_accessibility
+                in remote -> R.string.stop_rule_remote
+                else -> R.string.stop_rule_codes
+            }
             assertWithMessage(trigger.name).that(stopText(trigger, onCall = true, CallChannel.CELLULAR, canEndCall = true).rule)
                 .isEqualTo(expected)
         }

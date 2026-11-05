@@ -18,6 +18,7 @@ import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
+import com.filestech.callhalt.platform.accessibility.SYSTEM_ACCESSIBILITY_SUITES
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -55,9 +56,19 @@ class RemoteControlAppsTest {
         AndroidDecisionExecutor(launcher, warnings),
     )
 
+    /** The remote-control apps (D-031), and the phone's own accessibility features (D-033): no more, no less. */
     @Test
     fun `the manifest declares exactly the apps the code matches`() {
-        assertThat(manifestRemoteControlApps()).containsExactlyElementsIn(REMOTE_CONTROL_APPS.keys)
+        val blocks = manifestPackageBlocks()
+        assertThat(blocks).hasSize(2)
+        assertThat(blocks).contains(REMOTE_CONTROL_APPS.keys.toList())
+        assertThat(blocks).contains(SYSTEM_ACCESSIBILITY_SUITES.toList())
+    }
+
+    /** A preinstalled remote-control app (TeamViewer for Doro) is never exempt as a feature of the phone. */
+    @Test
+    fun `no remote-control app is taken for a feature of the phone`() {
+        assertThat(REMOTE_CONTROL_APPS.keys.intersect(SYSTEM_ACCESSIBILITY_SUITES)).isEmpty()
     }
 
     /** The name the warning gives: ours, one per app, never empty. */
@@ -142,14 +153,13 @@ class RemoteControlAppsTest {
 
     private fun at(seconds: Long) = Moment(T0.plusSeconds(seconds))
 
-    /** The `<queries>` block made of packages only: the other ones name intents (the settings pages, the SMS apps). */
-    private fun manifestRemoteControlApps(): List<String> {
+    /** The `<queries>` blocks made of packages only: the other ones name intents (the settings pages, the SMS apps). */
+    private fun manifestPackageBlocks(): List<List<String>> {
         val manifest = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
             .newDocumentBuilder().parse(File("src/main/AndroidManifest.xml"))
         val queries = manifest.getElementsByTagName("queries").elements()
         val packagesOnly = queries.filter { block -> block.childElements().all { it.tagName == "package" } }
-        assertThat(packagesOnly).hasSize(1)
-        return packagesOnly.single().childElements().map { it.getAttributeNS(ANDROID_NS, "name") }
+        return packagesOnly.map { block -> block.childElements().map { it.getAttributeNS(ANDROID_NS, "name") } }
     }
 
     private fun NodeList.elements(): List<Element> = (0 until length).map(::item).filterIsInstance<Element>()

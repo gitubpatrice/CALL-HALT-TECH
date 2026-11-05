@@ -84,8 +84,10 @@
     <string name="stop_trigger_bank_app">La app de su banco acaba de abrirse.</string>
     <string name="stop_trigger_remote_opened">Está en marcha una app que permite a otra persona ver o controlar su teléfono.</string>
     <string name="stop_trigger_remote_installed">Acaba de instalarse una app que permite a otra persona ver o controlar su teléfono.</string>
+    <string name="stop_trigger_accessibility">Una app acaba de recibir el acceso «accesibilidad»: puede ver su pantalla y actuar en su lugar.</string>
     <string name="stop_rule_codes">Ni su banco, ni la policía, ni Hacienda, ni su aseguradora le llamarán NUNCA para pedirle un código o que confirme una operación.</string>
     <string name="stop_rule_remote">Ni su banco, ni la policía, ni Hacienda, ni su aseguradora le llamarán NUNCA para pedirle que instale o abra una app así.</string>
+    <string name="stop_rule_accessibility">Ni su banco, ni la policía, ni Hacienda, ni su aseguradora le llamarán NUNCA para pedirle que conceda un acceso así.</string>
     <string name="stop_spoofed_number">El número o el nombre que aparece no prueba nada: un estafador puede mostrar los verdaderos.</string>
     <string name="stop_ignore_warning">Si le dicen que ignore esta pantalla, es una estafa.</string>
     <string name="stop_advice_on_call">Cuelgue. Después llame directamente a un número que conozca: el de su tarjeta o el de una carta, nunca el que le den.</string>

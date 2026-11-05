@@ -33,12 +33,13 @@ internal data class StopText(
  */
 internal fun stopText(trigger: SensitiveActionKind, onCall: Boolean, channel: CallChannel, canEndCall: Boolean): StopText {
     val canHangUp = onCall && channel == CallChannel.CELLULAR && canEndCall
-    // Hanging up does not end a remote-control session: the advice for those triggers is to switch the phone off.
-    val remote = trigger == SensitiveActionKind.REMOTE_CONTROL_OPENED || trigger == SensitiveActionKind.REMOTE_CONTROL_INSTALLED
+    // Hanging up does not end a remote-control session, nor what an app given the accessibility access does: the advice
+    // for those triggers is to switch the phone off.
+    val remote = trigger in REMOTE_TRIGGERS
     return StopText(
         situation = if (onCall) R.string.stop_on_call else R.string.stop_call_ended,
         happened = happened(trigger),
-        rule = if (remote) R.string.stop_rule_remote else R.string.stop_rule_codes,
+        rule = rule(trigger),
         advice = when {
             remote && onCall -> R.string.stop_advice_remote_on_call
             remote -> R.string.stop_advice_remote_after_call
@@ -62,4 +63,20 @@ private fun happened(trigger: SensitiveActionKind): Int = when (trigger) {
     SensitiveActionKind.BANK_APP_OPENED -> R.string.stop_trigger_bank_app
     SensitiveActionKind.REMOTE_CONTROL_OPENED -> R.string.stop_trigger_remote_opened
     SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> R.string.stop_trigger_remote_installed
+    SensitiveActionKind.ACCESSIBILITY_ENABLED -> R.string.stop_trigger_accessibility
 }
+
+/** Who never calls to have this done: a code given, an operation approved, an app installed, an access given. */
+@StringRes
+private fun rule(trigger: SensitiveActionKind): Int = when (trigger) {
+    SensitiveActionKind.ACCESSIBILITY_ENABLED -> R.string.stop_rule_accessibility
+    in REMOTE_TRIGGERS -> R.string.stop_rule_remote
+    else -> R.string.stop_rule_codes
+}
+
+/** Someone may be seeing or controlling the phone: hanging up does not stop that. */
+private val REMOTE_TRIGGERS = setOf(
+    SensitiveActionKind.REMOTE_CONTROL_OPENED,
+    SensitiveActionKind.REMOTE_CONTROL_INSTALLED,
+    SensitiveActionKind.ACCESSIBILITY_ENABLED,
+)

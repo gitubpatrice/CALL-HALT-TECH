@@ -114,8 +114,10 @@
     <string name="stop_trigger_bank_app">Your bank\'s app has just opened.</string>
     <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone is running.</string>
     <string name="stop_trigger_remote_installed">An app that lets someone else see or control your phone has just been installed.</string>
+    <string name="stop_trigger_accessibility">An app has just been given the \"accessibility\" access: it can see your screen and act in your place.</string>
     <string name="stop_rule_codes">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask for a code or to approve a transaction.</string>
     <string name="stop_rule_remote">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask you to install or open such an app.</string>
+    <string name="stop_rule_accessibility">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask you to give such an access.</string>
     <!-- The scammer's number shows as the bank's own (or a name, on WhatsApp): it must not reassure. -->
     <string name="stop_spoofed_number">The number or name on the screen proves nothing: a scammer can display the real one.</string>
     <!-- The scammer is still on the line when the screen shows, and will say "that is normal, press Continue". -->

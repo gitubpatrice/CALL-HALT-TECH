@@ -35,8 +35,15 @@ connexion, juste après l'appel ; rien hors appel ; l'écouteur relié en plein 
 coupure. **P-15 mesuré** : l'escroc voit l'écran STOP noir, et un service d'accessibilité qui n'est pas un outil
 déclaré ne peut pas appuyer sur « Continuer » (contrôle positif fait). **Limite mesurée** : si la victime refuse les
 notifications de RustDesk, son partage marche sans notification, et rien n'est vu — d'où la suite décidée par
-Patrice : **un service d'accessibilité activé pendant un appel → STOP** (fiche, § 9.2, idée 1). Puis le SMS au
-proche (fonction 7).
+Patrice : **un service d'accessibilité activé pendant un appel → STOP** (fiche, § 9.2, idée 1).
+
+**Puis D-033, fait le même soir : un service d'accessibilité activé pendant un appel, ou juste après → STOP** (« Une
+appli vient de recevoir l'accès « accessibilité » : elle peut voir votre écran et agir à votre place », Patrice). Lu
+dans le réglage d'Android qui liste ces services, sans permission. **Trouvé en mesurant : Android 16 bloque lui-même
+l'activation pour une appli téléchargée pendant un appel** (« Action impossible pendant un appel ») ; juste après, il
+la laisse faire, et l'écran STOP s'ouvre (« Votre appel vient de se terminer ») ; sur **Android 15**, rien ne bloque, et
+l'écran STOP s'ouvre pendant l'appel (mesuré, par les Réglages, comme une victime). **Ensuite** : le SMS au proche
+(fonction 7), puis les audits.
 
 **Le S24 FE, deux jours après** : redémarré le matin du 2026-11-05, l'appli relancée dans la même seconde, en vie
 9 h 53 plus tard, écouteur relié, toujours exemptée de la veille. Débranché ensuite (absent d'`adb`).
@@ -299,10 +306,10 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
 - **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
-- Ce qui manque encore : un **service d'accessibilité activé** pendant un appel (les applis de prise en main,
-  installées ou en marche, sont vues depuis le 2026-11-05, D-031 et D-032), le **SMS au proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
+- Ce qui manque encore : le **SMS au proche** (les applis de prise en main, installées ou en marche, et un service
+  d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033), et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 371 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 385 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -312,7 +319,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-032, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-033, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 

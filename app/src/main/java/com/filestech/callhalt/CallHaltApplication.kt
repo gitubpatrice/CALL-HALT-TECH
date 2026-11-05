@@ -1,6 +1,7 @@
 package com.filestech.callhalt
 
 import android.app.Application
+import com.filestech.callhalt.platform.accessibility.AccessibilitySensor
 import com.filestech.callhalt.platform.install.InstallSensor
 import com.filestech.callhalt.platform.power.ShutdownSensor
 import com.filestech.callhalt.platform.stop.StopNotifier
@@ -22,6 +23,9 @@ class CallHaltApplication : Application() {
     /** As cheap: built the same way, resolved only when a remote-control app is installed. */
     @Inject lateinit var installSensor: InstallSensor
 
+    /** As cheap: resolved only when an app is given the accessibility access. */
+    @Inject lateinit var accessibilitySensor: AccessibilitySensor
+
     override fun onCreate() {
         super.onCreate()
         // Debug builds only. A release plants no tree, so no log line — which could name a number that
@@ -33,5 +37,7 @@ class CallHaltApplication : Application() {
         // At every start of the process: Android tells only the receivers registered at run time (D-028, D-031).
         shutdownSensor.register(this)
         installSensor.register(this)
+        // And the accessibility services turned on, from what they are now (D-033).
+        accessibilitySensor.register(this)
     }
 }
