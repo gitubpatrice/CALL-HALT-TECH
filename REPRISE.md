@@ -12,7 +12,26 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-04)
+## Reprendre ici (2026-11-05)
+
+**La fonction 4 de la fiche, première moitié : une appli de prise en main installée (D-031).** Pendant un appel ou
+dans les 15 minutes qui suivent, l'installation d'AnyDesk, TeamViewer QuickSupport, RustDesk… ouvre l'écran STOP
+(« Raccrochez et éteignez votre téléphone ») ; hors appel, une notification la nomme (Patrice : « notification avec
+le nom ») et ouvre sa page dans les réglages, avec « Désinstaller ». **49 identifiants**, chacun vérifié sur sa page
+Google Play (RustDesk, retiré de Google Play à cause des arnaques, dans son APK) ; l'appli ne voit que ces applis-là,
+pas les autres (pas de permission de plus). **Mesuré** sur les émulateurs Android 16 et 11, avec le vrai RustDesk :
+STOP pendant l'appel (0,5 s) et juste après, rien pour une mise à jour ni pour une autre appli, la notification hors
+appel, notifications refusées sans rien casser. **Trois relectures Claude** : la liste juste ; deux renforcements
+faits ; trois défauts de mots corrigés (Patrice, les trois recommandations) — « voir ou contrôler », la règle du STOP
+« ne vous appelleront JAMAIS pour vous faire installer » (des banques allemandes font installer QuickSupport au client
+qui les appelle), et l'avertissement « Si vous ne l'avez pas installée de vous-même, désinstallez-la ». **Reste de la
+fonction 4** : l'ouverture d'une telle appli pendant un appel (`REMOTE_CONTROL_OPENED`). Puis le SMS au proche
+(fonction 7).
+
+**Le S24 FE, deux jours après** : redémarré le matin du 2026-11-05, l'appli relancée dans la même seconde, en vie
+9 h 53 plus tard, écouteur relié, toujours exemptée de la veille. Débranché ensuite (absent d'`adb`).
+
+## Le 2026-11-04
 
 **Le soir (Patrice : « tu peux reprendre, par contre je n'ai pas de téléphone avec Android Go »)** : aucun téléphone
 branché, tout sur émulateurs.
@@ -86,7 +105,8 @@ monétaire et financier, art. L133-24), et une carte à débit différé est dé
 plafond arrête une appli qui remplirait le journal. Élagué dans la transaction de chaque signal et au contrôle de
 l'accueil ; la politique de confidentialité le dit, avec l'effacement par la désinstallation. Tests sur téléphone avec
 contrôle négatif. Relecture : aucun constat élevé ni moyen. **Reste de P-11** : dédoublonner l'avertissement « appli
-de prise en main installée », à faire avec son capteur, qui n'existe pas encore.
+de prise en main installée », à faire avec son capteur, qui n'existe pas encore (tranché le 2026-11-05 avec lui :
+pas de dédoublonnage, une diffusion par installation, D-031).
 
 **Android Go de 11 à 13 fait (D-030) : protégé par la notification du STOP seule** (Patrice : « ok fais le »). Avant,
 ces téléphones à petit prix, souvent ceux des personnes âgées, n'avaient aucune protection. **Mesuré sur deux émulateurs
@@ -269,10 +289,10 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
 - **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
-- Ce qui manque encore : les **applis de prise en main à distance** (accès à l'utilisation des applis), le **SMS au
-  proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
+- Ce qui manque encore : l'**ouverture** d'une appli de prise en main pendant un appel (leur **installation** est
+  vue depuis le 2026-11-05, D-031), le **SMS au proche**, et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
   2026-11-03 : D-024).
-- Vérifications : 344 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 356 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -282,7 +302,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-030, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-031, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 

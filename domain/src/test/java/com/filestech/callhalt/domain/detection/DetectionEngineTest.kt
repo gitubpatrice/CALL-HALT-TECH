@@ -290,8 +290,11 @@ class DetectionEngineTest {
         fun `a remote-control app installed outside a call is warned about`() {
             val steps = run(action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 0))
 
-            assertThat(steps.last().decisions).containsExactly(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED))
-            assertThat(steps.last().journal).containsExactly(JournalEntry.Warning(at(0).wall, WarningReason.REMOTE_CONTROL_INSTALLED))
+            // The app it is about goes with it: the warning names it, the journal keeps which one it was.
+            assertThat(steps.last().decisions)
+                .containsExactly(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, source = "test"))
+            assertThat(steps.last().journal)
+                .containsExactly(JournalEntry.Warning(at(0).wall, WarningReason.REMOTE_CONTROL_INSTALLED, source = "test"))
         }
 
         @Test

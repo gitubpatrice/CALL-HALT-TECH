@@ -1,8 +1,10 @@
 package com.filestech.callhalt
 
 import android.app.Application
+import com.filestech.callhalt.platform.install.InstallSensor
 import com.filestech.callhalt.platform.power.ShutdownSensor
 import com.filestech.callhalt.platform.stop.StopNotifier
+import com.filestech.callhalt.platform.warning.WarningNotifier
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -12,8 +14,13 @@ class CallHaltApplication : Application() {
 
     @Inject lateinit var stopNotifier: StopNotifier
 
+    @Inject lateinit var warningNotifier: WarningNotifier
+
     /** Cheap to build: the queue, the clock, and a provider resolved only when the phone shuts down. */
     @Inject lateinit var shutdownSensor: ShutdownSensor
+
+    /** As cheap: built the same way, resolved only when a remote-control app is installed. */
+    @Inject lateinit var installSensor: InstallSensor
 
     override fun onCreate() {
         super.onCreate()
@@ -22,7 +29,9 @@ class CallHaltApplication : Application() {
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         // Before any STOP: a notification on a channel that does not exist is not shown.
         stopNotifier.createChannel()
-        // At every start of the process: Android tells only the receivers registered at run time (D-028).
+        warningNotifier.createChannel()
+        // At every start of the process: Android tells only the receivers registered at run time (D-028, D-031).
         shutdownSensor.register(this)
+        installSensor.register(this)
     }
 }

@@ -155,8 +155,8 @@ class DetectionEngine {
         when (signal.kind) {
             SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> Evaluation(
                 state = state,
-                journal = listOf(JournalEntry.Warning(signal.at.wall, WarningReason.REMOTE_CONTROL_INSTALLED)),
-                decisions = listOf(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED)),
+                journal = listOf(JournalEntry.Warning(signal.at.wall, WarningReason.REMOTE_CONTROL_INSTALLED, signal.source)),
+                decisions = listOf(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, signal.source)),
             )
             // Outside a call these are ordinary: the user pays, checks the account, gets a code.
             SensitiveActionKind.CODE_MESSAGE,
