@@ -31,10 +31,17 @@ change that adds it to the app, and the build checks the app asks for nothing el
   phone's settings page for it: only you can grant it.
 - **Notifications** (`POST_NOTIFICATIONS`, and `USE_FULL_SCREEN_INTENT`): if the phone prevents the STOP screen from
   showing, the app warns you with a notification that opens it; on a locked phone or a sleeping screen, it opens it at
-  once, as long as the phone lets it (an Android setting, "full-screen notifications", can take that back). It is the
-  only notification the app sends. It says what just happened (a code received, a request from your bank) — the STOP
+  once, as long as the phone lets it (an Android setting, "full-screen notifications", can take that back). It says
+  what just happened (a code received, a request from your bank) — the STOP
   screen says it too, over the lock screen — but neither the number calling, nor the code, nor your bank's name. From
-  Android 13, the phone asks for your consent; you can take it back in the app's notification settings.
+  Android 13, the phone asks for your consent; you can take it back in the app's notification settings. The app
+  sends one other notification, outside a call: when an app that lets someone else control the phone has just been
+  installed (AnyDesk, TeamViewer QuickSupport, RustDesk…), it names that app and opens its page in the phone's
+  settings, where it is uninstalled.
+
+To see those installations, the app may see whether one of the remote-control apps of its list (about fifty, named
+in its code and its manifest) is installed, and Android tells it when one is. It does not see the phone's other
+apps, and does not ask to.
 
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
 installed on this phone — by a store, or from a file. It keeps nothing of it. On a Xiaomi phone, it reads in the same
@@ -55,9 +62,10 @@ On this phone only, in the app's private storage:
   incoming or outgoing — never the number; and the last call state the phone reported. Its times are kept twice: by
   the phone's clock, and as the time since the phone started, with Android's count of its starts — so that a clock
   set back or forward changes nothing;
-- a journal of the alerts it shows: when, why, which app the request or the code came from (its package name, such
-  as `com.credit_coop.android.mobilebanking`), and what was chosen — never the text of a message. A request or a
-  code outside a call, or after the minutes that follow one, is not kept. Each line is kept **14 months**, then
+- a journal of the alerts it shows: when, why, which app the request or the code came from, or which remote-control
+  app was installed (its package name, such as `com.credit_coop.android.mobilebanking`), and what was chosen — never
+  the text of a message. A request or a code outside a call, or after the minutes that follow one, is not kept; a
+  remote-control app installed then is, with its warning. Each line is kept **14 months**, then
   erased: the 13 months the law leaves you to contest a payment with your bank, counted from its debit, and one more
   for a card debited at the end of the month — the journal shows that a call was in progress, or had just ended,
   when it was asked for.

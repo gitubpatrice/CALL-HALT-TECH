@@ -8,6 +8,8 @@ import com.filestech.callhalt.platform.stop.ActivityStopLauncher
 import com.filestech.callhalt.platform.stop.CallControl
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.stop.TelecomCallControl
+import com.filestech.callhalt.platform.warning.WarningNotifier
+import com.filestech.callhalt.platform.warning.WarningPoster
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,6 +22,9 @@ abstract class PlatformModule {
 
     @Binds
     abstract fun stopLauncher(impl: ActivityStopLauncher): StopLauncher
+
+    @Binds
+    abstract fun warningPoster(impl: WarningNotifier): WarningPoster
 
     @Binds
     abstract fun callControl(impl: TelecomCallControl): CallControl

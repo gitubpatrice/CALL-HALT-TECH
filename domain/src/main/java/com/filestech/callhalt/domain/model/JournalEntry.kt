@@ -20,7 +20,8 @@ sealed interface JournalEntry {
     /** A STOP decided at [at] that could not be shown (see [com.filestech.callhalt.domain.model.StopNotShown]). */
     data class NotShown(override val at: Instant, val trigger: SensitiveActionKind) : JournalEntry
 
-    data class Warning(override val at: Instant, val reason: WarningReason) : JournalEntry
+    /** [source]: the app the warning was about, when there is one (the remote-control app installed). */
+    data class Warning(override val at: Instant, val reason: WarningReason, val source: String? = null) : JournalEntry
 
     data class Answer(
         override val at: Instant,

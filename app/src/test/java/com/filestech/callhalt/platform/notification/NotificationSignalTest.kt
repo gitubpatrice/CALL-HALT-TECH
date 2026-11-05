@@ -20,6 +20,7 @@ import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.stop.StopLauncher
+import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -40,12 +41,15 @@ class NotificationSignalTest {
         shown += stop
         true // in front of the user
     }
+
+    /** A notification is never a warning: a request outside a call is the user's own. */
+    private val warnings = WarningPoster { error("no warning expected") }
     private val processSignal = ProcessSignalUseCase(
         DetectionEngine(),
         store,
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
-        AndroidDecisionExecutor(launcher),
+        AndroidDecisionExecutor(launcher, warnings),
     )
 
     @ParameterizedTest

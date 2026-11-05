@@ -94,7 +94,7 @@ class StopAnswersTest {
         store,
         { ProtectionSettings() },
         RestartSource { null },
-        AndroidDecisionExecutor { true },
+        AndroidDecisionExecutor({ true }) { error("no warning expected") },
     )
 
     private val clock = FakePhoneClock(Moment(Instant.EPOCH))

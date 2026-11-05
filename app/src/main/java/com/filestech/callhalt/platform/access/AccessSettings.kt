@@ -94,10 +94,11 @@ object AccessSettings {
 /**
  * [page] as the phone's OWN settings serve it. Any app can declare the same action: the phone would then offer it
  * beside them, and it could imitate them and give its own instructions (security review of 2026-11-02, S2). Seen
- * through the manifest's `<queries>`. Null when no system app serves the page.
+ * through the manifest's `<queries>`. Null when no system app serves the page. Also the page a warning opens
+ * (platform/warning/WarningNotifier).
  */
 @Suppress("DEPRECATION") // The Int flags: ResolveInfoFlags only exists from Android 13; they mean the same.
-private fun systemSettings(context: Context, page: Intent): Intent? =
+internal fun systemSettings(context: Context, page: Intent): Intent? =
     context.packageManager.queryIntentActivities(page, PackageManager.MATCH_SYSTEM_ONLY).firstOrNull()
         ?.let { settings -> Intent(page).setPackage(settings.activityInfo.packageName) }
 

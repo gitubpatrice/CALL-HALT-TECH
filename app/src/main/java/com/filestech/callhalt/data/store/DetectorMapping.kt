@@ -77,7 +77,7 @@ internal object DetectorMapping {
             )
         }
         is JournalEntry.NotShown -> blankRow(entry.at, TYPE_NOT_SHOWN).copy(trigger = entry.trigger.name)
-        is JournalEntry.Warning -> blankRow(entry.at, TYPE_WARNING).copy(warning = entry.reason.name)
+        is JournalEntry.Warning -> blankRow(entry.at, TYPE_WARNING).copy(warning = entry.reason.name, source = entry.source)
         is JournalEntry.Answer -> blankRow(entry.at, TYPE_ANSWER).copy(trigger = entry.trigger.name, choice = entry.choice.name)
     }
 
@@ -90,7 +90,7 @@ internal object DetectorMapping {
                 if (trigger == null || counterpart == null) null else JournalEntry.Stop(at, trigger, row.source, counterpart)
             }
             TYPE_NOT_SHOWN -> enumOrNull<SensitiveActionKind>(row.trigger)?.let { JournalEntry.NotShown(at, it) }
-            TYPE_WARNING -> enumOrNull<WarningReason>(row.warning)?.let { JournalEntry.Warning(at, it) }
+            TYPE_WARNING -> enumOrNull<WarningReason>(row.warning)?.let { JournalEntry.Warning(at, it, row.source) }
             TYPE_ANSWER -> {
                 val trigger = enumOrNull<SensitiveActionKind>(row.trigger)
                 val choice = enumOrNull<StopChoice>(row.choice)

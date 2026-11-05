@@ -35,10 +35,16 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
 - **Notifications** (`POST_NOTIFICATIONS`, et `USE_FULL_SCREEN_INTENT`) : si le téléphone empêche l'écran STOP de
   s'afficher, l'appli vous prévient par une notification qui l'ouvre ; téléphone verrouillé ou écran éteint, elle
   l'ouvre aussitôt, tant que le téléphone le lui permet (un réglage d'Android, « notifications plein écran », peut le
-  retirer). C'est la seule notification qu'elle envoie. Elle dit ce qui vient d'arriver (un code reçu, une demande de
+  retirer). Elle dit ce qui vient d'arriver (un code reçu, une demande de
   votre banque) — l'écran STOP le dit aussi, par-dessus l'écran verrouillé — mais ni le numéro qui appelle, ni le
   code, ni le nom de votre banque. À partir d'Android 13, le téléphone vous demande votre accord ; vous pouvez le
-  retirer dans les réglages de notifications de l'appli.
+  retirer dans les réglages de notifications de l'appli. L'appli envoie une autre notification, hors appel : quand une
+  appli qui permet à quelqu'un d'autre de contrôler le téléphone vient d'être installée (AnyDesk, TeamViewer
+  QuickSupport, RustDesk…), elle la nomme et ouvre sa page dans les réglages du téléphone, où on la désinstalle.
+
+Pour voir ces installations, l'appli peut voir si une des applis de prise en main de sa liste (une cinquantaine,
+nommées dans son code et son manifeste) est installée, et Android lui dit quand l'une d'elles l'est. Elle ne voit pas
+les autres applis du téléphone, et ne demande pas à les voir.
 
 Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
 comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien. Sur un
@@ -59,9 +65,10 @@ Sur ce téléphone seulement, dans l'espace privé de l'appli :
   entrant ou sortant — jamais le numéro ; et le dernier état d'appel signalé par le téléphone. Ses heures sont gardées
   deux fois : à l'horloge du téléphone, et en temps écoulé depuis son démarrage, avec le compte de ses démarrages que
   tient Android — une horloge reculée ou avancée n'y change ainsi rien ;
-- un journal des alertes affichées : quand, pourquoi, de quelle appli venait la demande ou le code (son nom de
-  paquet, comme `com.credit_coop.android.mobilebanking`), et ce qui a été choisi — jamais le texte d'un message.
-  Une demande ou un code hors appel, ou au-delà des minutes qui en suivent un, n'est pas gardé. Chaque ligne est
+- un journal des alertes affichées : quand, pourquoi, de quelle appli venait la demande ou le code, ou quelle appli
+  de prise en main a été installée (son nom de paquet, comme `com.credit_coop.android.mobilebanking`), et ce qui a été
+  choisi — jamais le texte d'un message. Une demande ou un code hors appel, ou au-delà des minutes qui en suivent
+  un, n'est pas gardé ; une appli de prise en main installée à ce moment-là l'est, avec son avertissement. Chaque ligne est
   gardée **14 mois**, puis effacée : les 13 mois que la loi vous laisse pour contester une opération auprès de votre
   banque, comptés depuis son débit, et un de plus pour une carte débitée en fin de mois — le journal montre qu'un
   appel était en cours, ou venait de finir, quand elle a été demandée. Jamais plus de 10 000 lignes : au-delà, les plus anciennes partent

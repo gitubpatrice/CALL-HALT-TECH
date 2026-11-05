@@ -102,16 +102,20 @@
     <string name="stop_notification_text">%1$s Touch here to read the STOP screen before doing anything.</string>
     <string name="stop_channel_name">STOP screen blocked</string>
     <string name="stop_channel_description">When the phone prevents the STOP screen from showing: a notification that opens it.</string>
+    <string name="warning_channel_name">Remote-control apps</string>
+    <string name="warning_channel_description">When an app that lets someone else see or control your phone is installed outside a call.</string>
+    <string name="warning_remote_installed_title">%1$s has just been installed</string>
+    <string name="warning_remote_installed_text">This app lets someone else see or control your phone. Your bank, the police, the tax office, your insurer: none of them will ever call you to ask you to install it. If you did not install it of your own accord, uninstall it.</string>
     <string name="stop_on_call">You are on the phone.</string>
     <string name="stop_call_ended">Your call has just ended.</string>
     <!-- What just happened, one text per trigger (SensitiveActionKind). -->
     <string name="stop_trigger_code">You have just received a code.</string>
     <string name="stop_trigger_bank_validation">Your bank\'s app is asking you to approve a transaction.</string>
     <string name="stop_trigger_bank_app">Your bank\'s app has just opened.</string>
-    <string name="stop_trigger_remote_opened">An app that lets someone else control your phone has just opened.</string>
-    <string name="stop_trigger_remote_installed">An app that lets someone else control your phone has just been installed.</string>
+    <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone has just opened.</string>
+    <string name="stop_trigger_remote_installed">An app that lets someone else see or control your phone has just been installed.</string>
     <string name="stop_rule_codes">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask for a code or to approve a transaction.</string>
-    <string name="stop_rule_remote">Your bank, the police, the tax office, your insurer: none of them will EVER ask you to install or open such an app.</string>
+    <string name="stop_rule_remote">Your bank, the police, the tax office, your insurer: none of them will EVER call you to ask you to install or open such an app.</string>
     <!-- The scammer's number shows as the bank's own (or a name, on WhatsApp): it must not reassure. -->
     <string name="stop_spoofed_number">The number or name on the screen proves nothing: a scammer can display the real one.</string>
     <!-- The scammer is still on the line when the screen shows, and will say "that is normal, press Continue". -->
@@ -119,8 +123,8 @@
     <string name="stop_advice_on_call">Hang up. Then call them yourself, on a number you know: the one on your card or in a letter, never one you are given.</string>
     <string name="stop_advice_after_call">Do not do what you were asked. Call them yourself, on a number you know: the one on your card or in a letter, never one you were given.</string>
     <!-- Hanging up does not end a remote-control session: switching the phone off does. -->
-    <string name="stop_advice_remote_on_call">Hang up and switch off your phone: someone may be controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
-    <string name="stop_advice_remote_after_call">Switch off your phone: someone may be controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
+    <string name="stop_advice_remote_on_call">Hang up and switch off your phone: someone may be seeing or controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
+    <string name="stop_advice_remote_after_call">Switch off your phone: someone may be seeing or controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
     <string name="stop_hang_up">Hang up</string>
     <!-- During the call, the app hangs up BEFORE dialling: dialling first would put the scammer on hold (D-011). -->
     <string name="stop_hang_up_and_call_my_bank">Hang up and call my bank</string>

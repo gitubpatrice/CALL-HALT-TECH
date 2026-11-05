@@ -14,6 +14,7 @@ import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.InMemoryPreferences
 import com.filestech.callhalt.platform.stop.StopLauncher
+import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -35,11 +36,12 @@ class CallStateSensorTest {
 
     /** Call states alone never decide a STOP: a launcher asked for one fails the test. */
     private val noStop = StopLauncher { error("no STOP expected") }
+    private val noWarning = WarningPoster { error("no warning expected") }
     private val settings = SettingsSource { ProtectionSettings() }
     private val events = CallEvents()
     private val sensor = CallStateSensor(
         PhoneStateMemory(InMemoryPreferences()),
-        ProcessSignalUseCase(DetectionEngine(), store, settings, { null }, AndroidDecisionExecutor(noStop)),
+        ProcessSignalUseCase(DetectionEngine(), store, settings, { null }, AndroidDecisionExecutor(noStop, noWarning)),
         events,
     )
 

@@ -103,6 +103,63 @@
     </queries>
 
     <!--
+        The apps that let someone else control this phone (platform/install/RemoteControlApps, docs/ARCHITECTURE.md,
+        D-031): Android tells the app of their installation, and of no other one. Not QUERY_ALL_PACKAGES: the app sees
+        these apps only. The same list as REMOTE_CONTROL_APPS, kept equal by RemoteControlAppsTest.
+    -->
+    <queries>
+        <package android:name="com.anydesk.anydeskandroid" />
+        <package android:name="com.anydesk.adcontrol.ad1" />
+        <package android:name="com.anydesk.adcontrol.htc1" />
+        <package android:name="com.teamviewer.quicksupport.market" />
+        <package android:name="com.teamviewer.host.market" />
+        <package android:name="com.teamviewer.quicksupport.addon.universal" />
+        <package android:name="com.teamviewer.quicksupport.addon.mobilebase" />
+        <package android:name="com.teamviewer.quicksupport.addon.aosp7" />
+        <package android:name="com.teamviewer.quicksupport.addon.doro" />
+        <package android:name="com.teamviewer.quicksupport.addon.nokia_4_2" />
+        <package android:name="com.carriez.flutter_hbb" />
+        <package android:name="com.hoptodesk.app" />
+        <package android:name="com.sand.airdroid" />
+        <package android:name="com.sand.airsos" />
+        <package android:name="com.sand.airdroidbiz" />
+        <package android:name="com.sand.aircast" />
+        <package android:name="com.sand.remotesupportaddon" />
+        <package android:name="com.splashtop.sos" />
+        <package android:name="com.splashtop.sos.onprem" />
+        <package android:name="com.splashtop.streamer.csrs" />
+        <package android:name="com.splashtop.streamer.csrs.enterprise" />
+        <package android:name="com.splashtop.streamer.addon.knox" />
+        <package android:name="com.zoho.assist.agent" />
+        <package android:name="com.zoho.remoteplugin.universal" />
+        <package android:name="com.logmein.rescuemobile" />
+        <package android:name="com.goto.resolve.customer" />
+        <package android:name="com.logmein.rescueassist" />
+        <package android:name="com.logmein.g2acorpcustomer" />
+        <package android:name="com.islonline.isllight.mobile.android" />
+        <package android:name="com.islonline.isllight.mobile.android.universaladdon" />
+        <package android:name="com.islonline.isllight.mobile.android.addon.LG" />
+        <package android:name="com.bomgar.thinclient.android" />
+        <package android:name="com.bomgar.thinpin.android" />
+        <package android:name="com.aomei.anyviewer" />
+        <package android:name="it.nanosystems.supremo.host" />
+        <package android:name="it.nanosystems.supremo.addon" />
+        <package android:name="me.getscreen.agent" />
+        <package android:name="com.awesun.client.service" />
+        <package android:name="com.remotepc.host" />
+        <package android:name="com.screenconnect.androidclient" />
+        <package android:name="com.zuler.deskin" />
+        <package android:name="com.raywing.avica" />
+        <package android:name="com.entersoftware.iperiusremotedesktop" />
+        <package android:name="net.tsplus.remotesupport" />
+        <package android:name="com.projector.screenmeet.support" />
+        <package android:name="com.simplehelp.remotesupport" />
+        <package android:name="com.rsupport.rs.activity.rsupport" />
+        <package android:name="com.realvnc.server" />
+        <package android:name="net.christianbeier.droidvnc_ng" />
+    </queries>
+
+    <!--
         No backup, no device transfer: the journal says who called, when, and what the user chose. It stays
         on this phone (data_extraction_rules.xml for Android 12+, allowBackup for the older ones).
     -->

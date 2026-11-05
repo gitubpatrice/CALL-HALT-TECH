@@ -132,6 +132,14 @@ class DetectorMappingTest {
         assertThat(DetectorMapping.journalEntry(DetectorMapping.journalRow(entry))).isEqualTo(entry)
     }
 
+    /** The app a warning was about: in the column a STOP's source already has, no new one. */
+    @Test
+    fun `a warning keeps the app it was about`() {
+        val entry = JournalEntry.Warning(t0, WarningReason.REMOTE_CONTROL_INSTALLED, source = "com.anydesk.anydeskandroid")
+
+        assertThat(DetectorMapping.journalEntry(DetectorMapping.journalRow(entry))).isEqualTo(entry)
+    }
+
     @ParameterizedTest
     @EnumSource(StopChoice::class)
     fun `every answer journal entry survives the round trip`(choice: StopChoice) {
