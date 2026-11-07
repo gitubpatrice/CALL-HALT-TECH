@@ -72,8 +72,16 @@ sensible, réduit à ce qui ne peut pas contredire la diffusion (un appel WhatsA
 **Mesuré** sur l'émulateur Android 16 : la demande Sécur'Pass pendant l'appel décroché avant le déverrouillage montre « Vous
 êtes au téléphone » ; sans action pendant l'appel, un code reçu après montre « Votre appel vient de se terminer ». Trois
 relectures (Claude justesse et robustesse, GPT Sol 0,437 $) : 6 corrections, 5 limites écrites. **501 tests** sur
-ordinateur, et un test sur l'appareil de plus. **Ensuite** : les corrections dans l'ordre du § 7 du rapport, en
-commençant par l'écran STOP qui perd « Retirer l'accès » (N-1).
+ordinateur, et un test sur l'appareil de plus.
+
+**Puis N-1 (D-017)** : un STOP qui tient pour plusieurs déclencheurs — un second STOP avant la réponse, ou une
+notification de repli remplacée avant d'être touchée — parle du plus grave (l'accessibilité, puis une prise en main, puis
+le reste ; le plus récent à égalité). Un SMS de code envoyé exprès par l'escroc n'ôte plus « Retirer l'accès ».
+**Mesuré** sur l'émulateur Android 16, écran ouvert et écran bloqué (notification), dans les deux ordres. Relectures :
+Claude (1 moyen, 3 faibles corrigés) et **Gemini, une première** (0,286 $ ; 2 réels corrigés, dont un défaut antérieur :
+un « Raccrocher » échoué cachait les boutons du STOP suivant). **511 tests.** **Ensuite** : les corrections dans l'ordre du
+§ 7 du rapport — C1 (une notification de SMS illisible vaut un code), le lanceur du STOP (#4), M1 à M4 ; avec FN-4 (le
+STOP quitté revient une fois), traiter aussi la notification balayée (relecture Gemini, 3).
 
 ## Le 2026-11-05
 
@@ -372,7 +380,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 501 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 511 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

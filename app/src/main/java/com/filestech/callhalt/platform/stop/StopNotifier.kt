@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.filestech.callhalt.R
+import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.ui.stop.stopText
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
@@ -39,6 +40,20 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
     /** Waiting for the screen to come back on ([alertAgainWhenScreenOn]); touched on the main thread only. */
     private var waiting: DisplayManager.DisplayListener? = null
 
+    /**
+     * The triggers the posted notification stands for, in their order of arrival: a later STOP replaces it, and must not
+     * lose them (publication audit, N-1). Guarded by this object's lock: posted from the sensor queue, cancelled by the
+     * screen on the main thread.
+     */
+    private var absorbed: List<SensitiveActionKind> = emptyList()
+
+    /** The id of the request the posted notification opens; same lock. */
+    private var postedId: Long? = null
+
+    /** The triggers of the STOP notification still waiting to be touched, oldest first; none once it is gone. */
+    @Synchronized
+    fun pending(): List<SensitiveActionKind> = if (absorbed.isNotEmpty() && stillPosted()) absorbed else emptyList()
+
     /** At the app's start: the user then finds it by its name in the app's notification settings. Idempotent. */
     fun createChannel() {
         manager.createNotificationChannel(
@@ -49,17 +64,24 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
         )
     }
 
-    /** False when the phone would show nothing: [canPost] false, or a refusal the check could not foresee. */
+    /**
+     * False when the phone would show nothing: [canPost] false, or a refusal the check could not foresee. Replacing one
+     * still waiting, it stands for that one's triggers too, and speaks of the gravest.
+     */
     @SuppressLint("MissingPermission") // canPost reads POST_NOTIFICATIONS first.
+    @Synchronized
     fun post(request: StopRequest): Boolean {
         if (!canPost(context)) return false
+        val triggers = inArrivalOrder(pending() + request.earlier + request.trigger)
         val open = PendingIntent.getActivity(
             context,
             0,
-            request.writeTo(Intent(context, StopActivity::class.java)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            request.copy(earlier = triggers - request.trigger).writeTo(Intent(context, StopActivity::class.java))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        val happened = context.getString(stopText(request.trigger, request.onCall, request.channel, canEndCall = false).happened)
+        val shown = gravest(triggers) ?: request.trigger
+        val happened = context.getString(stopText(shown, request.onCall, request.channel, canEndCall = false).happened)
         val text = context.getString(R.string.stop_notification_text, happened)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stop_notification)
@@ -75,6 +97,8 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
             .build()
         return try {
             manager.notify(NOTIFICATION_ID, notification)
+            absorbed = triggers
+            postedId = request.id
             alertAgainWhenScreenOn(notification)
             true
         } catch (refused: SecurityException) {
@@ -83,9 +107,19 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
         }
     }
 
-    /** A STOP screen got through: the notification has nothing left to open. */
-    fun cancel() {
+    /**
+     * A STOP screen got through, for request [shownId]: the notification has nothing left to open — the screen stands for
+     * its triggers. Unless it opens a LATER request (ids only grow, StopDisplay): a STOP posted while the screen of an
+     * earlier one was starting — a touch on the notification, then a new STOP before the screen was created — would be
+     * lost with it (Gemini review of 2026-11-07, 5); it stays, and opens its own.
+     */
+    @Synchronized
+    fun cancel(shownId: Long) {
+        val later = postedId?.let { it > shownId } == true
+        if (later) return
         manager.cancel(NOTIFICATION_ID)
+        absorbed = emptyList()
+        postedId = null
         main.post(::stopWaiting)
     }
 

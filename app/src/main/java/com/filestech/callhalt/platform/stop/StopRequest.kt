@@ -8,19 +8,23 @@ import com.filestech.callhalt.domain.model.SensitiveActionKind
 /**
  * What one STOP screen shows, as the engine decided it ([com.filestech.callhalt.domain.model.Decision.ShowStop]):
  * the trigger, and the call it fell within — still going on or not, and on which channel. [id] lets the executor
- * know that THIS screen got through ([StopDisplay]).
+ * know that THIS screen got through ([StopDisplay]). [earlier]: the triggers of a STOP notification still waiting to be
+ * touched, in their order of arrival — the screen this request opens stands for them too, and speaks of the gravest
+ * (publication audit, N-1): a notification replaced by a lesser one must not lose its way out.
  */
 data class StopRequest(
     val id: Long,
     val trigger: SensitiveActionKind,
     val onCall: Boolean,
     val channel: CallChannel,
+    val earlier: List<SensitiveActionKind> = emptyList(),
 ) {
     fun toBundle(): Bundle = Bundle().apply {
         putLong(KEY_ID, id)
         putString(KEY_TRIGGER, trigger.name)
         putBoolean(KEY_ON_CALL, onCall)
         putString(KEY_CHANNEL, channel.name)
+        putStringArray(KEY_EARLIER, earlier.map { it.name }.toTypedArray())
     }
 
     fun writeTo(intent: Intent): Intent = intent.putExtras(toBundle())
@@ -30,6 +34,7 @@ data class StopRequest(
         private const val KEY_TRIGGER = "com.filestech.callhalt.stop.TRIGGER"
         private const val KEY_ON_CALL = "com.filestech.callhalt.stop.ON_CALL"
         private const val KEY_CHANNEL = "com.filestech.callhalt.stop.CHANNEL"
+        private const val KEY_EARLIER = "com.filestech.callhalt.stop.EARLIER"
 
         /** Null for a bundle that does not carry a whole request: a screen that cannot say what happened shows nothing. */
         fun fromBundle(bundle: Bundle?): StopRequest? {
@@ -37,8 +42,11 @@ data class StopRequest(
             val trigger = SensitiveActionKind.entries.firstOrNull { it.name == bundle.getString(KEY_TRIGGER) }
             val channel = CallChannel.entries.firstOrNull { it.name == bundle.getString(KEY_CHANNEL) }
             val complete = bundle.containsKey(KEY_ID) && bundle.containsKey(KEY_ON_CALL)
+            // In their saved order; an unknown name is dropped, not guessed.
+            val earlier = bundle.getStringArray(KEY_EARLIER).orEmpty()
+                .mapNotNull { name -> SensitiveActionKind.entries.firstOrNull { it.name == name } }
             return if (trigger != null && channel != null && complete) {
-                StopRequest(bundle.getLong(KEY_ID), trigger, bundle.getBoolean(KEY_ON_CALL, true), channel)
+                StopRequest(bundle.getLong(KEY_ID), trigger, bundle.getBoolean(KEY_ON_CALL, true), channel, earlier)
             } else {
                 null
             }
