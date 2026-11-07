@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 
 /** What the relative's screen says after the user's last move. */
@@ -152,14 +152,21 @@ internal class GuardianChoice(
         }
     }
 
-    /** Busy at once, before anything is read or written: the buttons are off from the first touch. */
+    /**
+     * Busy at once, before anything is read or written: the buttons are off from the first touch. Any failure to write
+     * — not only the disk's — is said, the buttons back (3-axes audit of 2026-11-07, Q3): uncaught, it left them off.
+     */
+    // A catch-all, by design: see above; a cancellation goes through.
+    @Suppress("TooGenericExceptionCaught")
     private fun save(guardian: Guardian) {
         step.value = GuardianStep.Sending(guardian)
         scope.launch {
-            val previous = repository.current()
-            try {
-                repository.set(guardian)
-            } catch (failure: IOException) {
+            // The read inside too (GPT review of 2026-11-07, 2): its repository does not throw, nor may this.
+            val previous = try {
+                repository.current().also { repository.set(guardian) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
                 Timber.w(failure, "Relative not saved")
                 step.value = GuardianStep.SaveFailed
                 return@launch
@@ -182,13 +189,16 @@ internal class GuardianChoice(
         step.compareAndSet(GuardianStep.Sending(guardian), if (ok) GuardianStep.Sent(guardian) else GuardianStep.NotSent(guardian))
     }
 
+    // A catch-all, by design: as save; a cancellation goes through.
+    @Suppress("TooGenericExceptionCaught")
     private fun remove() {
         step.value = GuardianStep.Idle
         scope.launch {
-            val previous = repository.current()
-            try {
-                repository.clear()
-            } catch (failure: IOException) {
+            val previous = try {
+                repository.current().also { repository.clear() }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
                 Timber.w(failure, "Relative not removed")
                 step.value = GuardianStep.SaveFailed
                 return@launch

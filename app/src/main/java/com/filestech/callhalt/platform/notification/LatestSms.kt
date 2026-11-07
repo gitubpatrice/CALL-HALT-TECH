@@ -31,6 +31,21 @@ internal fun readLatestSms(notification: Notification, maskedText: String?, at: 
 }
 
 /**
+ * [read], or — when it throws — a message read as masked (coherence audit of 2026-11-07, C1). A notification of the
+ * default SMS app shaped in a way the reading does not expect (a maker's own extras) must not let a code pass in silence:
+ * a masked message is a code to the rule, the protective side — a STOP too many at worst, and only during a call or just
+ * after. Its time unknown (0), it is never taken for a repost. [failed] logs the failure.
+ */
+// A catch-all, by design: another app's notification is read here, and nothing in it may pass for "no code".
+@Suppress("TooGenericExceptionCaught")
+internal inline fun latestSmsOrMasked(read: () -> LatestSms?, failed: (Exception) -> Unit): LatestSms? = try {
+    read()
+} catch (failure: Exception) {
+    failed(failure)
+    LatestSms(SmsMessage.Masked, sentAtMillis = 0)
+}
+
+/**
  * Past this age, a message is not a code received now. Generous: a network may deliver an SMS minutes late, and a
  * message's time can come from the sender's network clock; a code ten minutes old has most often expired anyway.
  */
