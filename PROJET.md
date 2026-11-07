@@ -19,8 +19,9 @@ Protéger des **arnaques téléphoniques** — faux conseiller bancaire, faux te
 fraudes, faux gendarme — et non du simple démarchage. Public : tout le monde, et d'abord les personnes
 âgées et les proches qui veillent sur elles (« protégez vos proches des arnaques téléphoniques »).
 
-Comme les autres applis Files Tech : **aucune permission Internet**, rien ne sort du téléphone, pas de
-compte, pas de Google Play Services, français d'abord puis les 5 langues du portefeuille.
+Comme les autres applis Files Tech : **aucune permission Internet**, rien ne sort du téléphone (sauf les SMS au
+proche que l'utilisateur a choisi, fonction 7, D-034), pas de compte, pas de Google Play Services, français d'abord puis
+les 5 langues du portefeuille.
 
 ## 2. L'existant (vérifié le 2026-10-31)
 
@@ -89,6 +90,8 @@ raccrocher et rappeler soi-même.
 6. Mode « proche protégé » : réglages et désactivation sous code — l'escroc dira « désactivez cette
    appli ».
 7. SMS au proche : alerte STOP, « Continuer » choisi malgré l'alerte, protection coupée depuis l'appli.
+   **Fait le 2026-11-07** pour le STOP et « Continuer » (`docs/ARCHITECTURE.md`, D-034) ; « protection coupée » attend
+   un interrupteur dans l'appli, qui viendra avec la fonction 6.
    (La désinstallation, elle, ne peut pas être détectée par l'appli elle-même : limite à écrire.)
 8. Journal des alertes, lisible sur le téléphone (ce qui s'est passé, quand, ce qui a été choisi).
 9. Bouton « Essayer l'écran STOP », pour que le proche montre ce qui arrivera.

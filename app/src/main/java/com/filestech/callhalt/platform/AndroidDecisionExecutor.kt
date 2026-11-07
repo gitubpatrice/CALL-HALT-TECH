@@ -2,8 +2,10 @@ package com.filestech.callhalt.platform
 
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.port.DecisionExecutor
+import com.filestech.callhalt.platform.guardian.GuardianNotifier
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
+import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,24 +18,42 @@ import javax.inject.Singleton
  *   and the engine journals it as NOT shown.
  * - **Warning**: a notification ([WarningPoster], D-031). One that could not be posted throws nothing: the journal
  *   keeps the warning either way, and a throw would make a STOP shown with it read as not shown.
- * - **Text to the relative, wake-up**: not carried out yet, each with its own step (docs/ARCHITECTURE.md, § 6 and P-8).
- *   A wake-up is only asked for a long call with an unknown number, and the number is not read yet.
+ * - **Text to the relative**: after the STOP, which comes first ([GuardianNotifier], D-034); one that fails throws
+ *   nothing, for the same reason. Sent even when that STOP reached the user neither way (the phone blocked the screen,
+ *   its notifications turned off): the user then saw nothing, and the relative is all the protection left — the code
+ *   or the request did arrive during the call (review of 2026-11-07, 1: its text then says a little more than happened).
+ * - **Wake-up**: not carried out yet (docs/ARCHITECTURE.md, P-8). It is only asked for a long call with an unknown
+ *   number, and the number is not read yet.
  */
 @Singleton
 class AndroidDecisionExecutor @Inject constructor(
     private val launcher: StopLauncher,
     private val warnings: WarningPoster,
+    private val guardian: GuardianNotifier,
 ) : DecisionExecutor {
 
     override suspend fun execute(decisions: List<Decision>) {
         val notShown = decisions.filterIsInstance<Decision.ShowStop>().count { !launcher.show(it) }
         decisions.filterNot { it is Decision.ShowStop }.forEach { decision ->
-            when {
-                decision !is Decision.ShowWarning -> Timber.i("Not carried out at this step: %s", decision::class.simpleName)
-                !posted(decision) -> Timber.w("Warning not posted: %s", decision.reason)
+            when (decision) {
+                is Decision.ShowWarning -> if (!posted(decision)) Timber.w("Warning not posted: %s", decision.reason)
+                is Decision.NotifyGuardian -> told(decision)
+                else -> Timber.i("Not carried out at this step: %s", decision::class.simpleName)
             }
         }
         check(notShown == 0) { "STOP screen not shown: $notShown" }
+    }
+
+    /** Whatever the phone throws while texting: thrown out of here, it would journal a STOP shown as NOT shown. */
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun told(decision: Decision.NotifyGuardian) {
+        try {
+            guardian.tell(decision.event)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failure: RuntimeException) {
+            Timber.w(failure, "Text to the relative failed")
+        }
     }
 
     /**

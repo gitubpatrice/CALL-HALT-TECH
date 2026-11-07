@@ -137,4 +137,58 @@
         <item quantity="other">Continue (in %1$d seconds)</item>
     </plurals>
     <string name="stop_demo_banner">Demonstration — nothing happened on your phone.</string>
+
+    <!--
+        The relative (docs/ARCHITECTURE.md, D-034). The texts go from the user's own number, into the relative's
+        conversation with them: hence the app's name first. Never a code, nor any word of a message. "Continue" is the
+        STOP screen's button, word for word.
+    -->
+    <string name="guardian_sms_stop_during_call">Automatic message from the Call Halt Tech app: during a call, the STOP screen has just appeared on this phone (%1$s). It may be a scam. Call this number as soon as you can.</string>
+    <string name="guardian_sms_stop_after_call">Automatic message from the Call Halt Tech app: just after a call, the STOP screen has just appeared on this phone (%1$s). It may be a scam. Call this number as soon as you can.</string>
+    <string name="guardian_sms_continue_during_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), during a call. Call this number right away.</string>
+    <string name="guardian_sms_continue_after_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), just after a call. Call this number right away.</string>
+    <string name="guardian_sms_set_up">Automatic message from the Call Halt Tech app: this phone will text you if the STOP screen appears, during a call or just after it, a possible sign of a scam. It sends you nothing else.</string>
+    <string name="guardian_sms_removed">Automatic message from the Call Halt Tech app: this phone will no longer alert you. If this surprises you, call this number.</string>
+    <string name="guardian_sms_what_code">a code received by SMS</string>
+    <string name="guardian_sms_what_bank_validation">a request from the bank to approve a transaction</string>
+    <string name="guardian_sms_what_bank_app">the bank\'s app opened</string>
+    <string name="guardian_sms_what_remote_installed">a remote-control app installed</string>
+    <string name="guardian_sms_what_remote_opened">a remote-control app running</string>
+    <string name="guardian_sms_what_accessibility">an app given the \"accessibility\" access</string>
+
+    <string name="home_guardian_title">Alert someone close</string>
+    <string name="home_guardian_none">If the STOP screen appears, the app can text someone close to you.</string>
+    <string name="home_guardian_set">If the STOP screen appears, a text goes to %1$s.</string>
+    <string name="home_guardian_cannot_send">The text cannot go: the app is not allowed to send texts.</string>
+    <string name="home_guardian_choose">Choose someone</string>
+    <string name="home_guardian_change">Change</string>
+    <!-- A contact's name, then their number. -->
+    <string name="guardian_contact" translatable="false">%1$s (%2$s)</string>
+    <string name="guardian_title">Alert someone close</string>
+    <string name="guardian_why">If the STOP screen appears during a call or just after it, or if \"Continue\" is chosen despite it, a text goes to the person you choose. It says what happened, never your codes or what your messages say.</string>
+    <string name="guardian_how">The text goes from your number, like any text, and shows in your conversation with that person. As soon as you choose them, a first text tells them they will be alerted.</string>
+    <string name="guardian_permission_note">The phone will ask you to let the app \"send and view SMS messages\": the app only uses this to send these texts.</string>
+    <string name="guardian_current">A text goes to: %1$s</string>
+    <string name="guardian_change_note">If you choose someone else, a last text tells %1$s.</string>
+    <string name="guardian_pick">Choose from my contacts</string>
+    <string name="guardian_number_label">Or type their number</string>
+    <string name="guardian_save">Alert this number</string>
+    <string name="guardian_number_invalid">This number will not do: type a full phone number, with its area code.</string>
+    <string name="guardian_no_contacts">The contacts did not open: type the number.</string>
+    <string name="guardian_sms_refused">Without the permission to send texts, the app cannot alert anyone.</string>
+    <string name="guardian_sms_settings_steps">If the phone no longer asks: touch “Open the settings”, then Permissions, SMS, and Allow.</string>
+    <!-- After the phone's refusal, which makes "Allow restricted settings" appear (measured on Android 15 and 16, D-034). -->
+    <string name="guardian_restricted_steps">1. Touch “Open the app info”, below: the page of Call Halt Tech opens.\n2. Touch the three dots at the top right, then “Allow restricted settings”. If the phone asks for the code that unlocks it, type it yourself, without telling anyone.\n3. Come back here, and touch “Allow sending texts”.</string>
+    <string name="guardian_allow">Allow sending texts</string>
+    <string name="guardian_sending">Sending a text to %1$s…</string>
+    <string name="guardian_sent">Text sent to %1$s: this person will be alerted if the STOP screen appears.</string>
+    <string name="guardian_not_sent">The text to %1$s did not go. Check the number, and that the phone has a signal, then send it again.</string>
+    <string name="guardian_resend">Send the text again</string>
+    <string name="guardian_remove">Stop alerting anyone</string>
+    <string name="guardian_remove_confirm">If the STOP screen appears, no text will go to %1$s any more. A last text will tell them.</string>
+    <string name="guardian_remove_yes">Stop alerting</string>
+    <string name="guardian_cancel">Cancel</string>
+    <string name="guardian_removed">No one is alerted by text any more.</string>
+    <string name="guardian_save_failed">The app could not save this choice. Try again.</string>
+    <string name="guardian_done">Done</string>
 </resources>

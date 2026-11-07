@@ -1,10 +1,10 @@
 package com.filestech.callhalt.data.settings
 
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.filestech.callhalt.data.guardian.Guardian
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ class SettingsMappingTest {
             SettingsMapping.ENABLED to false,
             SettingsMapping.AFTER_CALL_WINDOW_MINUTES to 30,
             SettingsMapping.LONG_CALL_THRESHOLD_MINUTES to 5,
-            SettingsMapping.GUARDIAN_ALERTS to true,
+            SettingsMapping.GUARDIAN_NUMBER to "06 12 34 56 78",
         )
 
         assertThat(SettingsMapping.fromPreferences(preferences)).isEqualTo(
@@ -55,9 +55,29 @@ class SettingsMappingTest {
             stringPreferencesKey("protection_enabled") to "no",
             stringPreferencesKey("after_call_window_minutes") to "30",
             longPreferencesKey("long_call_threshold_minutes") to 5L,
-            intPreferencesKey("guardian_alerts") to 1,
+            longPreferencesKey("guardian_number") to 612345678L,
         )
 
         assertThat(SettingsMapping.fromPreferences(preferences)).isEqualTo(ProtectionSettings())
+    }
+
+    @Test
+    fun `the relative is read with the name the user knows them by`() {
+        val preferences = preferencesOf(
+            SettingsMapping.GUARDIAN_NUMBER to "+33 6 12 34 56 78",
+            SettingsMapping.GUARDIAN_NAME to "Julie",
+        )
+
+        assertThat(SettingsMapping.guardian(preferences)).isEqualTo(Guardian("+33612345678", "Julie"))
+        assertThat(SettingsMapping.guardian(preferencesOf(SettingsMapping.GUARDIAN_NAME to "Julie"))).isNull()
+    }
+
+    /** No number the app may text, nothing to tell: the engine decides no text a relative would never get. */
+    @Test
+    fun `a stored number the app may not text is no relative`() {
+        val preferences = preferencesOf(SettingsMapping.GUARDIAN_NUMBER to "36111")
+
+        assertThat(SettingsMapping.guardian(preferences)).isNull()
+        assertThat(SettingsMapping.fromPreferences(preferences).guardianAlerts).isFalse()
     }
 }

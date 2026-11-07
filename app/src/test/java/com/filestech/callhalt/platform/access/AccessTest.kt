@@ -48,6 +48,18 @@ class AccessTest {
         assertThat(restricted(Build.VERSION_CODES.S_V2, packageSource = null)).isEmpty()
     }
 
+    /** Measured on 2026-11-07 (D-034), installed from Files: Android 15 and 16 refuse, Android 14 asks. */
+    @Test
+    fun `the texts to the relative - restricted from Android 15, for an app installed from a file`() {
+        val file = PackageInstaller.PACKAGE_SOURCE_LOCAL_FILE
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.UPSIDE_DOWN_CAKE, file)).isFalse()
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.VANILLA_ICE_CREAM, file)).isTrue()
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.BAKLAVA, file)).isTrue()
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.BAKLAVA, PackageInstaller.PACKAGE_SOURCE_STORE)).isFalse()
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.BAKLAVA, PackageInstaller.PACKAGE_SOURCE_UNSPECIFIED)).isTrue()
+        assertThat(textsMayBeRestricted(Build.VERSION_CODES.S_V2, packageSource = null)).isFalse()
+    }
+
     /** D-024: before Android 13 an app posts notifications without asking; the step then opens the settings. */
     @Test
     fun `the notifications are a question of the phone from Android 13 only`() {

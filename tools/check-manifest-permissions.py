@@ -82,7 +82,7 @@ FORBIDDEN = {
 #
 # The one androidx.core generates for its own non-exported receivers (signature level, named after the
 # applicationId), then each permission with its component. The next ones, each with its own (docs/ARCHITECTURE.md,
-# § 6): READ_CALL_LOG, RECEIVE_SMS, PACKAGE_USAGE_STATS, QUERY_ALL_PACKAGES, SEND_SMS (the relative, D-015).
+# § 6): READ_CALL_LOG, RECEIVE_SMS, PACKAGE_USAGE_STATS, QUERY_ALL_PACKAGES.
 ALLOWED = {
     f"{PACKAGE}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
     # When a call starts and ends (platform/telephony/CallStateReceiver). Not the number: that is READ_CALL_LOG.
@@ -100,6 +100,8 @@ ALLOWED = {
     "android.permission.POST_NOTIFICATIONS",
     # ... opening the screen at once on a locked or sleeping phone (a full-screen notification).
     "android.permission.USE_FULL_SCREEN_INTENT",
+    # A text to the relative the user chose (platform/guardian, D-034). Sends only: never READ_SMS nor RECEIVE_SMS.
+    "android.permission.SEND_SMS",
 }
 
 # Every component the system binds with a special access — (component, its BIND_* permission) — no more, no less.

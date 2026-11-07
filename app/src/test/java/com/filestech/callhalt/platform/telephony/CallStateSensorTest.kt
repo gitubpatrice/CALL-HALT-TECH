@@ -13,6 +13,7 @@ import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.InMemoryPreferences
+import com.filestech.callhalt.platform.noGuardian
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -41,7 +42,13 @@ class CallStateSensorTest {
     private val events = CallEvents()
     private val sensor = CallStateSensor(
         PhoneStateMemory(InMemoryPreferences()),
-        ProcessSignalUseCase(DetectionEngine(), store, settings, { null }, AndroidDecisionExecutor(noStop, noWarning)),
+        ProcessSignalUseCase(
+            DetectionEngine(),
+            store,
+            settings,
+            { null },
+            AndroidDecisionExecutor(noStop, noWarning, noGuardian),
+        ),
         events,
     )
 

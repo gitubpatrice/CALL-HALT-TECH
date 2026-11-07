@@ -12,7 +12,35 @@ de la banque, une appli de prise en main à distance), elle affiche un écran **
 ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous demander cela. Si on vous
 dit d'ignorer cet écran, c'est une arnaque. Raccrochez, puis appelez vous-même un numéro que vous connaissez. »*
 
-## Reprendre ici (2026-11-05)
+## Reprendre ici (2026-11-07)
+
+**La fonction 7 de la fiche : le SMS au proche (D-034).** Depuis l'accueil, « Prévenir un proche » : un contact choisi
+(sans permission de lire les contacts) ou un numéro tapé. L'appli demande alors l'autorisation d'envoyer des SMS (pas
+avant : pas de proche, pas de SMS), puis un premier SMS dit au proche qu'il sera prévenu. Ensuite, un SMS part quand
+l'écran STOP s'affiche pendant un appel ou juste après, et quand « Continuer » est choisi malgré lui : « Message
+automatique de l'appli Call Halt Tech : pendant un appel, l'écran STOP vient de s'afficher sur ce téléphone (un code reçu
+par SMS). C'est peut-être une arnaque. Appelez ce numéro dès que possible. » Jamais le code ni un mot d'un message.
+Remplacé ou retiré, le proche reçoit un dernier SMS (contre « retirez le numéro de votre fille »). **Les choix de
+Patrice** (huit, tous les recommandés) : les textes, le premier et le dernier SMS, un SMS par sorte d'écran STOP en un
+quart d'heure mais **un pour chaque « Continuer »**, l'en-tête « Message automatique de l'appli… » et « Appelez ce
+numéro » (« Call Halt Tech… Call » se lisait « appelez Halt Tech »), la phrase qui rassure sur la question du téléphone
+(« envoyer et afficher des SMS »). Au plus 20 SMS par jour ; un numéro court surtaxé refusé.
+
+**Mesuré** sur émulateurs Android 14, 15 et 16 (chaque SMS lu dans la boîte d'envoi : les quatre alertes, le limiteur,
+l'autorisation retirée, le contact choisi, l'adieu, deux « Continuer ») et sur le **Galaxy S9** (sans SIM : « Le SMS …
+n'est pas parti », « Renvoyer le SMS » ; le numéro d'essai retiré ensuite). **Trouvé en mesurant** : installée depuis un
+fichier, **Android 15 et 16 refusent l'autorisation SMS** jusqu'à « Autoriser les paramètres restreints » (Android 14,
+non) : l'aide de l'activation est reprise sur cet écran ; et le clavier, resté ouvert, cachait le résultat (corrigé).
+**Pas mesuré** : la réception par un autre téléphone (le relais entre émulateurs ne passe pas) — à faire avec une vraie
+SIM, à la décision de Patrice (le S24 est en observation).
+
+**Trois relectures** (deux agents Claude, GPT 0,022 $) : 11 corrections, dont un « Continuer » touché le lendemain qui
+envoyait « juste après un appel », un SMS raté qui retenait le suivant, le « (0) » de « +49 (0)171… », un double toucher
+qui envoyait deux SMS ; gardé exprès : le SMS part même si l'écran STOP n'a pas pu s'afficher (le proche est alors la
+seule protection). **476 tests.** **Ensuite** : la proposition en attente (un bouton vers la page Accessibilité sur le
+STOP d'accessibilité, D-033), puis les audits vers 95/100 et la liste « avant toute publication ».
+
+## Le 2026-11-05
 
 **La fonction 4 de la fiche, première moitié : une appli de prise en main installée (D-031).** Pendant un appel ou
 dans les 15 minutes qui suivent, l'installation d'AnyDesk, TeamViewer QuickSupport, RustDesk… ouvre l'écran STOP
@@ -306,10 +334,10 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - **Premier capteur d'action sensible (2026-11-02)** : la demande de validation de la banque (Sécur'Pass),
   vue dans sa notification.
 - **Le capteur des SMS de code (2026-11-02)** et **l'écran d'activation** (le même soir, D-022).
-- Ce qui manque encore : le **SMS au proche** (les applis de prise en main, installées ou en marche, et un service
-  d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033), et la liste « avant toute publication » ci-dessus (le **repli par notification**, P-19, est construit le
-  2026-11-03 : D-024).
-- Vérifications : 385 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
+  marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
+  fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
+- Vérifications : 476 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -319,7 +347,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 | Fichier | Ce qu'il contient |
 |---|---|
 | `PROJET.md` | le **pourquoi** et les **fonctions** ; § 9 : la revue du 2026-11-01 (corrections, idées retenues et écartées, le nom) |
-| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-033, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
+| `docs/ARCHITECTURE.md` | **comment** c'est construit : modules, décisions D-001 à D-034, ce qu'Android permet (vérifié sur sources officielles et mesuré, § 6), points ouverts P-1 à P-22 (§ 7), comment travailler (§ 8) |
 | `relectures/` | chaque relecture (agents Claude, GPT) et ce qui a été fait de chaque constat ; `README.md` = l'index et les coûts |
 | `SECURITY.md`, `PRIVACY.md` | menace, signalement d'une faille ; ce que l'appli demande et garde (en anglais et en français) |
 
@@ -377,7 +405,9 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 
 - ~~Renommer le dossier~~ — **fait par Patrice le 2026-11-01** : `J:\applications\call_halt_tech`.
 - **Faire relire les phrases de sécurité** allemandes, italiennes et espagnoles par quelqu'un dont c'est la
-  langue : une consigne mal traduite ferait faire l'inverse.
+  langue : une consigne mal traduite ferait faire l'inverse. Les SMS au proche (D-034) en font partie.
+- **Mesurer la réception d'un SMS au proche sur un vrai téléphone** (D-034) : une SIM côté téléphone protégé, une
+  autre côté proche ; le S24 est en observation, à ta décision.
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid
   oui ; DataStore 1.3.0 fusionné, AGP 9.5.0 reporté à la prochaine montée de tout le portefeuille.
 - ~~Un Xiaomi, à emprunter~~ — **fait le 2026-11-03** : Patrice a branché un Redmi 9C (MIUI 12, Android 10, sans SIM) ;

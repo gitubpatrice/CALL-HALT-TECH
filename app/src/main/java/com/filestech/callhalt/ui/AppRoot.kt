@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.ui.activation.ActivationScreen
+import com.filestech.callhalt.ui.guardian.GuardianScreen
 import com.filestech.callhalt.ui.home.HomeScreen
 import com.filestech.callhalt.ui.stop.StopScreen
 
@@ -19,7 +20,11 @@ fun AppRoot() {
                 // Single top: a double tap opens one screen, not two stacked.
                 onActivate = { navController.navigate(Routes.ACTIVATION) { launchSingleTop = true } },
                 onTryStop = { navController.navigate(Routes.STOP_DEMO) { launchSingleTop = true } },
+                onGuardian = { navController.navigate(Routes.GUARDIAN) { launchSingleTop = true } },
             )
+        }
+        composable(Routes.GUARDIAN) {
+            GuardianScreen(onDone = { navController.popBackStack(Routes.GUARDIAN, inclusive = true) })
         }
         composable(Routes.ACTIVATION) {
             // Pops the activation only if it is still there, for the same reason as the demonstration below.

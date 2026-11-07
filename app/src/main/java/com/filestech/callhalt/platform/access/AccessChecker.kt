@@ -31,6 +31,9 @@ interface AccessChecker {
     /** See [mayBeRestricted]. */
     fun mayBeRestricted(access: Access): Boolean
 
+    /** The permission to send texts to the relative: see [textsMayBeRestricted]. */
+    fun textsMayBeRestricted(): Boolean
+
     /** How far this phone can run the protection: an "Android Go" one (low memory) before Android 14, less — see [phoneSupport]. */
     fun support(): PhoneSupport
 }
@@ -63,6 +66,8 @@ class AndroidAccessChecker @Inject constructor(@ApplicationContext private val c
     }
 
     override fun mayBeRestricted(access: Access): Boolean = mayBeRestricted(access, Build.VERSION.SDK_INT, packageSource)
+
+    override fun textsMayBeRestricted(): Boolean = textsMayBeRestricted(Build.VERSION.SDK_INT, packageSource)
 
     override fun support(): PhoneSupport = support
 

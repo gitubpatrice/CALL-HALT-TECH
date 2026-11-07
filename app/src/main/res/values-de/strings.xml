@@ -100,4 +100,50 @@
         <item quantity="other">Weiter (in %1$d Sekunden)</item>
     </plurals>
     <string name="stop_demo_banner">Vorführung – auf Ihrem Telefon ist nichts passiert.</string>
+
+    <string name="guardian_sms_stop_during_call">Automatische Nachricht der App Call Halt Tech: Während eines Anrufs ist auf diesem Telefon gerade der STOP-Bildschirm erschienen (%1$s). Es ist vielleicht ein Betrug. Rufen Sie diese Nummer so bald wie möglich an.</string>
+    <string name="guardian_sms_stop_after_call">Automatische Nachricht der App Call Halt Tech: Kurz nach einem Anruf ist auf diesem Telefon gerade der STOP-Bildschirm erschienen (%1$s). Es ist vielleicht ein Betrug. Rufen Sie diese Nummer so bald wie möglich an.</string>
+    <string name="guardian_sms_continue_during_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), während eines Anrufs. Rufen Sie diese Nummer sofort an.</string>
+    <string name="guardian_sms_continue_after_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), kurz nach einem Anruf. Rufen Sie diese Nummer sofort an.</string>
+    <string name="guardian_sms_set_up">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie per SMS, wenn der STOP-Bildschirm erscheint, während eines Anrufs oder kurz danach, ein mögliches Zeichen für Betrug. Sonst sendet es Ihnen nichts.</string>
+    <string name="guardian_sms_removed">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie nicht mehr. Wenn Sie das überrascht, rufen Sie diese Nummer an.</string>
+    <string name="guardian_sms_what_code">ein per SMS erhaltener Code</string>
+    <string name="guardian_sms_what_bank_validation">eine Freigabeanfrage der Bank</string>
+    <string name="guardian_sms_what_bank_app">die App der Bank geöffnet</string>
+    <string name="guardian_sms_what_remote_installed">eine Fernsteuerungs-App installiert</string>
+    <string name="guardian_sms_what_remote_opened">eine Fernsteuerungs-App in Betrieb</string>
+    <string name="guardian_sms_what_accessibility">eine App mit dem Zugriff „Bedienungshilfen“</string>
+
+    <string name="home_guardian_title">Eine vertraute Person benachrichtigen</string>
+    <string name="home_guardian_none">Wenn der STOP-Bildschirm erscheint, kann die App eine vertraute Person per SMS benachrichtigen.</string>
+    <string name="home_guardian_set">Wenn der STOP-Bildschirm erscheint, geht eine SMS an %1$s.</string>
+    <string name="home_guardian_cannot_send">Die SMS kann nicht gesendet werden: Die App darf keine SMS senden.</string>
+    <string name="home_guardian_choose">Eine Person wählen</string>
+    <string name="home_guardian_change">Ändern</string>
+    <string name="guardian_title">Eine vertraute Person benachrichtigen</string>
+    <string name="guardian_why">Wenn der STOP-Bildschirm während eines Anrufs oder kurz danach erscheint, oder wenn trotzdem „Weiter“ gewählt wird, geht eine SMS an die Person Ihrer Wahl. Sie sagt, was passiert ist, niemals Ihre Codes oder den Inhalt Ihrer Nachrichten.</string>
+    <string name="guardian_how">Die SMS wird von Ihrer Nummer gesendet, wie eine gewöhnliche SMS, und erscheint in Ihrer Unterhaltung mit dieser Person. Sobald Sie sie wählen, sagt ihr eine erste SMS, dass sie benachrichtigt wird.</string>
+    <string name="guardian_permission_note">Das Telefon fragt, ob die App SMS senden und anzeigen darf: Die App nutzt das nur, um diese SMS zu senden.</string>
+    <string name="guardian_current">Eine SMS geht an: %1$s</string>
+    <string name="guardian_change_note">Wenn Sie eine andere Person wählen, teilt eine letzte SMS das %1$s mit.</string>
+    <string name="guardian_pick">Aus meinen Kontakten wählen</string>
+    <string name="guardian_number_label">Oder geben Sie die Nummer ein</string>
+    <string name="guardian_save">Diese Nummer benachrichtigen</string>
+    <string name="guardian_number_invalid">Diese Nummer passt nicht: Geben Sie eine vollständige Telefonnummer ein, wie 0151 23456789.</string>
+    <string name="guardian_no_contacts">Die Kontakte haben sich nicht geöffnet: Geben Sie die Nummer ein.</string>
+    <string name="guardian_sms_refused">Ohne die Erlaubnis, SMS zu senden, kann die App niemanden benachrichtigen.</string>
+    <string name="guardian_sms_settings_steps">Wenn das Telefon nicht mehr fragt: Tippen Sie auf „Einstellungen öffnen“, dann auf Berechtigungen, SMS und Zulassen.</string>
+    <string name="guardian_restricted_steps">1. Tippen Sie unten auf „App-Info öffnen“: Die Seite von Call Halt Tech öffnet sich.\n2. Tippen Sie oben rechts auf die drei Punkte, dann auf „Eingeschränkte Einstellungen zulassen“. Wenn das Telefon nach dem Code fragt, mit dem es entsperrt wird, geben Sie ihn selbst ein, ohne ihn jemandem zu sagen.\n3. Kehren Sie hierher zurück und tippen Sie auf „SMS senden erlauben“.</string>
+    <string name="guardian_allow">SMS senden erlauben</string>
+    <string name="guardian_sending">SMS an %1$s wird gesendet…</string>
+    <string name="guardian_sent">SMS an %1$s gesendet: Diese Person wird benachrichtigt, wenn der STOP-Bildschirm erscheint.</string>
+    <string name="guardian_not_sent">Die SMS an %1$s wurde nicht gesendet. Prüfen Sie die Nummer und ob das Telefon Empfang hat, und senden Sie sie dann erneut.</string>
+    <string name="guardian_resend">SMS erneut senden</string>
+    <string name="guardian_remove">Niemanden mehr benachrichtigen</string>
+    <string name="guardian_remove_confirm">Wenn der STOP-Bildschirm erscheint, geht keine SMS mehr an %1$s. Eine letzte SMS teilt das noch mit.</string>
+    <string name="guardian_remove_yes">Nicht mehr benachrichtigen</string>
+    <string name="guardian_cancel">Abbrechen</string>
+    <string name="guardian_removed">Niemand wird mehr per SMS benachrichtigt.</string>
+    <string name="guardian_save_failed">Die App konnte diese Wahl nicht speichern. Versuchen Sie es erneut.</string>
+    <string name="guardian_done">Fertig</string>
 </resources>

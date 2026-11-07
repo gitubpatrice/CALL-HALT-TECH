@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,10 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.filestech.callhalt.R
 import com.filestech.callhalt.platform.access.AccessSettings
+import com.filestech.callhalt.ui.guardian.GuardianMove
+import com.filestech.callhalt.ui.guardian.GuardianState
+import com.filestech.callhalt.ui.guardian.GuardianViewModel
+import com.filestech.callhalt.ui.guardian.guardianLabel
 import com.filestech.callhalt.ui.protection.ProtectionState
 import com.filestech.callhalt.ui.protection.ProtectionStatus
 import com.filestech.callhalt.ui.protection.ProtectionViewModel
@@ -42,13 +47,23 @@ import com.filestech.callhalt.ui.theme.brandButtonColors
 /**
  * The home screen: the state of the protection (docs/ARCHITECTURE.md, D-022), read from the phone each time the app
  * comes to the front — on only when every access is granted, and then it says what it watches, no more (a protection
- * app that looks active while it is not would be worse than none); weakened while storage fails (P-10). Then the rule,
- * and the STOP demonstration (PROJET.md, § 4.9).
+ * app that looks active while it is not would be worse than none); weakened while storage fails (P-10). Then who is
+ * texted when a STOP shows (D-034), the rule, and the STOP demonstration (PROJET.md, § 4.9).
  */
 @Composable
-fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: ProtectionViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onActivate: () -> Unit,
+    onTryStop: () -> Unit,
+    onGuardian: () -> Unit,
+    viewModel: ProtectionViewModel = hiltViewModel(),
+    guardianViewModel: GuardianViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
+    val guardian by guardianViewModel.state.collectAsStateWithLifecycle()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refresh()
+        guardianViewModel.on(GuardianMove.Resumed)
+    }
     LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { viewModel.leave() }
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -66,6 +81,7 @@ fun HomeScreen(onActivate: () -> Unit, onTryStop: () -> Unit, viewModel: Protect
             )
             ProtectionCard(state, onActivate)
             AccessList(state)
+            GuardianSection(guardian, onGuardian)
             Text(text = stringResource(R.string.home_rule), style = MaterialTheme.typography.bodyLarge)
             Button(onClick = onTryStop, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(R.string.home_try_stop), modifier = Modifier.padding(vertical = 8.dp))
@@ -148,6 +164,39 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
 private fun CardButton(@StringRes label: Int, onClick: () -> Unit) {
     Button(onClick = onClick, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(label), modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+/**
+ * The relative (D-034): who is texted, or that no one is; and when the permission was taken back, that the text cannot
+ * go — said here, where the user looks, not only on the relative's screen. Not the protection's state: without a
+ * relative the STOP screen protects all the same.
+ */
+@Composable
+private fun GuardianSection(state: GuardianState, onGuardian: () -> Unit) {
+    val guardian = state.guardian
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = stringResource(R.string.home_guardian_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
+        Text(
+            text = guardian?.let { stringResource(R.string.home_guardian_set, guardianLabel(it)) }
+                ?: stringResource(R.string.home_guardian_none),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        if (guardian != null && !state.canSend) {
+            Text(
+                text = stringResource(R.string.home_guardian_cannot_send),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+        OutlinedButton(onClick = onGuardian, modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(if (guardian == null) R.string.home_guardian_choose else R.string.home_guardian_change))
+        }
     }
 }
 
