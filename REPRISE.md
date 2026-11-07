@@ -136,7 +136,10 @@ sans réponse » (5 langues) ; mesuré sur l'émulateur Android 16 (retour 15 s 
 vert, **628 tests**. **À faire en reprenant** : (1) la relecture externe (GPT `gpt-5.6-sol`, code critique :
 moteur et base) ; (2) mesurer que **toucher** la notification revenue n'envoie pas de SMS ; (3) les tests de
 stockage sur l'émulateur (migration) après les corrections ; (4) README de relectures, PR, CI, fusion.
-**Ensuite** : FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer.
+**Ensuite** : FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
+relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
+nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », N-3), et un `android-architecture-coherence-checker`
+(cohérence des motifs après cette série de corrections).
 
 ## Le 2026-11-05
 
