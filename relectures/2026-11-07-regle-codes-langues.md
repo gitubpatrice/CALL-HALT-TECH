@@ -36,7 +36,7 @@ puisqu'il ne dépend d'aucun moteur. Seule la raison écrite était fausse.
 | Les trois familles | **corrigées** ; la règle reprise rend, sur les 126 SMS du harnais, le verdict de la version de l'agent, sur les trois moteurs (vérifié par une seconde passe du harnais sur le fichier du dépôt, avant l'ajout de « Kartenendung » ci-dessous, seul écart voulu) |
 | « Kartenendung 4821 » devenait un code (le bord gauche ajouté pour « Anwendung ») | **corrigé** en plus : `(?:karten)?endung` ; ligne `W66` |
 | Le commentaire sur le `\b` du JVM | **corrigé** : le KDoc dit que le sens d'un bord de mot près d'une lettre non ASCII a changé au JDK 19 |
-| Le décompte | **corrigé** dans D-021 (55 lignes `W`, 181 SMS) |
+| Le décompte | **corrigé** dans D-021 (58 lignes `W` après la relecture GPT, 184 SMS) |
 | B7, « Ring Alarm » (« Use it to sign in to Ring Alarm ») | **accepté** : faible, pas de correctif sans perte |
 | C4, mois abrégés suivis d'un code (« Votre code : sept 4821 ») | **accepté** : formulations artificielles, aucune vraie date suivie d'un code trouvée |
 | P07, P16 (« Toute personne qui vous le demande… est un escroc », « Si une personne vous le demande… raccrochez ») restent manqués | **accepté** : les rattraper ferait un code de « Toute personne munie de ce code pourra retirer votre colis » |
@@ -55,6 +55,7 @@ Dans le doute, c'est un code : chacun de ces SMS ordinaires devient un STOP s'il
 
 ## Vérifications
 
-- `ValidationCodeTest` (JVM, JDK 17) : 182 tests, 0 échec (181 SMS + le test de comptage).
-- `ValidationCodeOnDeviceTest` sur l'émulateur API 36 (moteur ICU d'Android) : les 181 SMS rendent leur verdict.
-- Gate local : `assembleDebug`, `testDebugUnitTest` (582 tests), `lintDebug`, `detekt` verts.
+Après les correctifs de cette relecture : `ValidationCodeTest` (JVM, JDK 17) 182 tests, 0 échec (181 SMS + le test
+de comptage) ; `ValidationCodeOnDeviceTest` vert sur l'émulateur API 36 (moteur ICU d'Android) ; gate local vert
+(582 tests). Après ceux de la relecture GPT qui a suivi (`2026-11-07-gpt-regle-codes-langues.md`) : 185 tests
+(184 SMS), l'émulateur et le gate (585 tests) verts.

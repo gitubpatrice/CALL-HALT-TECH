@@ -36,12 +36,12 @@ fun isValidationCode(text: CharSequence): Boolean {
  */
 private val NEVER_A_CODE = listOf(
     """\bstop\b[ \t\u00A0:]*(?:sms[ \t\u00A0:]*)?(?:au[ \t\u00A0:]*|to[ \t\u00A0:]*)?[0-9]{5}\b""",
-    """\b(?:[0-9]{1,2}(?:er|\.)?[ \u00A0]+)?(?:janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|""" +
+    """\b(?:[0-9]{1,2}(?:er|\.)?[ \u00A0]+(?:de[ \u00A0]+)?)?(?:janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|""" +
         """octobre|novembre|d[ée]cembre|january|february|march|april|may|june|july|august|september|october|""" +
         """november|december|januar|februar|m[äa]rz|juni|juli|oktober|dezember|gennaio|febbraio|marzo|aprile|maggio|""" +
         """giugno|luglio|agosto|settembre|ottobre|dicembre|enero|febrero|abril|mayo|junio|julio|septiembre|octubre|""" +
         """noviembre|diciembre|janv|f[ée]vr?|avr|juil|sept?|oct|nov|d[ée]c|jan|feb|mar|apr|jun|jul|aug|dec)\.?""" +
-        """[ \u00A0]+[0-9]{4}\b""",
+        """[ \u00A0]+(?:de[ \u00A0]+)?[0-9]{4}\b""",
     """\b[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}\b|\b[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\b""",
     """\b(?:ann[ée]e|year)[ \u00A0]+[0-9]{4}\b""",
     """(?:appelez|contactez|composez|rappelez|joindre|call(?:[ \u00A0]+us)?(?:[ \u00A0]+(?:on|at))?|unter|""" +
@@ -51,7 +51,7 @@ private val NEVER_A_CODE = listOf(
         """termina(?:ta|da)?[ \u00A0]+(?:con|in|en)|[*Xx•]{2,})[ \u00A0]*[0-9]{4}\b""",
     """\b[A-Z]{2}[0-9]{2}(?:[ \u00A0]?[0-9A-Z]{4}){2,7}(?:[ \u00A0]?[0-9A-Z]{1,4})?\b|\bcode[ \u00A0]+(?:banque|guichet)[ :]*[0-9]{5}\b""",
     """\b(?:n°|nº|num[ée]ro)(?:[ \u00A0]+\p{L}+){0,2}[ \u00A0:]*[0-9]+""",
-    """(?<!pin[ \u00A0-])(?<!code[ \u00A0-])(?<!otp[ \u00A0-])\b(?:nr|no)\.[ \u00A0:]*[0-9]+""",
+    """(?<!(?:pin|code|otp)[ \u00A0:-]{1,2})\b(?:nr|no)\.[ \u00A0:]*[0-9]+""",
 ).map { Regex(it, RegexOption.IGNORE_CASE) }
 
 /**
