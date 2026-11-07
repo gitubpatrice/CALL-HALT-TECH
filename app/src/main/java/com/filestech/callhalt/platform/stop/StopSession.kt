@@ -27,10 +27,25 @@ data class StopSession(
     val opening: StopChoice? = null,
 ) {
     /**
-     * A new STOP while this one shows: it takes the screen, and its trigger joins the others. Its call state is the
-     * engine's, decided just now — the scammer calling back is a call to offer to cut.
+     * The trigger the screen speaks of: the gravest it absorbed, the newest among equals (publication audit, N-1). A
+     * later, lesser STOP — a code the scammer texts on purpose, a notice an app posts to look like the bank's — must not
+     * take away the advice and the way out the graver one needs: an app given the accessibility access is removed in the
+     * phone's settings, and a remote session ends only with the phone switched off. The call state stays the newest's.
+     * [triggers] keeps their order of arrival, the newest last.
      */
-    fun replacedBy(next: StopRequest): StopSession = copy(current = next, triggers = triggers + next.trigger)
+    val shown: SensitiveActionKind
+        get() = gravest(triggers) ?: current.trigger
+
+    /**
+     * A new STOP while this one shows: it takes the screen, and its trigger joins the others — with those of a STOP
+     * notification it stood for. Its call state is the engine's, decided just now — the scammer calling back is a call to
+     * offer to cut: a "Hang up" that failed on the earlier one no longer hides it (Gemini review of 2026-11-07, 4).
+     */
+    fun replacedBy(next: StopRequest): StopSession = copy(
+        current = next,
+        triggers = inArrivalOrder(triggers + next.earlier + next.trigger).toSet(),
+        callStillOn = false,
+    )
 
     /**
      * A new STOP reaching this screen. Not answered yet, it takes the screen ([replacedBy]). Answered — the phone asking
@@ -70,13 +85,16 @@ data class StopSession(
         private const val KEY_CALL_STILL_ON = "com.filestech.callhalt.stop.session.CALL_STILL_ON"
         private const val KEY_OPENING = "com.filestech.callhalt.stop.session.OPENING"
 
-        fun of(first: StopRequest): StopSession = StopSession(first, setOf(first.trigger))
+        /** The screen of [first], standing also for the STOP notification it may come from ([StopRequest.earlier]). */
+        fun of(first: StopRequest): StopSession = StopSession(first, inArrivalOrder(first.earlier + first.trigger).toSet())
 
         /** Null when the bundle holds no whole session: the screen then starts again from its intent. */
         fun fromBundle(bundle: Bundle?): StopSession? {
             val current = StopRequest.fromBundle(bundle?.getBundle(KEY_CURRENT)) ?: return null
-            val names = bundle?.getStringArray(KEY_TRIGGERS).orEmpty().toSet()
-            val triggers = SensitiveActionKind.entries.filter { it.name in names }.toSet() + current.trigger
+            // In their saved order of arrival: rebuilt, the screen speaks of the same trigger (review of 2026-11-07, 2).
+            val saved = bundle?.getStringArray(KEY_TRIGGERS).orEmpty()
+                .mapNotNull { name -> SensitiveActionKind.entries.firstOrNull { it.name == name } }
+            val triggers = inArrivalOrder(saved + current.trigger).toSet()
             val opening = bundle?.getString(KEY_OPENING)?.let { name -> StopChoice.entries.firstOrNull { it.name == name } }
             return StopSession(
                 current,

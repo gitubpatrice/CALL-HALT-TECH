@@ -31,7 +31,8 @@ class ActivityStopLauncher @Inject constructor(
 ) : StopLauncher {
 
     override suspend fun show(stop: Decision.ShowStop): Boolean {
-        val request = StopRequest(display.nextId(), stop.trigger, stop.call.isActive, stop.call.channel)
+        // A STOP notification still waiting: the screen started now stands for its triggers too, and removes it (N-1).
+        val request = StopRequest(display.nextId(), stop.trigger, stop.call.isActive, stop.call.channel, notifier.pending())
         val started = started(request)
         // Without the display over the others, Android blocks a screen started from the background, whatever the phone
         // (unless the app is in front, the screen then removes the notification): no wait, the notification at once — on
@@ -60,7 +61,7 @@ class ActivityStopLauncher @Inject constructor(
         // The screen may have got through between the wait and the post: it removed nothing yet, so this does — or the
         // notification would stay, and a touch later open a STOP already answered (review of 2026-11-03, R-02). Got
         // through after this, the screen removes it itself.
-        if (posted && display.isShown(request.id)) notifier.cancel()
+        if (posted && display.isShown(request.id)) notifier.cancel(request.id)
         return posted
     }
 

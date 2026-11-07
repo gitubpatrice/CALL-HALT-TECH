@@ -41,8 +41,9 @@ import javax.inject.Inject
  * - **Back does not close it**: an answer is a choice. Leaving it otherwise (Home, another app in front) closes it
  *   and frees its triggers, so that a repeat shows a new screen — never one nobody sees.
  * - **It follows the call**: once its call has ended, it says so and no longer offers to hang up.
- * - A second STOP while one is shown takes the screen, with its own countdown; the answer counts for both. Once the
- *   first is answered (the phone asking for the unlock), the second is a screen of its own, and nothing opens over it.
+ * - A second STOP while one is shown takes the screen, with its own countdown; the screen speaks of the graver of the
+ *   two ([StopSession.shown]), and the answer counts for both. Once the first is answered (the phone asking for the
+ *   unlock), the second is a screen of its own, and nothing opens over it.
  */
 @AndroidEntryPoint
 class StopActivity : ComponentActivity() {
@@ -88,7 +89,7 @@ class StopActivity : ComponentActivity() {
         reopening = created.opening
         // Created: Android let the start through (StopDisplay), or the notification opened it — which it replaces.
         display.shown(created.current.id)
-        notifier.cancel()
+        notifier.cancel(created.current.id)
         // For the screen's whole life, not only while in front: an end missed while it was hidden would leave it
         // offering to cut the next call.
         lifecycleScope.launch {
@@ -102,7 +103,7 @@ class StopActivity : ComponentActivity() {
                     key(current.current.id) {
                         val permitted = remember { calls.canEndCall() }
                         StopScreen(
-                            trigger = current.current.trigger,
+                            trigger = current.shown,
                             onCall = current.current.onCall,
                             channel = current.current.channel,
                             canEndCall = permitted && !current.callStillOn,
@@ -122,7 +123,7 @@ class StopActivity : ComponentActivity() {
             // Arrived while the phone asks for the unlock: a screen of its own, answered by its own buttons.
             session = session?.receiving(next) ?: StopSession.of(next)
             display.shown(next.id)
-            notifier.cancel()
+            notifier.cancel(next.id)
         }
     }
 
