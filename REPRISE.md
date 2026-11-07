@@ -34,10 +34,10 @@ non) : l'aide de l'activation est reprise sur cet écran ; et le clavier, resté
 **Pas mesuré** : la réception par un autre téléphone (le relais entre émulateurs ne passe pas) — à faire avec une vraie
 SIM, à la décision de Patrice (le S24 est en observation).
 
-**Trois relectures** (deux agents Claude, GPT 0,022 $) : 11 corrections, dont un « Continuer » touché le lendemain qui
+**Quatre relectures** (trois passes Claude, GPT 0,022 $) : 13 corrections, dont un « Continuer » touché le lendemain qui
 envoyait « juste après un appel », un SMS raté qui retenait le suivant, le « (0) » de « +49 (0)171… », un double toucher
 qui envoyait deux SMS ; gardé exprès : le SMS part même si l'écran STOP n'a pas pu s'afficher (le proche est alors la
-seule protection). **476 tests.** **Ensuite** : la proposition en attente (un bouton vers la page Accessibilité sur le
+seule protection). **480 tests.** **Ensuite** : la proposition en attente (un bouton vers la page Accessibilité sur le
 STOP d'accessibilité, D-033), puis les audits vers 95/100 et la liste « avant toute publication ».
 
 ## Le 2026-11-05
@@ -337,7 +337,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 476 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 480 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
