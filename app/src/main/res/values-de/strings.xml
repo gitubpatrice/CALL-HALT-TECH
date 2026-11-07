@@ -10,7 +10,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Während eines Telefonanrufs erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS (auf Französisch oder Englisch) oder eine Sécur\'Pass-Freigabeanfrage erhalten (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Er sieht nicht alles, auch keine Anrufe über das Internet (WhatsApp…): Auch ohne STOP-Bildschirm gilt die Regel unten.</string>
-    <string name="home_on_landline">Ein Anruf auf Ihrem Festnetztelefon wird nicht erkannt. Werden Sie am Festnetz nach einem per SMS erhaltenen Code gefragt, ist das Betrug: Legen Sie auf.</string>
+    <string name="home_on_landline">Ein Anruf auf Ihrem Festnetztelefon wird nicht erkannt. Wenn Sie bei einem Anruf über das Festnetz nach einem per SMS erhaltenen Code gefragt werden, ist das Betrug: Legen Sie auf.</string>
     <string name="home_off">Schutz ausgeschaltet</string>
     <string name="home_weakened">Schutz geschwächt</string>
     <string name="home_weakened_detail">Die App kann nicht mehr speichern, was sie sieht. Sie schützt Sie weiterhin, aber wenn das Telefon sie während eines Anrufs beendet, weiß sie nicht mehr, dass Sie telefonieren. Vielleicht ist das Telefon voll: Geben Sie Speicherplatz frei und kommen Sie dann hierher zurück. Hat es genug Platz, starten Sie es neu.</string>

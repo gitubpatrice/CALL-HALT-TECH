@@ -115,8 +115,13 @@ part que si le retour du STOP est ignoré lui aussi ; E-1, sur l'accueil « Un a
 n'est pas vu. Si, au fixe, on vous demande un code reçu par SMS, c'est une arnaque : raccrochez. » ; le premier
 SMS au proche perd « Il ne vous envoie rien d'autre. » ; FN-2, sur l'accueil « Votre appli SMS cache le texte
 des messages dans ses notifications : un code reçu par SMS n'est pas vu. Dans ses réglages, affichez l'aperçu
-des messages. » **Ensuite** : ces textes, FN-4 (et la notification balayée, relecture Gemini, 3), FN-3, N-3,
-l'écran Historique ; les mots d'E-2 (README) restent à proposer.
+des messages. »
+
+**Puis E-1 et le premier SMS au proche** : la phrase du fixe sur l'accueil, avec la limite existante, dès que la
+protection voit quelque chose (activée, ou affaiblie) — la limite n'était montrée qu'activée ; README et PROJET
+le disent ; « Il ne vous envoie rien d'autre » retiré. Relectures Claude et GPT Luna (0,010 $). **Ensuite** :
+FN-2 (l'aperçu masqué), FN-4 (et la notification balayée, relecture Gemini, 3), FN-3, N-3, l'écran Historique ;
+les mots d'E-2 (README) restent à proposer.
 
 ## Le 2026-11-05
 
