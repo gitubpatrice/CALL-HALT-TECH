@@ -118,7 +118,11 @@ fun GuardianScreen(onDone: () -> Unit, viewModel: GuardianViewModel = hiltViewMo
                 },
                 onTyped = { move(GuardianMove.Typed(it)) },
             )
-            if (state.guardian != null) WideOutlinedButton(R.string.guardian_remove) { move(GuardianMove.AskRemove) }
+            if (state.guardian != null) {
+                WideOutlinedButton(R.string.guardian_remove, enabled = step !is GuardianStep.Sending) {
+                    move(GuardianMove.AskRemove)
+                }
+            }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(R.string.guardian_done))
             }

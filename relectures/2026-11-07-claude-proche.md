@@ -43,3 +43,16 @@ quitté n'envoient rien ; la démonstration n'envoie rien.
 
 **Hors axe, pour mémoire** : les alertes françaises partent en UCS-2 (« peut-être », guillemets, insécables) : 3 à 4 SMS
 facturés par alerte là où les SMS se paient ; l'anglais tient en 2. Le plafond de 20 par jour en tient compte.
+
+## 3. `android-code-quality-deep-dive` — sécurité, sur ce qui a changé après les relectures 1, 2 et GPT
+
+Demandée par le rappel du poste (fichiers sensibles modifiés après la première relecture), sur le commit `9a9ea73`.
+Vérifié, aucun défaut : le contrôle des chiffres strictement ASCII (pleine chasse, arabo-indiques refusés), les marques
+de réordonnancement refusées avant tout, `"$1"` (référence de groupe, pas un gabarit Kotlin), le plancher de 8 chiffres
+après toutes les transformations, aucune expression coûteuse ; le limiteur (synchronisé, `StopOverridden` toujours
+soumis au plafond) ; le moteur ; les gabarits `%1$s` dans les 5 langues, rien de sensible dans les textes ; le manifeste.
+
+| # | Constat (gravité, certitude) | Tri | Suite |
+|---|---|---|---|
+| 1 | « +33-(0)6-12… », « 0033.(0)6… » : le « (0) » n'est pas retiré (les tirets et points sont encore là quand il est cherché) ; « +330612345678 » passe, injoignable (moyen, confirmé) | **Réel, corrigé** | Séparateurs retirés d'abord, puis le « (0) », puis les parenthèses. Tests (tiret, point, barre oblique) |
+| 2 | « Ne plus prévenir personne » reste actif pendant l'envoi du premier SMS : retiré à ce moment, l'écran finit sur « SMS envoyé » d'un proche retiré ; « Annuler » rouvre un second choix concurrent (moyen, confirmé) | **Réel, corrigé** | Pendant l'envoi, le bouton est inactif, « Supprimer » et « Annuler » ne font rien ; la fin de l'envoi n'écrit son résultat que si l'écran l'attend encore. Test, **contrôle négatif** fait |
