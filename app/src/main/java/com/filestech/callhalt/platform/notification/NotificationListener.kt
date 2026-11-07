@@ -75,6 +75,13 @@ class NotificationListener : NotificationListenerService() {
         // What came while the listener was away came during the call perhaps (RemoteControlNotices.RECONNECTED_WITHIN).
         val shown = shownNow() ?: return remoteControl.forget()
         remoteControl.alreadyShown(shown.map { it.notice() }, clock.now()).forEach(::submit)
+        // The SMS app's messages already shown, read for its previews only (FN-2, GPT review of 2026-11-07, 3): one that
+        // came while the listener was away, or before its access was granted, tells it as well. Never a new code.
+        val smsApp = defaultSmsApp()
+        val at = clock.now().wall
+        shown.filter { it.packageName == smsApp && it.notification.channelId !in BANK_REQUEST_CHANNELS }
+            .sortedBy { it.postTime }
+            .forEach { sbn -> latestSms(sbn, at)?.let { smsPreview.seen(sbn.packageName, it) } }
     }
 
     override fun onListenerDisconnected() {
