@@ -96,7 +96,9 @@ Sur ce téléphone seulement, dans l'espace privé de l'appli :
   gardée **14 mois**, puis effacée : les 13 mois que la loi vous laisse pour contester une opération auprès de votre
   banque, comptés depuis son débit, et un de plus pour une carte débitée en fin de mois — le journal montre qu'un
   appel était en cours, ou venait de finir, quand elle a été demandée. Jamais plus de 10 000 lignes : au-delà, les plus anciennes partent
-  d'abord.
+  d'abord ;
+- quand votre appli SMS cache le texte des messages dans ses notifications, son nom de paquet (comme
+  `com.filestech.sms`), pour le dire sur l'accueil tant qu'elle est votre appli SMS ; jamais le texte d'un message.
 
 Désinstaller l'appli, ou effacer ses données dans les réglages du téléphone, efface tout d'un coup.
 

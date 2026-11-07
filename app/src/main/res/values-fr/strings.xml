@@ -11,6 +11,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Pendant un appel téléphonique, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou une demande de validation Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Elle ne voit pas tout, ni les appels par Internet (WhatsApp…) : même sans écran STOP, la règle ci-dessous reste vraie.</string>
+    <string name="home_sms_preview_hidden">Votre appli SMS cache le texte des messages dans ses notifications : un code reçu par SMS n\'est pas vu. Dans ses réglages, affichez l\'aperçu des messages.</string>
     <string name="home_on_landline">Un appel sur votre téléphone fixe n\'est pas vu. Si, au fixe, on vous demande un code reçu par SMS, c\'est une arnaque : raccrochez.</string>
     <string name="home_off">Protection désactivée</string>
     <string name="home_weakened">Protection affaiblie</string>

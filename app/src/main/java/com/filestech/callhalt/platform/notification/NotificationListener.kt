@@ -56,6 +56,9 @@ class NotificationListener : NotificationListenerService() {
     /** Bound or not: the home screen says it (P-21, D-025). */
     @Inject lateinit var connection: ListenerConnection
 
+    /** Whether the SMS app hides its messages: the home screen says it (FN-2). */
+    @Inject lateinit var smsPreview: SmsPreview
+
     // All of what follows is touched on the main thread only, where the callbacks come.
     private var smsApp: String? = null
     private var smsAppReadAt: Long? = null
@@ -97,6 +100,7 @@ class NotificationListener : NotificationListenerService() {
     private fun bankRequestOrCode(sbn: StatusBarNotification, at: Moment): SensitiveAction? {
         val channel = sbn.notification.channelId
         val sms = if (channel !in BANK_REQUEST_CHANNELS && sbn.packageName == defaultSmsApp()) latestSms(sbn, at.wall) else null
+        sms?.let { smsPreview.seen(sbn.packageName, it) }
         val signal = notificationSignal(sbn.packageName, channel, sms?.message, at)
         val repost = signal?.kind == SensitiveActionKind.CODE_MESSAGE && sms != null && isRepost(sbn.key, sms.sentAtMillis)
         return signal.takeUnless { repost }

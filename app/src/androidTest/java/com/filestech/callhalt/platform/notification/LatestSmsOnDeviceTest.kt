@@ -66,6 +66,26 @@ class LatestSmsOnDeviceTest {
         assertThat((latest?.message as SmsMessage.Text).value.toString()).isEqualTo("Votre code de validation est 482913")
     }
 
+    /** FN-2: only a message received from someone else in a conversation says how the SMS app shows its messages. */
+    @Test
+    fun aMessageOfSomeoneElseIsReceived_theUsersOwnReplyIsNot() {
+        assertThat(readLatestSms(conversation("Bonjour" to now), maskedText = null, now)?.receivedInConversation)
+            .isTrue()
+        val reply = builder()
+            .setStyle(style("Bonjour" to now.minusSeconds(60)).addMessage("Je te rappelle", now.toEpochMilli(), null as Person?))
+            .build()
+        val latest = checkNotNull(readLatestSms(reply, maskedText = null, now))
+        assertThat((latest.message as SmsMessage.Text).value.toString()).isEqualTo("Je te rappelle")
+        assertThat(latest.receivedInConversation).isFalse()
+    }
+
+    /** A failed send, a warning of the SMS app: no conversation, so not a message received. */
+    @Test
+    fun aNotificationWithoutAConversationIsNoMessageReceived() {
+        val failed = builder().setContentText("Échec de l'envoi").setWhen(now.toEpochMilli()).build()
+        assertThat(readLatestSms(failed, maskedText = null, now)?.receivedInConversation).isFalse()
+    }
+
     private fun conversation(vararg messages: Pair<String, Instant>): Notification =
         builder().setStyle(style(*messages)).build()
 

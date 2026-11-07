@@ -155,6 +155,14 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
             // What it does not see, wherever it sees something: on, or weakened but working. The landline first — the
             // scam that needs no call on this phone (E-1) — then the limit, which ends on "the rule below".
             if (state.status in WATCHING) {
+                // First: a hole the user can close, in the SMS app's settings (FN-2).
+                if (state.smsPreviewHidden) {
+                    Text(
+                        text = stringResource(R.string.home_sms_preview_hidden),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
                 Text(text = stringResource(R.string.home_on_landline), style = MaterialTheme.typography.bodyLarge)
                 Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
             }

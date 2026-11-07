@@ -7,8 +7,13 @@ import androidx.core.os.BundleCompat
 import java.time.Duration
 import java.time.Instant
 
-/** What [readLatestSms] read: the latest message, and when it was sent (0 when the notification does not say). */
-class LatestSms(val message: SmsMessage, val sentAtMillis: Long)
+/**
+ * What [readLatestSms] read: the latest message, and when it was sent (0 when the notification does not say).
+ * [receivedInConversation]: it is the latest entry of a conversation, from someone else — not the user's own reply, nor a
+ * notification without a conversation (a failed send, a warning of the SMS app), which say nothing of how the app shows
+ * the messages it receives (FN-2, [SmsPreview]).
+ */
+class LatestSms(val message: SmsMessage, val sentAtMillis: Long, val receivedInConversation: Boolean = false)
 
 /**
  * Reads, of a notification of the default SMS app, what the code rule needs (docs/ARCHITECTURE.md, D-021): its latest
@@ -27,7 +32,9 @@ internal fun readLatestSms(notification: Notification, maskedText: String?, at: 
     val summary = notification.flags and Notification.FLAG_GROUP_SUMMARY != 0
     if (summary || text == null || isOlderThan(sentAt, at.minus(MAX_MESSAGE_AGE))) return null
     val message = if (maskedText != null && text.toString() == maskedText) SmsMessage.Masked else SmsMessage.Text(text)
-    return LatestSms(message, sentAt)
+    // A message of someone else carries its sender; the user's own reply has none (MessagingStyle.Message.toBundle).
+    val received = latest != null && (latest.getCharSequence(MESSAGE_SENDER) != null || latest.containsKey(MESSAGE_SENDER_PERSON))
+    return LatestSms(message, sentAt, received)
 }
 
 /**
@@ -64,3 +71,5 @@ private fun isOlderThan(sentAtMillis: Long, limit: Instant): Boolean =
 // NotificationCompat.java): read directly, so that the messages before the latest are never even built.
 private const val MESSAGE_TEXT = "text"
 private const val MESSAGE_TIME = "time"
+private const val MESSAGE_SENDER = "sender"
+private const val MESSAGE_SENDER_PERSON = "sender_person"
