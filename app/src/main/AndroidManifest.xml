@@ -43,6 +43,19 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <!--
+        A text to the relative the user chose (platform/guardian, docs/ARCHITECTURE.md, D-034): when a STOP shows, when
+        "Continue" is chosen despite it, when they are chosen or no longer are. Asked on the relative's screen, not by the
+        activation: no relative, no text. Sends only: never READ_SMS nor RECEIVE_SMS (a code is seen in the SMS app's
+        notification, D-021).
+    -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!--
+        SEND_SMS would otherwise make the phone's telephony REQUIRED, and keep the app from a device without it. Not
+        needed: there, the relative is not texted (platform/guardian/TextSender), and nothing else changes.
+    -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <!--
         The phone's settings pages the app opens: seen here so that platform/access/AccessSettings can send the
         user to the SYSTEM's own, never to an app that declares the same action. Not a permission: these names only.
     -->
@@ -226,6 +239,14 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
+        <!--
+            The phone's answer for each text sent to the relative (platform/guardian/TextSender): reached only through the
+            app's own PendingIntent, which the phone sends as this app. Not exported, no intent filter.
+        -->
+        <receiver
+            android:name=".platform.guardian.SmsSentReceiver"
+            android:exported="false" />
 
         <!--
             A banking app's request to approve an operation, and a validation code arriving by SMS, seen in their

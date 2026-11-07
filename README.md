@@ -6,9 +6,9 @@ An Android app against **phone scams** — the fake bank adviser, the fake techn
 department — written first for elderly people and the relatives who look after them.
 
 **Status: in development, not published.** Once its accesses are granted (it asks for them one by one), it
-shows the STOP screen when a code arrives by SMS, or a banking app asks to approve an operation (Sécur'Pass),
-during a call or just after it. Remote-control apps and the alert to a relative are still to come, and nothing is
-published before the app is reliable.
+shows the STOP screen when, during a call or just after it, a code arrives by SMS, a banking app asks to approve an
+operation (Sécur'Pass), a remote-control app is installed or set to work, or an app is given the accessibility
+access. It can text someone close to you when that happens. Nothing is published before the app is reliable.
 
 ## The method
 
@@ -25,7 +25,8 @@ It blocks nothing. It is a pause at the right moment.
 
 - **No internet permission**, ever: the CI reads the merged release manifest against an exact list
   (`tools/check-manifest-permissions.py`, with its negative control).
-- No account, no server, no Google Play Services. Nothing leaves the phone.
+- No account, no server, no Google Play Services. Nothing leaves the phone but the texts to the person close to you,
+  if you choose one: by SMS, from your number, never a code nor a message's content ([PRIVACY.md](PRIVACY.md)).
 - English, French, German, Italian, Spanish.
 
 ## Building

@@ -20,11 +20,15 @@ sealed interface Decision {
 
 enum class WarningReason { REMOTE_CONTROL_INSTALLED, LONG_CALL_WITH_UNKNOWN }
 
+/**
+ * What the relative is told (docs/ARCHITECTURE.md, D-034). [duringCall]: a call was still going on — the text says
+ * "during a call", else "just after a call".
+ */
 sealed interface GuardianEvent {
-    data class StopShown(val trigger: SensitiveActionKind) : GuardianEvent
+    data class StopShown(val trigger: SensitiveActionKind, val duringCall: Boolean) : GuardianEvent
 
     /** "Continue" chosen despite the STOP screen. */
-    data class StopOverridden(val trigger: SensitiveActionKind) : GuardianEvent
+    data class StopOverridden(val trigger: SensitiveActionKind, val duringCall: Boolean) : GuardianEvent
 
     data object LongCallWithUnknown : GuardianEvent
 }

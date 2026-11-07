@@ -142,7 +142,9 @@ class DetectionEngine {
     private fun stopDuring(call: CallSession, state: DetectorState, signal: SensitiveAction, settings: ProtectionSettings): Evaluation {
         val decisions = buildList {
             add(Decision.ShowStop(signal.kind, call))
-            if (settings.guardianAlerts) add(Decision.NotifyGuardian(GuardianEvent.StopShown(signal.kind)))
+            if (settings.guardianAlerts) {
+                add(Decision.NotifyGuardian(GuardianEvent.StopShown(signal.kind, CallWindow.inProgress(call, signal.at))))
+            }
         }
         return Evaluation(
             state = state.copy(pendingStops = state.pendingStops + (signal.kind to signal.at)),
@@ -199,9 +201,14 @@ class DetectionEngine {
 
     private fun onStopAnswered(state: DetectorState, signal: StopAnswered, settings: ProtectionSettings): Evaluation {
         // The answer is a fact and is journaled even if protection was turned off meanwhile.
-        val overridden = signal.choice == StopChoice.CONTINUE
+        // "Continue" chosen within the window of a call only, as the STOP rule: a screen left on a sleeping phone and
+        // answered the next morning is no "just after a call, call right away" (review of 2026-11-07, faux positifs 1).
+        // The relative was told when the STOP showed.
+        val overridden = signal.choice == StopChoice.CONTINUE &&
+            CallWindow.callAt(state, signal.at, settings.afterCallWindow) != null
         val decisions = if (settings.enabled && settings.guardianAlerts && overridden) {
-            listOf(Decision.NotifyGuardian(GuardianEvent.StopOverridden(signal.trigger)))
+            val duringCall = state.calls.values.any { CallWindow.inProgress(it, signal.at) }
+            listOf(Decision.NotifyGuardian(GuardianEvent.StopOverridden(signal.trigger, duringCall)))
         } else {
             emptyList()
         }

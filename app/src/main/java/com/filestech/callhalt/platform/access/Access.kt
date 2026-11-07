@@ -113,10 +113,23 @@ internal fun phoneSupport(lowRam: Boolean, sdk: Int): PhoneSupport = when {
  * lines where it is not needed — where it is, its absence would leave the user stuck in front of a refusal.
  */
 internal fun mayBeRestricted(access: Access, sdk: Int, packageSource: Int?): Boolean {
-    if (packageSource == null || packageSource == PackageInstaller.PACKAGE_SOURCE_STORE) return false
+    if (!fromFile(packageSource)) return false
     return when (access) {
         Access.CALLS, Access.BACKGROUND, Access.AUTOSTART, Access.ALERTS -> false
         Access.SCREEN -> sdk >= Build.VERSION_CODES.VANILLA_ICE_CREAM
         Access.NOTIFICATIONS -> sdk >= Build.VERSION_CODES.TIRAMISU
     }
 }
+
+/**
+ * Whether the phone may refuse the permission to send texts to the relative behind its "restricted settings" (D-034) —
+ * measured on 2026-11-07 for an APK installed from a file: Android 15 and 16 refuse it ("App was denied access to
+ * SMS") until the restricted settings are allowed in the app info; Android 14 asks as for any permission. Allowed once,
+ * for the notification access during the activation, they are allowed for this too.
+ */
+internal fun textsMayBeRestricted(sdk: Int, packageSource: Int?): Boolean =
+    fromFile(packageSource) && sdk >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+
+/** An install whose source may be restricted: known (Android 13+), and not by a store. */
+private fun fromFile(packageSource: Int?): Boolean =
+    packageSource != null && packageSource != PackageInstaller.PACKAGE_SOURCE_STORE

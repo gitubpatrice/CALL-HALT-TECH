@@ -43,6 +43,22 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   retirer dans les réglages de notifications de l'appli. L'appli envoie une autre notification, hors appel : quand une
   appli qui permet à quelqu'un d'autre de contrôler le téléphone vient d'être installée (AnyDesk, TeamViewer
   QuickSupport, RustDesk…), elle la nomme et ouvre sa page dans les réglages du téléphone, où on la désinstalle.
+- **Envoyer des SMS** (`SEND_SMS`) : seulement si vous choisissez un proche à prévenir, et demandé sur cet écran, pas
+  par l'activation. L'appli s'en sert pour envoyer, jamais pour lire : la question d'Android dit « envoyer et afficher
+  des SMS », le nom de tout le groupe, mais l'appli ne demande aucune permission de lire vos messages (ce qu'elle lit
+  d'un code passe par l'accès aux notifications, plus haut). Elle n'écrit **qu'au numéro que vous avez choisi**, depuis votre numéro,
+  comme un SMS ordinaire — Android range chacun dans votre appli SMS, dans votre conversation avec cette personne :
+  - quand vous la choisissez, que ce téléphone la préviendra si l'écran STOP s'affiche pendant un appel ;
+  - quand l'écran STOP s'affiche pendant un appel ou juste après, ou que « Continuer » est choisi malgré lui : ce qui
+    est arrivé en quelques mots (un code reçu par SMS, une demande de la banque, une appli de prise en main…), et si
+    l'appel était encore en cours — **jamais le code, ni aucun mot d'un message**, ni le numéro qui appelle. Un SMS
+    par sorte d'écran STOP en un quart d'heure, un pour chaque « Continuer », et jamais plus de 20 par jour ;
+  - quand vous choisissez quelqu'un d'autre, ou plus personne, que ce téléphone ne la préviendra plus.
+
+  Sans cette permission, l'écran STOP fonctionne tout de même ; seuls les SMS ne partent pas.
+
+Quand vous choisissez ce proche dans vos contacts, votre appli de contacts transmet à l'appli le nom et le numéro de ce
+seul contact, et rien d'autre : l'appli n'a pas accès à vos contacts.
 
 Pour voir ces installations, l'appli peut voir si une des applis de prise en main de sa liste (une cinquantaine,
 nommées dans son code et son manifeste) est installée, et Android lui dit quand l'une d'elles l'est. Elle ne voit pas
@@ -65,6 +81,8 @@ Le manifeste porte aussi une ligne ajoutée par une bibliothèque d'Android pour
 Sur ce téléphone seulement, dans l'espace privé de l'appli :
 
 - ses réglages ;
+- le numéro du proche à qui elle écrit, et son nom quand vous l'avez choisi dans vos contacts, jusqu'à ce que vous
+  choisissiez quelqu'un d'autre ou plus personne ;
 - la mémoire de son détecteur : pour le dernier appel seulement, quand il a commencé et fini, et s'il était
   entrant ou sortant — jamais le numéro ; et le dernier état d'appel signalé par le téléphone. Ses heures sont gardées
   deux fois : à l'horloge du téléphone, et en temps écoulé depuis son démarrage, avec le compte de ses démarrages que
@@ -85,5 +103,8 @@ de tout cela ne quitte le téléphone.
 
 ## Ce que l'appli envoie
 
-**Rien.** Elle n'a ni permission Internet, ni compte, ni serveur, ni statistiques d'usage, ni services
+**Rien par Internet.** Elle n'a ni permission Internet, ni compte, ni serveur, ni statistiques d'usage, ni services
 Google Play.
+
+Seuls quittent le téléphone les SMS au proche, si vous en avez choisi un — par SMS, depuis votre numéro, vers le sien
+seulement, comme décrit plus haut.

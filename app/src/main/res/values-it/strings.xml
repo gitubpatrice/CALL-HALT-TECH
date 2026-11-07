@@ -104,4 +104,50 @@
         <item quantity="other">Continuare (tra %1$d secondi)</item>
     </plurals>
     <string name="stop_demo_banner">Dimostrazione — sul Suo telefono non è successo nulla.</string>
+
+    <string name="guardian_sms_stop_during_call">Messaggio automatico dell\'app Call Halt Tech: durante una chiamata, su questo telefono è appena comparsa la schermata STOP (%1$s). Potrebbe essere una truffa. Chiami questo numero appena possibile.</string>
+    <string name="guardian_sms_stop_after_call">Messaggio automatico dell\'app Call Halt Tech: subito dopo una chiamata, su questo telefono è appena comparsa la schermata STOP (%1$s). Potrebbe essere una truffa. Chiami questo numero appena possibile.</string>
+    <string name="guardian_sms_continue_during_call">Messaggio automatico dell\'app Call Halt Tech: è stato scelto «Continuare» nonostante la schermata STOP (%1$s), durante una chiamata. Chiami subito questo numero.</string>
+    <string name="guardian_sms_continue_after_call">Messaggio automatico dell\'app Call Halt Tech: è stato scelto «Continuare» nonostante la schermata STOP (%1$s), subito dopo una chiamata. Chiami subito questo numero.</string>
+    <string name="guardian_sms_set_up">Messaggio automatico dell\'app Call Halt Tech: questo telefono La avviserà via SMS se compare la schermata STOP, durante una chiamata o subito dopo, possibile segno di una truffa. Non Le invia nient\'altro.</string>
+    <string name="guardian_sms_removed">Messaggio automatico dell\'app Call Halt Tech: questo telefono non La avviserà più. Se La sorprende, chiami questo numero.</string>
+    <string name="guardian_sms_what_code">un codice ricevuto via SMS</string>
+    <string name="guardian_sms_what_bank_validation">una richiesta di conferma della banca</string>
+    <string name="guardian_sms_what_bank_app">l\'app della banca aperta</string>
+    <string name="guardian_sms_what_remote_installed">un\'app di controllo remoto installata</string>
+    <string name="guardian_sms_what_remote_opened">un\'app di controllo remoto in funzione</string>
+    <string name="guardian_sms_what_accessibility">un\'app che riceve l\'accesso «accessibilità»</string>
+
+    <string name="home_guardian_title">Avvisare una persona cara</string>
+    <string name="home_guardian_none">Se compare la schermata STOP, l\'app può avvisare una persona cara via SMS.</string>
+    <string name="home_guardian_set">Se compare la schermata STOP, parte un SMS verso %1$s.</string>
+    <string name="home_guardian_cannot_send">L\'SMS non può partire: l\'app non ha il permesso di inviare SMS.</string>
+    <string name="home_guardian_choose">Scegliere una persona</string>
+    <string name="home_guardian_change">Modificare</string>
+    <string name="guardian_title">Avvisare una persona cara</string>
+    <string name="guardian_why">Se la schermata STOP compare durante una chiamata o subito dopo, o se viene scelto «Continuare» nonostante essa, parte un SMS verso la persona che sceglie. Dice cosa è successo, mai i Suoi codici né il contenuto dei Suoi messaggi.</string>
+    <string name="guardian_how">L\'SMS parte dal Suo numero, come un SMS normale, e compare nella Sua conversazione con questa persona. Appena la sceglie, un primo SMS le dice che sarà avvisata.</string>
+    <string name="guardian_permission_note">Il telefono Le chiederà di consentire all\'app di inviare e visualizzare gli SMS: l\'app se ne serve solo per inviare questi SMS.</string>
+    <string name="guardian_current">Un SMS parte verso: %1$s</string>
+    <string name="guardian_change_note">Se sceglie un\'altra persona, un ultimo SMS lo dirà a %1$s.</string>
+    <string name="guardian_pick">Scegliere tra i miei contatti</string>
+    <string name="guardian_number_label">Oppure digiti il numero</string>
+    <string name="guardian_save">Avvisare questo numero</string>
+    <string name="guardian_number_invalid">Questo numero non va bene: digiti un numero di telefono completo, come 312 345 6789.</string>
+    <string name="guardian_no_contacts">I contatti non si sono aperti: digiti il numero.</string>
+    <string name="guardian_sms_refused">Senza il permesso di inviare SMS, l\'app non può avvisare nessuno.</string>
+    <string name="guardian_sms_settings_steps">Se il telefono non lo chiede più: tocchi «Aprire le impostazioni», poi Autorizzazioni, SMS e Consenti.</string>
+    <string name="guardian_restricted_steps">1. Tocchi «Aprire le informazioni dell\'app», qui sotto: si apre la pagina di Call Halt Tech.\n2. Tocchi i tre puntini in alto a destra, poi «Consenti impostazioni con limitazioni». Se il telefono chiede il codice che lo sblocca, lo digiti personalmente, senza dirlo a nessuno.\n3. Torni qui e tocchi «Consentire l\'invio di SMS».</string>
+    <string name="guardian_allow">Consentire l\'invio di SMS</string>
+    <string name="guardian_sending">Invio di un SMS a %1$s…</string>
+    <string name="guardian_sent">SMS inviato a %1$s: questa persona sarà avvisata se compare la schermata STOP.</string>
+    <string name="guardian_not_sent">L\'SMS a %1$s non è partito. Controlli il numero e che il telefono abbia campo, poi lo invii di nuovo.</string>
+    <string name="guardian_resend">Inviare di nuovo l\'SMS</string>
+    <string name="guardian_remove">Non avvisare più nessuno</string>
+    <string name="guardian_remove_confirm">Se compare la schermata STOP, non partirà più nessun SMS verso %1$s. Un ultimo SMS glielo dirà.</string>
+    <string name="guardian_remove_yes">Non avvisare più</string>
+    <string name="guardian_cancel">Annullare</string>
+    <string name="guardian_removed">Nessuno viene più avvisato via SMS.</string>
+    <string name="guardian_save_failed">L\'app non è riuscita a salvare questa scelta. Riprovi.</string>
+    <string name="guardian_done">Fatto</string>
 </resources>

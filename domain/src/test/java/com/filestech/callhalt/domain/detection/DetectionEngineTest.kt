@@ -261,8 +261,62 @@ class DetectionEngineTest {
             val notSetUp = run(callStarted(), action(SensitiveActionKind.CODE_MESSAGE, minutes = 1))
 
             assertThat(told.last().decisions)
-                .contains(Decision.NotifyGuardian(GuardianEvent.StopShown(SensitiveActionKind.CODE_MESSAGE)))
+                .contains(Decision.NotifyGuardian(GuardianEvent.StopShown(SensitiveActionKind.CODE_MESSAGE, duringCall = true)))
             assertThat(notSetUp.last().decisions.filterIsInstance<Decision.NotifyGuardian>()).isEmpty()
+        }
+
+        /** The text says "just after a call": the relative calls a phone that is free. */
+        @Test
+        fun `is told the call had ended when STOP shows after it`() {
+            val after = run(
+                callStarted(),
+                CallEnded(at(2), CallChannel.CELLULAR),
+                action(SensitiveActionKind.BANK_VALIDATION_REQUEST, minutes = 3),
+                settings = withGuardian,
+            )
+
+            assertThat(after.last().decisions).contains(
+                Decision.NotifyGuardian(GuardianEvent.StopShown(SensitiveActionKind.BANK_VALIDATION_REQUEST, duringCall = false)),
+            )
+        }
+
+        @Test
+        fun `is told whether a call was still going on when Continue is chosen`() {
+            fun overridden(vararg meanwhile: Signal) = run(
+                callStarted(),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 1),
+                *meanwhile,
+                StopAnswered(at(3), SensitiveActionKind.CODE_MESSAGE, StopChoice.CONTINUE),
+                settings = withGuardian,
+            ).last().decisions
+
+            fun told(duringCall: Boolean) =
+                Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE, duringCall))
+
+            assertThat(overridden()).containsExactly(told(duringCall = true))
+            assertThat(overridden(CallEnded(at(2), CallChannel.CELLULAR))).containsExactly(told(duringCall = false))
+        }
+
+        /**
+         * A STOP left on a sleeping phone, "Continue" touched the next morning: no "just after a call, call right away".
+         * The answer is still journaled; the relative was told when the STOP showed.
+         */
+        @Test
+        fun `is not told of a Continue chosen once the call's window has passed`() {
+            val steps = run(
+                callStarted(),
+                CallEnded(at(10), CallChannel.CELLULAR),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 20),
+                StopAnswered(at(600), SensitiveActionKind.CODE_MESSAGE, StopChoice.CONTINUE),
+                settings = withGuardian,
+            )
+
+            assertThat(steps[2].decisions).contains(
+                Decision.NotifyGuardian(GuardianEvent.StopShown(SensitiveActionKind.CODE_MESSAGE, duringCall = false)),
+            )
+            assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().journal)
+                .containsExactly(JournalEntry.Answer(at(600).wall, SensitiveActionKind.CODE_MESSAGE, StopChoice.CONTINUE))
         }
 
         @Test
@@ -275,7 +329,7 @@ class DetectionEngineTest {
             ).last().decisions
 
             assertThat(answer(StopChoice.CONTINUE))
-                .containsExactly(Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE)))
+                .containsExactly(Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE, duringCall = true)))
             assertThat(answer(StopChoice.HANG_UP)).isEmpty()
             assertThat(answer(StopChoice.CALL_MY_BANK)).isEmpty()
             // Leaving the screen to hang up from the call screen is ordinary: no false alarm to the relative.

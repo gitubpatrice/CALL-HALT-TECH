@@ -17,6 +17,7 @@ import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
+import com.filestech.callhalt.platform.noGuardian
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -41,7 +42,7 @@ class AccessibilityGrantsTest {
         store,
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
-        AndroidDecisionExecutor(launcher, WarningPoster { error("no warning expected") }),
+        AndroidDecisionExecutor(launcher, WarningPoster { error("no warning expected") }, noGuardian),
     )
 
     @Test

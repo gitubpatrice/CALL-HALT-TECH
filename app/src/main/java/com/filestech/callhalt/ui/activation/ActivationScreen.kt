@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -35,7 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -47,6 +45,7 @@ import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessSettings
 import com.filestech.callhalt.platform.access.runtimePermissions
 import com.filestech.callhalt.ui.protection.ProtectionViewModel
+import com.filestech.callhalt.ui.protection.RestrictedSettingsHelp
 import com.filestech.callhalt.ui.protection.accessText
 import com.filestech.callhalt.ui.theme.brandButtonColors
 
@@ -176,7 +175,7 @@ private fun AccessStep(
                 if (refused) {
                     text.refused?.let { Text(text = stringResource(it), style = MaterialTheme.typography.bodyLarge) }
                 }
-                if (mayBeRestricted) RestrictedSettingsHelp()
+                if (mayBeRestricted) RestrictedSettingsHelp(R.string.restricted_steps)
             }
             Button(
                 onClick = {
@@ -217,33 +216,6 @@ private fun AccessStep(
 private fun SecondButton(@StringRes label: Int, onClick: () -> Unit) {
     OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(label))
-    }
-}
-
-/**
- * The way through the phone's "restricted settings" (measured, docs/ARCHITECTURE.md, P-3): the menu that allows them
- * shows in the app info only once the phone has refused once — hence the order of the steps. Its button is pinned with
- * the others.
- */
-@Composable
-private fun RestrictedSettingsHelp() {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
-                text = stringResource(R.string.restricted_title),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.semantics { heading() },
-            )
-            // Scammers have their victims allow the restricted settings of THEIR app: before the steps, which someone
-            // guided on the phone follows without reading on (security review of 2026-11-02, S1).
-            Text(
-                text = stringResource(R.string.restricted_warning),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(text = stringResource(R.string.restricted_why), style = MaterialTheme.typography.bodyLarge)
-            Text(text = stringResource(R.string.restricted_steps), style = MaterialTheme.typography.bodyLarge)
-        }
     }
 }
 

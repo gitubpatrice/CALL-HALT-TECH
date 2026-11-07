@@ -6,9 +6,10 @@ Une appli Android contre les **arnaques au téléphone** : faux conseiller banca
 service des fraudes. Elle est pensée d'abord pour les personnes âgées et les proches qui veillent sur elles.
 
 **État : en développement, non publiée.** Une fois ses accès accordés (elle les demande un par un), elle
-affiche l'écran STOP quand un code arrive par SMS, ou quand l'appli d'une banque demande de valider une opération
-(Sécur'Pass), pendant un appel ou juste après. Les applis de prise en main à distance et l'alerte au proche sont
-à venir, et rien n'est publié avant que l'appli soit fiable.
+affiche l'écran STOP quand, pendant un appel ou juste après, un code arrive par SMS, l'appli d'une banque demande de
+valider une opération (Sécur'Pass), une appli de prise en main à distance est installée ou mise en marche, ou une appli
+reçoit l'accès « accessibilité ». Elle peut alors prévenir un proche par SMS. Rien n'est publié avant que l'appli soit
+fiable.
 
 ## La méthode
 
@@ -26,7 +27,8 @@ Elle ne bloque rien. C'est une pause, au bon moment.
 
 - **Aucune permission Internet**, jamais : la CI lit le manifeste fusionné de la release et le compare à
   une liste exacte (`tools/check-manifest-permissions.py`, avec son contrôle négatif).
-- Pas de compte, pas de serveur, pas de services Google Play. Rien ne sort du téléphone.
+- Pas de compte, pas de serveur, pas de services Google Play. Rien ne sort du téléphone, sauf les SMS au proche, si
+  vous en choisissez un : depuis votre numéro, jamais un code ni le contenu d'un message ([PRIVACY.fr.md](PRIVACY.fr.md)).
 - Anglais, français, allemand, italien, espagnol.
 
 ## Construire

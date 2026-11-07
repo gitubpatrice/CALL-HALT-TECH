@@ -40,6 +40,22 @@ change that adds it to the app, and the build checks the app asks for nothing el
   sends one other notification, outside a call: when an app that lets someone else control the phone has just been
   installed (AnyDesk, TeamViewer QuickSupport, RustDesk…), it names that app and opens its page in the phone's
   settings, where it is uninstalled.
+- **Send SMS** (`SEND_SMS`): only if you choose someone close to alert, and asked on that screen, not by the
+  activation. The app uses it to send, never to read: Android's question says "send and view SMS messages", the name of
+  the whole group, but the app asks for no permission to read your messages (what it reads of a code goes through the
+  notification access, above). It texts **only the number you chose**, from your own number, like any text — Android
+  files each one in your SMS app, in your conversation with that person:
+  - when you choose them, that this phone will text them if the STOP screen shows during a call;
+  - when the STOP screen shows during a call or just after it, or when "Continue" is chosen despite it: what happened
+    in a few words (a code received by SMS, a request from the bank, a remote-control app…), whether the call was
+    still going on — **never the code, nor any word of a message**, nor the number calling. One text per kind of
+    STOP screen in a quarter of an hour, one for each "Continue", and never more than 20 a day;
+  - when you choose someone else, or no one any more, that this phone will no longer alert them.
+
+  Without that permission, the STOP screen works all the same; only the texts do not go.
+
+When you pick that person among your contacts, your contacts app hands the app that one contact's name and number,
+and nothing else: the app has no access to your contacts.
 
 To see those installations, the app may see whether one of the remote-control apps of its list (about fifty, named
 in its code and its manifest) is installed, and Android tells it when one is. It does not see the phone's other
@@ -62,6 +78,8 @@ The manifest also carries a line Android's own library adds for the app's intern
 On this phone only, in the app's private storage:
 
 - its settings;
+- the number of the person close to you that it texts, and their name when you picked them among your contacts, until
+  you choose someone else or no one;
 - the memory of its detector: for the latest call only, when it started and ended, and whether it was
   incoming or outgoing — never the number; and the last call state the phone reported. Its times are kept twice: by
   the phone's clock, and as the time since the phone started, with Android's count of its starts — so that a clock
@@ -81,4 +99,8 @@ Android backup and device-to-device transfer are **disabled** for this app: none
 
 ## What the app sends
 
-**Nothing.** It has no internet permission, no account, no server, no analytics, and no Google Play Services.
+**Nothing over the internet.** It has no internet permission, no account, no server, no analytics, and no Google Play
+Services.
+
+The only thing that leaves the phone is the texts to the person close to you, if you chose one — by SMS, from your
+number, to theirs alone, as described above.

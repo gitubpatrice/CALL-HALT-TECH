@@ -5,6 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.filestech.callhalt.data.guardian.Guardian
+import com.filestech.callhalt.data.guardian.guardianNumber
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.port.SettingsSource
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +21,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The user's settings, in DataStore. Read side only for now: the settings screen brings the write side,
- * behind the relative's code once guardian mode exists (PROJET.md, § 4.6).
+ * The user's settings, in DataStore. Read side only for now, but for the relative's number
+ * ([com.filestech.callhalt.data.guardian.GuardianRepository]): the settings screen brings the write side, behind the
+ * relative's code once guardian mode exists (PROJET.md, § 4.6).
  */
 @Singleton
 class SettingsRepository @Inject constructor(
@@ -47,7 +51,10 @@ internal object SettingsMapping {
     val ENABLED = booleanPreferencesKey("protection_enabled")
     val AFTER_CALL_WINDOW_MINUTES = intPreferencesKey("after_call_window_minutes")
     val LONG_CALL_THRESHOLD_MINUTES = intPreferencesKey("long_call_threshold_minutes")
-    val GUARDIAN_ALERTS = booleanPreferencesKey("guardian_alerts")
+
+    /** The relative ([Guardian], D-034): written by [com.filestech.callhalt.data.guardian.GuardianRepository] alone. */
+    val GUARDIAN_NUMBER = stringPreferencesKey("guardian_number")
+    val GUARDIAN_NAME = stringPreferencesKey("guardian_name")
 
     fun fromPreferences(preferences: Preferences): ProtectionSettings = ProtectionSettings(
         enabled = preferences.read(ENABLED) ?: true,
@@ -55,8 +62,15 @@ internal object SettingsMapping {
             ?: ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW,
         longCallThreshold = minutesWithin(preferences.read(LONG_CALL_THRESHOLD_MINUTES), ProtectionSettings.LONG_CALL_THRESHOLD_RANGE)
             ?: ProtectionSettings.DEFAULT_LONG_CALL_THRESHOLD,
-        guardianAlerts = preferences.read(GUARDIAN_ALERTS) ?: false,
+        // On with a relative to text, and only then: one fact, not a switch that could say "on" with no number to text.
+        guardianAlerts = guardian(preferences) != null,
     )
+
+    /** The relative set up, or null: none, or a number stored that the app may not text ([guardianNumber]). */
+    fun guardian(preferences: Preferences): Guardian? =
+        preferences.read(GUARDIAN_NUMBER)?.let(::guardianNumber)?.let { number ->
+            Guardian(number, preferences.read(GUARDIAN_NAME)?.takeIf(String::isNotBlank))
+        }
 
     /**
      * `preferences[key]` casts without checking, so a value of another type under the key's name throws a
