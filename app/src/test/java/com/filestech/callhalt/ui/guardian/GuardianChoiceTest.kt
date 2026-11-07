@@ -179,6 +179,20 @@ class GuardianChoiceTest {
         assertThat(texts).containsExactly("0698765432" to REMOVED)
     }
 
+    /** "Stop alerting" touched while the first text goes: nothing, or the screen would say "sent" of no one. */
+    @Test
+    fun `nothing is removed while a choice is being sent`() = runTest {
+        repository.set(julie)
+        val choice = choice()
+        choice.on(GuardianMove.Picked(paul))
+        choice.on(GuardianMove.AskRemove)
+        choice.on(GuardianMove.Remove)
+        advanceUntilIdle()
+        assertThat(repository.current()).isEqualTo(paul)
+        assertThat(texts).containsExactly("0612345678" to REMOVED, "0698765432" to SET_UP).inOrder()
+        assertThat(choice.now().step).isEqualTo(GuardianStep.Sent(paul))
+    }
+
     @Test
     fun `removing can be cancelled`() = runTest {
         repository.set(julie)

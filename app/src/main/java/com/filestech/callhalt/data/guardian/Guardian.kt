@@ -20,8 +20,10 @@ data class Guardian(val number: String, val name: String? = null)
  */
 internal fun guardianNumber(typed: String): String? {
     if (typed.any { it in REORDERING }) return null
-    val compact = typed.filterNot { it.isWhitespace() || it in INVISIBLE }
-    val kept = compact.replaceFirst(TRUNK_ZERO, "$1").filterNot { it in SEPARATORS }
+    // The brackets last: "+33-(0)6…" and "0033.(0)6…" have their "(0)" after the country code once the dots and dashes
+    // are gone, not before (review of 2026-11-07, security delta, 1).
+    val compact = typed.filterNot { it.isWhitespace() || it in INVISIBLE || it in SEPARATORS }
+    val kept = compact.replaceFirst(TRUNK_ZERO, "$1").filterNot { it in BRACKETS }
     val plus = kept.startsWith('+')
     val digits = if (plus) kept.drop(1) else kept
     val valid = digits.length in MIN_DIGITS..MAX_DIGITS && digits.all { it in '0'..'9' }
@@ -52,8 +54,10 @@ private const val MAX_DIGITS = 15
 /** "(0)" right after a country code — "+" or "00", then 1 to 3 digits — and only there (GPT review of 2026-11-07, 6). */
 private val TRUNK_ZERO = Regex("""^((?:\+|00)\d{1,3})\(0\)""")
 
-/** Dots, slashes, brackets, and every dash a keyboard or a contacts app writes. */
-private const val SEPARATORS = ".-/()\u2010\u2011\u2012\u2013\u2212"
+private const val BRACKETS = "()"
+
+/** Dots, slashes, and every dash a keyboard or a contacts app writes. */
+private const val SEPARATORS = ".-/\u2010\u2011\u2012\u2013\u2212"
 
 /** Marks that show nothing and move nothing: zero-width spaces and joiners, left-to-right marks and isolates. */
 private const val INVISIBLE = "\u200B\u200C\u200D\u200E\u2060\uFEFF\u202A\u202C\u202D\u2066\u2069"

@@ -35,6 +35,10 @@ class GuardianNumberTest {
         "+44 (0)7700 900123, +447700900123",
         "0044 (0)7700 900123, 00447700900123",
         "+44 ( 0 ) 7700 900123, +447700900123",
+        // With dashes or dots, as contacts write it too (security review of the delta, 1).
+        "+33-(0)6-12-34-56-78, +33612345678",
+        "0033.(0)6.12.34.56.78, 0033612345678",
+        "+49/(0)171/2345678, +491712345678",
     )
     fun `the national 0 in brackets after a country code is left out`(typed: String, number: String) {
         assertThat(guardianNumber(typed)).isEqualTo(number)

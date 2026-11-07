@@ -108,8 +108,10 @@ internal class GuardianChoice(
             is GuardianMove.Typed -> picked(guardianNumber(move.text)?.let(::Guardian))
             is GuardianMove.Picked -> picked(move.contact)
             GuardianMove.NoContactsApp -> step.value = GuardianStep.NoContactsApp
-            GuardianMove.AskRemove -> step.value = GuardianStep.ConfirmRemove
-            GuardianMove.Cancel -> step.value = GuardianStep.Idle
+            // Not while a choice is being sent: removing then, the text's end would say "sent" of no one (security
+            // review of the delta, 2). Cancel closes the dialog, nothing else.
+            GuardianMove.AskRemove -> if (step.value !is GuardianStep.Sending) step.value = GuardianStep.ConfirmRemove
+            GuardianMove.Cancel -> if (step.value == GuardianStep.ConfirmRemove) step.value = GuardianStep.Idle
             // Once: a second touch on the dialog's button, before it closes, would text a second farewell.
             GuardianMove.Remove -> if (step.value == GuardianStep.ConfirmRemove) remove()
             GuardianMove.Resumed, GuardianMove.PermissionAsked, GuardianMove.PermissionAnswered, GuardianMove.AskAgain,
@@ -176,7 +178,8 @@ internal class GuardianChoice(
         step.value = GuardianStep.Sending(guardian)
         val sent = sender.send(guardian.number, texts.setUp())
         val ok = sent?.let { withTimeoutOrNull(SEND_WAIT) { it.await() } } == true
-        step.value = if (ok) GuardianStep.Sent(guardian) else GuardianStep.NotSent(guardian)
+        // Said only if the screen still waits for this text: never over a later move.
+        step.compareAndSet(GuardianStep.Sending(guardian), if (ok) GuardianStep.Sent(guardian) else GuardianStep.NotSent(guardian))
     }
 
     private fun remove() {
