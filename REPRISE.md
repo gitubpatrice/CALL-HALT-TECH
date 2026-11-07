@@ -51,8 +51,19 @@ page restait dans la tâche du STOP, d'où elle revenait après le « Continuer 
 Android 15 et 16 (l'appel coupé avant la demande du code ; RustDesk désactivé en deux touches et une confirmation).
 **Trois relectures** (Claude justesse et sécurité, GPT 0,019 $) : aucune faille ; corrigés et mesurés, un second STOP
 perdu s'il arrivait pendant la demande du code (le SMS de code de l'escroc à ce moment-là) et l'écran recréé pendant
-cette demande (Android jette alors le rappel). **486 tests.** **Ensuite** : les audits vers 95/100 et la liste « avant
-toute publication ».
+cette demande (Android jette alors le rappel). **486 tests.**
+
+**Puis, le même jour : le premier audit de publication, appli entière** (`relectures/2026-11-07-audit-publication-1.md`).
+La grille du score (`docs/GRILLE-PUBLICATION.md`) est fixée et commitée **avant** le premier agent. Sécurité au palier
+profond (5 chercheurs, 3 vérificateurs adverses par candidat), faux positifs, faux négatifs, motifs de défaut, trois
+axes, cohérence, langues. **Un constat élevé, bloquant, mesuré (FN-1)** : après un redémarrage, un appel décroché avant
+le premier déverrouillage n'est pas vu (aucun composant n'est `directBootAware`, et rien ne relit l'état réel de
+l'appel, P-7) ; toute l'arnaque passe ensuite sans STOP, et l'escroc l'obtient d'une phrase (« éteignez et rallumez »).
+Mesuré aussi : 55 SMS de numéros distincts saturent Google Messages (plafond de 50 notifications d'Android) et cachent
+le code (N-3). Sécurité : 3 constats retenus sur 15 (le dernier écran perd « Retirer l'accès », N-1 ; une
+superposition, C-2 ; le canal Sécur'Pass imité, S-2). **18 / 100 avant corrections** ; environ 74 après les corrections
+techniques ; 95 avec les mesures sur de vrais téléphones et la relecture des natifs. **Ensuite** : FN-1, puis les
+corrections dans l'ordre du § 7 du rapport ; quatre décisions de Patrice (§ 6).
 
 ## Le 2026-11-05
 
