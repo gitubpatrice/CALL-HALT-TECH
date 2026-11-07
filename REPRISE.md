@@ -85,9 +85,13 @@ un « Raccrocher » échoué cachait les boutons du STOP suivant). **511 tests.*
 compte comme un message masqué, donc comme un code (elle laissait passer un code en silence) ; les réglages retombent sur
 les valeurs protectrices pour toute erreur ; l'écran du proche dit tout échec d'écriture au lieu de rester occupé ; le
 lanceur du STOP rattrape tout ce que `startActivity` lève, pour que la notification de repli prenne le relais. Relectures
-Claude et GPT Luna (0,013 $). **518 tests.** **Ensuite** : C2 (les tests du lanceur du STOP), M1 à M4 (la règle des codes
-hors du français, l'exemption de l'accessibilité) ; avec FN-4 (le STOP quitté revient une fois), traiter aussi la
-notification balayée (relecture Gemini, 3).
+Claude et GPT Luna (0,013 $). **518 tests.**
+
+**Puis C2** : le lanceur du STOP isolé d'Android (`ScreenStarter`, `StopNotice`), son code inchangé, et ses règles
+testées en temps virtuel (10 tests : l'écran attendu, la notification quand il est bloqué ou tout de suite sans
+l'affichage par-dessus, l'écran seul quand aucune notification ne part, la course R-02, les déclencheurs reportés).
+**527 tests.** **Ensuite** : M1 à M4 (la règle des codes hors du français, l'exemption de l'accessibilité) ; avec FN-4 (le
+STOP quitté revient une fois), traiter aussi la notification balayée (relecture Gemini, 3).
 
 ## Le 2026-11-05
 
@@ -386,7 +390,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 518 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 527 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
