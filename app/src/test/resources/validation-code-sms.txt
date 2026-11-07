@@ -202,3 +202,8 @@ W65|L|Vous pouvez donner procuration à une personne de votre choix pour retirer
 W66|L|Wir haben Ihre Karte mit Kartenendung 4821 gesperrt. Die neue PIN kommt per Post.
 W67|L|Ihre PIN wurde geändert. Kunden-Nr. 48291374
 W68|L|Your PIN has been changed. Customer No. 48291374
+
+# The external review (relectures/2026-11-07-gpt-regle-codes-langues.md): a Spanish date with its "de", a code after "code: No.".
+W53|C|Your verification code: No. 482913
+W69|L|Su PIN fue enviado el 12 de diciembre de 2026 por correo.
+W70|L|Recibirás tu nuevo PIN en diciembre de 2026.

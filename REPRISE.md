@@ -90,8 +90,15 @@ Claude et GPT Luna (0,013 $). **518 tests.**
 **Puis C2** : le lanceur du STOP isolé d'Android (`ScreenStarter`, `StopNotice`), son code inchangé, et ses règles
 testées en temps virtuel (10 tests : l'écran attendu, la notification quand il est bloqué ou tout de suite sans
 l'affichage par-dessus, l'écran seul quand aucune notification ne part, la course R-02, les déclencheurs reportés).
-**527 tests.** **Ensuite** : M1 à M4 (la règle des codes hors du français, l'exemption de l'accessibilité) ; avec FN-4 (le
-STOP quitté revient une fois), traiter aussi la notification balayée (relecture Gemini, 3).
+**527 tests.**
+
+**Puis M1 à M3, la règle des SMS de code hors du français** (D-021) : les nombres qui ne sont jamais un code, les
+autres sortes de code et les mises en garde sont lus en anglais, allemand, italien et espagnol ; « personne » ne
+refait un code que dans une mise en garde. La relecture Claude a mesuré que la première version perdait 49 vrais
+codes (« à aucune personne », le clavier du distributeur, « PIN No. 4821 »…) : rattrapés ; GPT Luna (0,024 $) a
+ajouté la date espagnole et son « de ». Corpus de 184 SMS, vert sur le JVM et sur l'émulateur API 36. **585 tests.**
+**Ensuite** : M4 (l'exemption de l'accessibilité) ; avec FN-4 (le STOP quitté revient une fois), traiter aussi la
+notification balayée (relecture Gemini, 3).
 
 ## Le 2026-11-05
 
@@ -390,7 +397,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 527 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 585 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
