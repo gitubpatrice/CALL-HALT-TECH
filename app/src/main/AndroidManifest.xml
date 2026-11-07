@@ -184,6 +184,7 @@
     <queries>
         <package android:name="com.google.android.marvin.talkback" />
         <package android:name="com.google.android.apps.accessibility.voiceaccess" />
+        <package android:name="com.google.android.accessibility.switchaccess" />
         <package android:name="com.android.systemui.accessibility.accessibilitymenu" />
         <package android:name="com.samsung.accessibility" />
         <package android:name="com.samsung.android.accessibility.talkback" />

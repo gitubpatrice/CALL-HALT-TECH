@@ -16,11 +16,13 @@ import com.filestech.callhalt.domain.model.SensitiveActionKind
  * `RemoteControlAppsTest` keeps both lists equal.
  *
  * Read on the S9 (`com.samsung.accessibility`, `com.samsung.android.bixby.agent`, `com.sec.android.app.camera`: SYSTEM)
- * and the Android 15 and 16 emulators (the accessibility menu, TalkBack).
+ * and the Android 15 and 16 emulators (the accessibility menu, TalkBack; Google's Switch Access, its own package on the
+ * Android 16 one, added after the GPT review of 2026-11-07).
  */
 internal val SYSTEM_ACCESSIBILITY_SUITES: Set<String> = setOf(
     "com.google.android.marvin.talkback",
     "com.google.android.apps.accessibility.voiceaccess",
+    "com.google.android.accessibility.switchaccess",
     "com.android.systemui.accessibility.accessibilitymenu",
     "com.samsung.accessibility",
     "com.samsung.android.accessibility.talkback",
@@ -32,9 +34,10 @@ internal val SYSTEM_ACCESSIBILITY_SUITES: Set<String> = setOf(
  * The signing certificates (SHA-256) of the phone's own features that a phone may not preinstall: Google's suites,
  * installed from Play on a Samsung, which preinstalls only its own (publication audit of 2026-11-07, M4, read on the S9).
  * Google signs each with two keys: the one of its copies on Play (APKMirror, several versions: TalkBack 15.0 to 16.2 by
- * "Google Eyes-Free Project", Voice Access 6.1 to 17.0 by "accessibility-voice-access"), and the one of the copies a
- * phone preinstalls (read with apksigner on the Android 16 emulator's; APKMirror lists both as valid). Samsung's features
- * have none here: every Samsung preinstalls them.
+ * "Google Eyes-Free Project", Voice Access 6.1 to 17.0 by "accessibility-voice-access", Switch Access 1.15 to 1.17 by
+ * Google's "Android"), and the one of the copies a phone preinstalls (read with apksigner on the Android 16 emulator's;
+ * APKMirror lists both as valid, and Switch Access's on Play too). Samsung's features have none here: every Samsung
+ * preinstalls them.
  */
 internal val SUITE_CERTIFICATES: Map<String, Set<String>> = mapOf(
     "com.google.android.marvin.talkback" to setOf(
@@ -44,6 +47,10 @@ internal val SUITE_CERTIFICATES: Map<String, Set<String>> = mapOf(
     "com.google.android.apps.accessibility.voiceaccess" to setOf(
         "7a425040828738d0fc0b93c16f3e4e4ac2aa49026100b2d01aebbc0b557d356e", // Play
         "d553b41c17aad365902adf609043a0f5af31634925e23cc6e750acb7ac056ca7", // preinstalled
+    ),
+    "com.google.android.accessibility.switchaccess" to setOf(
+        "8d1c9c4347bbccbe0f477f803fe3c83deb6272d871332c2d62c547aead7ebc96", // Play
+        "eb9bab3f0476c400260f1ac8074ee564bd896af47640f93f8eb8ac831aaa8401", // preinstalled, and Play
     ),
 )
 
