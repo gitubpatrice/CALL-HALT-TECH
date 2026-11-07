@@ -28,9 +28,9 @@ class StopLayoutTest {
         assertThat(placement.order).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8).inOrder()
         assertThat(placement.height).isEqualTo(1_000)
         // The texts from the top, 12 apart.
-        assertThat(placement.ys.take(6)).containsExactly(0, 102, 234, 296, 368, 420).inOrder()
+        assertThat(placement.tops.take(6)).containsExactly(0, 102, 234, 296, 368, 420).inOrder()
         // "Continue" against the bottom, the buttons above it, 16 apart.
-        assertThat(placement.ys.drop(6)).containsExactly(1_000 - 40 - 16 - 56 - 16 - 56, 1_000 - 40 - 16 - 56, 960).inOrder()
+        assertThat(placement.tops.drop(6)).containsExactly(1_000 - 40 - 16 - 56 - 16 - 56, 1_000 - 40 - 16 - 56, 960).inOrder()
     }
 
     @Test
@@ -44,8 +44,9 @@ class StopLayoutTest {
         val placement = stopPlacement(parts, heights, available = asTall - 1, TEXT, GROUP)
 
         assertThat(placement.order).containsExactly(0, 1, 2, 6, 7, 3, 4, 5, 8).inOrder()
-        // One after the other, the whole screen scrolling: a text after a button is a group's gap away.
-        assertThat(placement.ys).containsExactly(0, 102, 234, 300, 372, 444, 516, 568, 664).inOrder()
+        // One after the other, the whole screen scrolling: a text after a button is a group's gap away. Each piece's
+        // top, in the pieces' own order: the buttons (6, 7) above the explanation (3, 4, 5).
+        assertThat(placement.tops).containsExactly(0, 102, 234, 444, 516, 568, 300, 372, 664).inOrder()
         assertThat(placement.height).isEqualTo(704)
     }
 
@@ -61,7 +62,7 @@ class StopLayoutTest {
     fun `with no safe button, Continue alone is at the bottom`() {
         val placement = stopPlacement(listOf(MESSAGE, EXPLANATION, CONTINUE), listOf(100, 100, 40), 1_000, TEXT, GROUP)
 
-        assertThat(placement.ys).containsExactly(0, 112, 960).inOrder()
+        assertThat(placement.tops).containsExactly(0, 112, 960).inOrder()
     }
 
     /** The demonstration's banner is one more message, first: it stays first, the buttons still under the warning. */
@@ -96,8 +97,9 @@ class StopLayoutTest {
             val placement = stopPlacement(parts, sizes, available = random.nextInt(0, 3_000), TEXT, GROUP)
 
             assertThat(placement.order.sorted()).isEqualTo(parts.indices.toList())
-            val spans = placement.order.mapIndexed { at, index -> placement.ys[at] to placement.ys[at] + sizes[index] }
-                .sortedBy { it.first }
+            // The order top to bottom is the order of the tops.
+            assertThat(placement.order.map { placement.tops[it] }).isInOrder()
+            val spans = placement.order.map { placement.tops[it] to placement.tops[it] + sizes[it] }
             spans.zipWithNext().forEach { (above, below) -> assertThat(below.first).isAtLeast(above.second) }
             assertThat(spans.first().first).isAtLeast(0)
             assertThat(spans.last().second).isAtMost(placement.height)

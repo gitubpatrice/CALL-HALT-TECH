@@ -160,6 +160,15 @@ AnyDesk, D-026) et la relecture par des natifs.
 Pour le n° 5, « achat » et « paiement » restent tels quels (côté protecteur, ils gardent de vrais codes de paiement ;
 mon choix technique) ; les mots des textes viendront avec leurs corrections.
 
+**Tranché par Patrice le 2026-11-07, plus tard** (les quatre recommandés) :
+- FN-4 : le SMS « l'écran STOP a été quitté sans réponse » ne part que si le **retour** du STOP est ignoré lui
+  aussi (quitter pour raccrocher depuis l'écran d'appel est un geste ordinaire).
+- E-1 : sur l'accueil, « Un appel sur votre téléphone fixe n'est pas vu. Si, au fixe, on vous demande un code
+  reçu par SMS, c'est une arnaque : raccrochez. » ; README et PROJET reprennent l'idée.
+- Le premier SMS au proche perd « Il ne vous envoie rien d'autre. »
+- FN-2 : sur l'accueil, « Votre appli SMS cache le texte des messages dans ses notifications : un code reçu par
+  SMS n'est pas vu. Dans ses réglages, affichez l'aperçu des messages. »
+
 ## 7. Plan
 
 1. **Avant tout** : FN-1 (bloquant), puis N-1, C1, #4, M1 à M4.
