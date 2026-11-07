@@ -316,7 +316,7 @@ L'étape suivante prévue ce soir-là (l'activation sur le S24 FE, puis un vrai 
 P-21 (la mise en veille de Samsung sur plusieurs jours : en observation sur le S24), P-3 (la source
 d'une installation par F-Droid, lue dans son code : « boutique » dans le cas courant, à mesurer une fois publiée), l'écran d'appel qui repasse devant le STOP après un redémarrage d'Android seul (D-026,
 observé), les deux SIM (Patrice : « plus tard ce sera possible »), la relecture des traductions par des natifs, les audits
-(95/100, D-016).
+(95/100, D-016 ; la grille, fixée le 2026-11-07 avant le premier audit : `docs/GRILLE-PUBLICATION.md`).
 
 Trust Code Tech : **pas arrêtée**, Patrice veut en reparler (`J:\applications\trust_code_tech\PROJET.md`).
 
