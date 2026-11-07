@@ -125,8 +125,18 @@ le disent ; « Il ne vous envoie rien d'autre » retiré. Relectures Claude et G
 à la place de chaque message ; l'appli le reconnaît sur un message reçu, garde le nom de l'appli (jamais le
 texte), et l'accueil le dit en gras tant qu'elle est l'appli SMS par défaut, avec ce qu'il faut faire. Mesuré
 sur l'émulateur avec SMS Tech (masqué, rétabli, changement d'appli, écouteur reconnecté). Relectures Claude
-(3 réels) et GPT Luna (0,013 $). **607 tests.** **Ensuite** : FN-4 (et la notification balayée, relecture
-Gemini, 3), FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer.
+(3 réels) et GPT Luna (0,013 $). **607 tests.**
+
+**Puis FN-4, un STOP quitté revient une fois, puis le proche est prévenu** (D-038) — **sur la branche
+`fix/stop-comes-back`, poussée, PAS encore fusionnée** (Patrice : « après les corrections on s'arrête »).
+Fait : les règles (`StopReturns`), la table `stop_return` (migration 2 → 3), les réveils enfin exécutés
+(`ProcessWakeUps`, réarmés au démarrage), la notification balayée (`StopNotificationSwiped`), le SMS « quitté
+sans réponse » (5 langues) ; mesuré sur l'émulateur Android 16 (retour 15 s après, SMS au balayage ; raccroché
+→ rien) ; relecture Claude (1 grave et 4 réels corrigés, `relectures/2026-11-07-claude-stop-revient.md`) ; gate
+vert, **628 tests**. **À faire en reprenant** : (1) la relecture externe (GPT `gpt-5.6-sol`, code critique :
+moteur et base) ; (2) mesurer que **toucher** la notification revenue n'envoie pas de SMS ; (3) les tests de
+stockage sur l'émulateur (migration) après les corrections ; (4) README de relectures, PR, CI, fusion.
+**Ensuite** : FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer.
 
 ## Le 2026-11-05
 
@@ -425,7 +435,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 607 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 607 tests sur ordinateur (628 sur la branche FN-4), 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

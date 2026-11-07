@@ -413,6 +413,77 @@ class DetectionEngineTest {
             assertThat(steps.last().state.stopReturns).isEmpty()
         }
 
+        /** A call over 2 s before the STOP was left was not hung up by leaving it (review of 2026-11-07, 4). */
+        @Test
+        fun `a call over just before the screen was left is no hang-up - it comes back`() {
+            val steps = run(
+                fromContact(),
+                CallEnded(at(1), CallChannel.CELLULAR),
+                action(code, minutes = 1, seconds = 1),
+                left(1, 2),
+                Tick(at(1, 17)),
+            )
+
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>().single().returning).isTrue()
+        }
+
+        /** The process killed, the wake-up lost: a return found much later is dropped, without a STOP (review, 2). */
+        @Test
+        fun `a return due long ago is dropped without a STOP`() {
+            val late = at(1, 21).plus(DetectionEngine.RETURN_LATE_LIMIT)
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(late), settings = withGuardian)
+
+            assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        @Test
+        fun `a return back long ago and found much later tells nobody`() {
+            val late = at(1, 21).plus(DetectionEngine.RETURN_ANSWER_WAIT).plus(DetectionEngine.RETURN_LATE_LIMIT)
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 20)), Tick(late), settings = withGuardian)
+
+            assertThat(told(steps)).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+            assertThat(steps.last().state.pendingStops).isEmpty()
+        }
+
+        /** Left just after a call, then another call starts: the STOP of the first does not come back over the second. */
+        @Test
+        fun `another call going on when it is due, it does not come back`() {
+            val steps = run(
+                fromContact(),
+                CallEnded(at(1), CallChannel.CELLULAR),
+                action(code, minutes = 1, seconds = 2),
+                left(1, 4),
+                CallStarted(at(1, 10), CallChannel.CELLULAR, CallDirection.INCOMING, contact),
+                Tick(at(1, 19)),
+            )
+
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>()).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        /** Back, it absorbs the burst of its trigger like any STOP shown: one screen, not five. */
+        @Test
+        fun `back, it absorbs a burst of its trigger`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 20)), action(code, minutes = 1, seconds = 30))
+
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>()).isEmpty()
+        }
+
+        @Test
+        fun `protection turned off meanwhile, nothing comes back`() {
+            var state = DetectorState()
+            listOf(fromContact(), action(code, minutes = 1), left(1, 5)).forEach { signal ->
+                state = engine.process(state, signal, withGuardian).state
+            }
+
+            val off = engine.process(state, Tick(at(1, 20)), withGuardian.copy(enabled = false))
+
+            assertThat(off.decisions).isEmpty()
+            assertThat(off.state.stopReturns).isEmpty()
+        }
+
         @Test
         fun `without a relative set up, it still comes back and nobody is texted`() {
             val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 20)), left(1, 30))

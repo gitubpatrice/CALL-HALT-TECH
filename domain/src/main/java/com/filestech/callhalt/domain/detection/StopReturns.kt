@@ -2,7 +2,7 @@ package com.filestech.callhalt.domain.detection
 
 import com.filestech.callhalt.domain.detection.DetectionEngine.Companion.RETURN_ANSWER_WAIT
 import com.filestech.callhalt.domain.detection.DetectionEngine.Companion.RETURN_DELAY
-import com.filestech.callhalt.domain.detection.DetectionEngine.Companion.SIGNAL_CLOCK_TOLERANCE
+import com.filestech.callhalt.domain.detection.DetectionEngine.Companion.RETURN_LATE_LIMIT
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
@@ -59,22 +59,30 @@ internal object StopReturns {
 
     /**
      * The returns due at [at]. A STOP left [RETURN_DELAY] ago comes back once, by its full-screen notification — unless
-     * the call it stood for ended since it was left (the user went to hang up: no alarm for that), or the window of the
-     * call is over. Back and still unanswered [RETURN_ANSWER_WAIT] later, the relative is told. Not due yet (a wake-up
-     * that came early): asked again for its own time.
+     * the call it stood for ended since it was left (the user went to hang up: no alarm for that), or that call's window
+     * is over, or another call is now going on. Back and still unanswered [RETURN_ANSWER_WAIT] later, the relative is
+     * told. Not due yet (a wake-up that came early): asked again for its own time. Due long ago — more than
+     * [RETURN_LATE_LIMIT] late: the process was killed, or the phone slept through the wait — it is dropped, without a
+     * STOP nor a text: hours later, both would speak of a call that is no longer the one (review of 2026-11-07, 2).
      */
     fun due(state: DetectorState, at: Moment, settings: ProtectionSettings): Evaluation {
         var next = state
         val decisions = mutableListOf<Decision>()
         state.stopReturns.forEach { (trigger, back) ->
             val returnedAt = back.returnedAt
+            val dueAt = returnedAt?.plus(RETURN_ANSWER_WAIT) ?: back.leftAt.plus(RETURN_DELAY)
             when {
-                returnedAt != null && !at.isBefore(returnedAt.plus(RETURN_ANSWER_WAIT)) -> {
+                at.isBefore(dueAt) -> decisions += Decision.ScheduleTick(dueAt)
+                at.isAfter(dueAt.plus(RETURN_LATE_LIMIT)) -> next = next.copy(
+                    pendingStops = if (returnedAt != null) next.pendingStops - trigger else next.pendingStops,
+                    stopReturns = next.stopReturns - trigger,
+                )
+                returnedAt != null -> {
                     next = next.copy(pendingStops = next.pendingStops - trigger, stopReturns = next.stopReturns - trigger)
                     decisions += told(state, trigger, at, settings)
                 }
-                returnedAt == null && !at.isBefore(back.leftAt.plus(RETURN_DELAY)) -> {
-                    val call = CallWindow.callAt(state, at, settings.afterCallWindow)
+                else -> {
+                    val call = CallWindow.callAt(state, at, settings.afterCallWindow)?.takeUnless { it.startedAt.isAfter(back.leftAt) }
                     if (hungUpSince(state, back.leftAt, at) || call == null) {
                         next = next.copy(stopReturns = next.stopReturns - trigger)
                     } else {
@@ -86,7 +94,6 @@ internal object StopReturns {
                         decisions += Decision.ScheduleTick(at.plus(RETURN_ANSWER_WAIT))
                     }
                 }
-                else -> decisions += Decision.ScheduleTick(returnedAt?.plus(RETURN_ANSWER_WAIT) ?: back.leftAt.plus(RETURN_DELAY))
             }
         }
         return Evaluation(next, decisions = decisions)
@@ -99,12 +106,13 @@ internal object StopReturns {
         return listOf(Decision.NotifyGuardian(GuardianEvent.StopLeft(trigger, duringCall)))
     }
 
-    /** A call that was going on when the STOP was left, at [leftAt], and has ended since: the user hung up. */
+    /**
+     * A call that was going on when the STOP was left, at [leftAt], and has ended since: the user hung up. Since, not a
+     * moment before: a call over before the STOP showed (a code just after it) was not hung up by leaving it (review of
+     * 2026-11-07, 4).
+     */
     private fun hungUpSince(state: DetectorState, leftAt: Moment, at: Moment): Boolean = state.calls.values.any { call ->
         val end = call.endedAt
-        end != null &&
-            !call.startedAt.isAfter(leftAt) &&
-            !end.isBefore(leftAt.minus(SIGNAL_CLOCK_TOLERANCE)) &&
-            !end.isAfter(at)
+        end != null && !call.startedAt.isAfter(leftAt) && !end.isBefore(leftAt) && !end.isAfter(at)
     }
 }

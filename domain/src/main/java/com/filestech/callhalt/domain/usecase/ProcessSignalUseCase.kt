@@ -79,11 +79,27 @@ class ProcessSignalUseCase(
             throw cancelled
         } catch (failure: Exception) {
             // The executor throws only when a STOP could not be shown (its contract): each one goes back to
-            // the engine, which re-arms its trigger and journals it as not shown. Then the caller learns it.
-            decisions.filterIsInstance<Decision.ShowStop>().forEach { stop ->
+            // the engine, which re-arms its trigger and journals it as not shown — and, for a STOP coming back (FN-4),
+            // tells the relative, which is carried out here (review of 2026-11-07, 1: it was dropped). Then the caller
+            // learns it.
+            val notShown = decisions.filterIsInstance<Decision.ShowStop>().flatMap { stop ->
                 store.apply { state -> engine.process(state, StopNotShown(signal.at, stop.trigger), current) }
             }
+            carryOut(notShown.filterNot { it is Decision.ShowStop })
             throw failure
+        }
+    }
+
+    /** What a STOP not shown calls for; a failure there must not hide the one being reported. */
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    private suspend fun carryOut(decisions: List<Decision>) {
+        if (decisions.isEmpty()) return
+        try {
+            executor.execute(decisions)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failed: Exception) {
+            // The STOP's own failure is thrown just after: the adapter logs it.
         }
     }
 }

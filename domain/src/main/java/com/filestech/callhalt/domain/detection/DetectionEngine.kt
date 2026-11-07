@@ -252,8 +252,15 @@ class DetectionEngine {
         /** How long a STOP that came back may wait for an answer before the relative is told (FN-4). */
         val RETURN_ANSWER_WAIT: Duration = Duration.ofMinutes(RETURN_ANSWER_WAIT_MINUTES)
 
+        /**
+         * How late a return may still come (FN-4): a phone that slept through the wait wakes a few minutes after it.
+         * Later — the process killed, the wake-up lost — it is dropped: it would speak of a call that is over.
+         */
+        val RETURN_LATE_LIMIT: Duration = Duration.ofMinutes(RETURN_LATE_LIMIT_MINUTES)
+
         private const val RETURN_DELAY_SECONDS = 15L
         private const val RETURN_ANSWER_WAIT_MINUTES = 2L
+        private const val RETURN_LATE_LIMIT_MINUTES = 15L
 
         /**
          * How far before a call's start its end may be stamped and still be ITS end: two signals stamped by the

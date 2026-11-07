@@ -1,6 +1,8 @@
 package com.filestech.callhalt
 
 import android.app.Application
+import com.filestech.callhalt.platform.PhoneClock
+import com.filestech.callhalt.platform.WakeUps
 import com.filestech.callhalt.platform.accessibility.AccessibilitySensor
 import com.filestech.callhalt.platform.install.InstallSensor
 import com.filestech.callhalt.platform.power.ShutdownSensor
@@ -30,6 +32,11 @@ class CallHaltApplication : Application() {
     /** As cheap: the queue, the clock, the phone's call state, and a provider resolved in the queue. */
     @Inject lateinit var callStateAtStart: CallStateAtStart
 
+    /** As cheap: a scope, the queue, the clock, and a provider resolved in the queue. */
+    @Inject lateinit var wakeUps: WakeUps
+
+    @Inject lateinit var clock: PhoneClock
+
     override fun onCreate() {
         super.onCreate()
         // Debug builds only. A release plants no tree, so no log line — which could name a number that
@@ -45,5 +52,8 @@ class CallHaltApplication : Application() {
         accessibilitySensor.register(this)
         // And the call going on now, which no broadcast may have told: answered before the first unlock (FN-1, P-7).
         callStateAtStart.check()
+        // And the wake-ups a killed process lost (FN-4, D-038): one now, after the call state, so that the STOP screens
+        // left are looked at again — due back still, asked again for their time, or too late, dropped.
+        wakeUps.at(clock.now())
     }
 }

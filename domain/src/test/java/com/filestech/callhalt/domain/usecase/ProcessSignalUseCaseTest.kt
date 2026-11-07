@@ -9,11 +9,15 @@ import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.model.CallStarted
 import com.filestech.callhalt.domain.model.Counterpart
 import com.filestech.callhalt.domain.model.Decision
+import com.filestech.callhalt.domain.model.GuardianEvent
 import com.filestech.callhalt.domain.model.JournalEntry
 import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopAnswered
+import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.model.Tick
 import com.filestech.callhalt.domain.port.DecisionExecutor
 import com.filestech.callhalt.domain.port.DetectorStore
 import com.filestech.callhalt.domain.port.LiveCallSource
@@ -115,6 +119,27 @@ class ProcessSignalUseCaseTest {
             JournalEntry.NotShown::class,
             JournalEntry.Stop::class,
         ).inOrder()
+    }
+
+    /** FN-4: a STOP coming back whose notification is refused — the relative told, carried out (review of 2026-11-07, 1). */
+    @Test
+    fun `a returning STOP that cannot be shown has the relative told, and is still reported`() = runTest {
+        val executed = mutableListOf<Decision>()
+        val process = useCase(settings = SettingsSource { ProtectionSettings(guardianAlerts = true) }) { decisions ->
+            check(decisions.none { it is Decision.ShowStop && it.returning }) { "its notification refused" }
+            executed += decisions
+        }
+        process(CallStarted(t0, CallChannel.CELLULAR, CallDirection.INCOMING, contact))
+        process(SensitiveAction(t0.plusSeconds(60), SensitiveActionKind.CODE_MESSAGE))
+        process(StopAnswered(t0.plusSeconds(65), SensitiveActionKind.CODE_MESSAGE, StopChoice.LEFT))
+        executed.clear()
+
+        val failure = runCatching { process(Tick(t0.plusSeconds(65).plus(DetectionEngine.RETURN_DELAY))) }.exceptionOrNull()
+
+        assertThat(failure).isInstanceOf(IllegalStateException::class.java)
+        assertThat(executed).containsExactly(
+            Decision.NotifyGuardian(GuardianEvent.StopLeft(SensitiveActionKind.CODE_MESSAGE, duringCall = true)),
+        )
     }
 
     @Test
