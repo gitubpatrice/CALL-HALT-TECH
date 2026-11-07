@@ -25,8 +25,11 @@ internal enum class StopPart {
     CONTINUE,
 }
 
-/** Where each piece goes: [order] of the pieces given, top to bottom, at [ys]; the whole [height] tall. */
-internal data class StopPlacement(val order: List<Int>, val ys: List<Int>, val height: Int)
+/**
+ * Where each piece goes: [tops], one per piece, in the pieces' own order (so that placing piece i at `tops[i]` cannot
+ * pick another's place); [order], the pieces top to bottom; the whole [height] tall.
+ */
+internal data class StopPlacement(val tops: List<Int>, val order: List<Int>, val height: Int)
 
 /**
  * The STOP screen's arrangement (publication audit of 2026-11-07, U2), from the [parts] in their reading order and
@@ -50,17 +53,19 @@ internal fun stopPlacement(
         order.sumOf { heights[it] } + order.zipWithNext { a, b -> gap(parts[a], parts[b]) }.sum()
 
     val asRead = parts.indices.toList()
+    val tops = IntArray(parts.size)
+    fun stackAt(order: List<Int>, from: Int) =
+        stack(order, from, heights, parts, ::gap).forEachIndexed { at, y -> tops[order[at]] = y }
     if (length(asRead) <= available) {
         val bottom = asRead.filter { parts[it] == StopPart.BUTTON || parts[it] == StopPart.CONTINUE }
-        val top = asRead - bottom.toSet()
-        val ys = IntArray(parts.size)
-        stack(top, from = 0, heights, parts, ::gap).forEachIndexed { at, y -> ys[top[at]] = y }
-        stack(bottom, from = available - length(bottom), heights, parts, ::gap).forEachIndexed { at, y -> ys[bottom[at]] = y }
-        return StopPlacement(asRead, asRead.map { ys[it] }, available)
+        stackAt(asRead - bottom.toSet(), from = 0)
+        stackAt(bottom, from = available - length(bottom))
+        return StopPlacement(tops.toList(), asRead, available)
     }
     val compact = listOf(StopPart.MESSAGE, StopPart.BUTTON, StopPart.EXPLANATION, StopPart.CONTINUE)
         .flatMap { part -> asRead.filter { parts[it] == part } }
-    return StopPlacement(compact, stack(compact, from = 0, heights, parts, ::gap), length(compact))
+    stackAt(compact, from = 0)
+    return StopPlacement(tops.toList(), compact, length(compact))
 }
 
 /** The tops of the pieces of [order], stacked from [from] down, each followed by its gap to the next. */
@@ -100,7 +105,7 @@ internal fun StopLayout(modifier: Modifier = Modifier, content: @Composable () -
             // Unbounded width (a preview in a horizontal list): as wide as the widest piece.
             val width = if (constraints.hasBoundedWidth) constraints.maxWidth else placeables.maxOfOrNull { it.width } ?: 0
             layout(width, placement.height) {
-                placement.order.forEachIndexed { at, index -> placeables[index].place(0, placement.ys[at]) }
+                placeables.forEachIndexed { index, piece -> piece.place(0, placement.tops[index]) }
             }
         }
     }

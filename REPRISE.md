@@ -102,9 +102,21 @@ ajouté la date espagnole et son « de ». Corpus de 184 SMS, vert sur le JVM et
 plus seulement préinstallée. Google signe chaque suite de deux clés, celle de Play et celle des copies
 préinstallées ; la première version ne portait que la seconde (la relecture Claude a demandé une source
 indépendante, APKMirror l'a montré). GPT Luna (0,014 $) a trouvé Switch Access, paquet à part, qui faisait un STOP
-même préinstallé. Mesuré sur les émulateurs Android 15 (sans Google) et 16. **592 tests.** **Ensuite** : FN-4 (le
-STOP quitté revient une fois ; traiter aussi la notification balayée, relecture Gemini, 3), FN-3, N-3, l'écran
-Historique, U1 à U4 ; les mots d'E-1, E-2, FN-2 et du premier SMS au proche sont à Patrice.
+même préinstallé. Mesuré sur les émulateurs Android 15 (sans Google) et 16. **592 tests.**
+
+**Puis U1 à U4, l'écran STOP lisible à toute taille de police et senti à l'oreille** (D-036) : à 200 %, le
+premier écran montre le message entier et les boutons sûrs (avant : coupé à « Si on vous dit d'ignorer ») ;
+l'état des accès sous leur titre ; une bordure visible aux boutons secondaires ; deux vibrations brèves à
+l'ouverture, avec la permission `VIBRATE` (le retour haptique sans permission se tait quand la vibration au toucher
+est coupée, comme sur le S9 — mesuré). Relectures Claude et GPT Luna (0,017 $). **600 tests.**
+
+**Mots tranchés par Patrice le 2026-11-07** (les quatre recommandés) : FN-4, le SMS « quitté sans réponse » ne
+part que si le retour du STOP est ignoré lui aussi ; E-1, sur l'accueil « Un appel sur votre téléphone fixe
+n'est pas vu. Si, au fixe, on vous demande un code reçu par SMS, c'est une arnaque : raccrochez. » ; le premier
+SMS au proche perd « Il ne vous envoie rien d'autre. » ; FN-2, sur l'accueil « Votre appli SMS cache le texte
+des messages dans ses notifications : un code reçu par SMS n'est pas vu. Dans ses réglages, affichez l'aperçu
+des messages. » **Ensuite** : ces textes, FN-4 (et la notification balayée, relecture Gemini, 3), FN-3, N-3,
+l'écran Historique ; les mots d'E-2 (README) restent à proposer.
 
 ## Le 2026-11-05
 
@@ -403,7 +415,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 592 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 600 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
