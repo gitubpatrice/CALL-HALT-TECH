@@ -94,9 +94,13 @@
     <string name="stop_advice_after_call">No haga lo que le han pedido. Llame directamente a un número que conozca: el de su tarjeta o el de una carta, nunca el que le hayan dado.</string>
     <string name="stop_advice_remote_on_call">Cuelgue y apague su teléfono: alguien podría estar viéndolo o controlándolo. Después avise a su banco, desde otro teléfono si es posible, al número de su tarjeta.</string>
     <string name="stop_advice_remote_after_call">Apague su teléfono: alguien podría estar viéndolo o controlándolo. Después avise a su banco, desde otro teléfono si es posible, al número de su tarjeta.</string>
+    <string name="stop_advice_accessibility_on_call">Cuelgue y retire este acceso: en la página «Accesibilidad» de los ajustes, toque la app y desactívela. Después apague su teléfono: alguien podría estar viéndolo o controlándolo. Avise a su banco, desde otro teléfono si es posible, al número de su tarjeta.</string>
+    <string name="stop_advice_accessibility_after_call">Retire este acceso: en la página «Accesibilidad» de los ajustes, toque la app y desactívela. Después apague su teléfono: alguien podría estar viéndolo o controlándolo. Avise a su banco, desde otro teléfono si es posible, al número de su tarjeta.</string>
     <string name="stop_hang_up">Colgar</string>
     <string name="stop_hang_up_and_call_my_bank">Colgar y llamar a mi banco</string>
     <string name="stop_call_my_bank">Llamar a mi banco</string>
+    <string name="stop_remove_access">Retirar el acceso</string>
+    <string name="stop_hang_up_and_remove_access">Colgar y retirar el acceso</string>
     <string name="stop_continue">Continuar</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continuar (en %1$d segundo)</item>

@@ -51,7 +51,7 @@ const val CONTINUE_DELAY_SECONDS = 10
  * The same composable serves the demonstration ([demo] = true, nothing happened) and, once the adapters
  * exist, the real interruption shown by its own Activity — never an overlay window, which a banking app
  * hides (docs/ARCHITECTURE.md, D-006). What each choice DOES (hang up, dial the bank once the call has
- * ended) belongs to that host, not to this screen.
+ * ended, open the accessibility settings) belongs to that host, not to this screen.
  *
  * The texts scroll; the buttons stay at the bottom, in sight whatever the length of the texts and the size
  * of the font.
@@ -121,22 +121,20 @@ fun StopScreen(
             Text(text = stringResource(text.advice), color = OnStop, style = MaterialTheme.typography.bodyLarge)
         }
 
-        // The first button is the safe way out: hang up while the app can, otherwise call the bank — and neither
-        // during a call the app cannot end (the advice then says to hang up).
-        val callMyBank = text.callMyBank
-        if (text.offerHangUp) {
-            StopFilledButton(R.string.stop_hang_up) { onAnswer(StopChoice.HANG_UP) }
-            callMyBank?.let { label ->
+        // The safe ways out (StopText.buttons), the most protective first and filled; none during a call the app
+        // cannot end (the advice then says to hang up).
+        text.buttons.forEachIndexed { index, button ->
+            if (index == 0) {
+                StopFilledButton(button.label) { onAnswer(button.choice) }
+            } else {
                 OutlinedButton(
-                    onClick = { onAnswer(StopChoice.CALL_MY_BANK) },
+                    onClick = { onAnswer(button.choice) },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = OnStop),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    StopButtonLabel(label)
+                    StopButtonLabel(button.label)
                 }
             }
-        } else {
-            callMyBank?.let { label -> StopFilledButton(label) { onAnswer(StopChoice.CALL_MY_BANK) } }
         }
         TextButton(
             onClick = { onAnswer(StopChoice.CONTINUE) },

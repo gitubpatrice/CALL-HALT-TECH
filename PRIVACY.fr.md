@@ -14,9 +14,9 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   que vous utilisez — celle de votre banque comprise — quand une action à risque arrive pendant un appel.
   L'appli ne dessine aucune fenêtre par-dessus les autres : l'écran STOP est un écran entier, à part, exclu des
   captures d'écran et du partage d'écran.
-- **Répondre aux appels** (`ANSWER_PHONE_CALLS`) : seulement pour mettre fin à l'appel quand vous appuyez sur
-  « Raccrocher », ou « Raccrocher et appeler ma banque », dans l'écran STOP. Sans elle, aucun de ces deux
-  boutons n'apparaît pendant un appel. L'appli ne décroche et ne passe jamais d'appel d'elle-même : « appeler
+- **Répondre aux appels** (`ANSWER_PHONE_CALLS`) : seulement pour mettre fin à l'appel quand vous appuyez, dans
+  l'écran STOP, sur « Raccrocher », « Raccrocher et appeler ma banque » ou « Raccrocher et retirer l'accès ». Sans
+  elle, aucun de ces boutons n'apparaît pendant un appel. L'appli ne décroche et ne passe jamais d'appel d'elle-même : « appeler
   ma banque » ouvre le clavier du téléphone, et c'est vous qui appelez.
 - **Demander à fonctionner en arrière-plan sans restriction** (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`) : seulement
   pour afficher, pendant l'activation, la question du téléphone « Toujours autoriser en arrière-plan ? ». Une appli de

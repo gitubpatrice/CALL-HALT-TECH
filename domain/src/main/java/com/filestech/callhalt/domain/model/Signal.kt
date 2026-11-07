@@ -98,6 +98,12 @@ enum class SensitiveActionKind {
 enum class StopChoice {
     HANG_UP,
     CALL_MY_BANK,
+
+    /**
+     * After an app was given the accessibility access: the phone's accessibility page opens, where the user turns the
+     * app off — the app cannot do it itself (docs/ARCHITECTURE.md, D-033). During a call, the call ends first.
+     */
+    REMOVE_ACCESS,
     CONTINUE,
 
     /**

@@ -69,7 +69,8 @@ pas la prise de contrôle). Dans les minutes qui suivent l'appel : « Votre appe
 « Ne faites pas ce qu'on vous a demandé ».
 Boutons : **Raccrocher** (appel téléphonique en cours seulement ; pas sur WhatsApp, qu'Android ne sait pas
 raccrocher) · **Raccrocher et appeler ma banque**, puis **Appeler ma banque** après l'appel (numéro officiel
-saisi depuis la carte) · **Continuer** (actif après 10 s). En option : **SMS à un proche**.
+saisi depuis la carte) · **Continuer** (actif après 10 s). Après qu'une appli a reçu l'accès « accessibilité » :
+**Raccrocher et retirer l'accès**, puis **Retirer l'accès** après l'appel (la page Accessibilité des réglages). En option : **SMS à un proche**.
 
 Ça ne bloque rien : c'est une pause au bon moment, avec la seule vérification fiable au téléphone —
 raccrocher et rappeler soi-même.

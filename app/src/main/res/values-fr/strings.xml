@@ -93,9 +93,13 @@
     <string name="stop_advice_after_call">Ne faites pas ce qu\'on vous a demandé. Appelez vous-même un numéro que vous connaissez : celui de votre carte ou d\'un courrier, jamais celui qu\'on vous a donné.</string>
     <string name="stop_advice_remote_on_call">Raccrochez et éteignez votre téléphone : quelqu\'un le voit ou le contrôle peut-être. Prévenez ensuite votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
     <string name="stop_advice_remote_after_call">Éteignez votre téléphone : quelqu\'un le voit ou le contrôle peut-être. Prévenez ensuite votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
+    <string name="stop_advice_accessibility_on_call">Raccrochez et retirez cet accès : dans la page «\u00A0Accessibilité\u00A0» des réglages, touchez l\'appli, puis désactivez-la. Éteignez ensuite votre téléphone : quelqu\'un le voit ou le contrôle peut-être. Prévenez votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
+    <string name="stop_advice_accessibility_after_call">Retirez cet accès : dans la page «\u00A0Accessibilité\u00A0» des réglages, touchez l\'appli, puis désactivez-la. Éteignez ensuite votre téléphone : quelqu\'un le voit ou le contrôle peut-être. Prévenez votre banque, d\'un autre téléphone si possible, au numéro de votre carte.</string>
     <string name="stop_hang_up">Raccrocher</string>
     <string name="stop_hang_up_and_call_my_bank">Raccrocher et appeler ma banque</string>
     <string name="stop_call_my_bank">Appeler ma banque</string>
+    <string name="stop_remove_access">Retirer l\'accès</string>
+    <string name="stop_hang_up_and_remove_access">Raccrocher et retirer l\'accès</string>
     <string name="stop_continue">Continuer</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continuer (dans %1$d seconde)</item>

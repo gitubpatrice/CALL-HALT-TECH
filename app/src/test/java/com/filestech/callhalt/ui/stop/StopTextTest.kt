@@ -3,6 +3,7 @@ package com.filestech.callhalt.ui.stop
 import com.filestech.callhalt.R
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopChoice
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
@@ -16,17 +17,26 @@ class StopTextTest {
         SensitiveActionKind.ACCESSIBILITY_ENABLED,
     )
 
+    private val access = SensitiveActionKind.ACCESSIBILITY_ENABLED
+
+    /** Each button ends the call first; after an accessibility access, removing it replaces the plain "Hang up" (D-033). */
     @Test
-    fun `during a cellular call the app may end, it says so and offers to hang up first`() {
+    fun `during a cellular call the app may end, it says so and every button hangs up first`() {
         SensitiveActionKind.entries.forEach { trigger ->
             val text = stopText(trigger, onCall = true, CallChannel.CELLULAR, canEndCall = true)
+            val first = if (trigger == access) {
+                StopButton(R.string.stop_hang_up_and_remove_access, StopChoice.REMOVE_ACCESS)
+            } else {
+                StopButton(R.string.stop_hang_up, StopChoice.HANG_UP)
+            }
             assertWithMessage(trigger.name).that(text.situation).isEqualTo(R.string.stop_on_call)
-            assertWithMessage(trigger.name).that(text.offerHangUp).isTrue()
-            assertWithMessage(trigger.name).that(text.callMyBank).isEqualTo(R.string.stop_hang_up_and_call_my_bank)
+            assertWithMessage(trigger.name).that(text.buttons)
+                .containsExactly(first, StopButton(R.string.stop_hang_up_and_call_my_bank, StopChoice.CALL_MY_BANK))
+                .inOrder()
         }
     }
 
-    /** Whatever the channel and the permission: once the call is over, calling the bank is safe. */
+    /** Whatever the channel and the permission: once the call is over, calling the bank, or the settings, is safe. */
     @Test
     fun `after the call, it never says you are on the phone, nor offers to hang up, and offers to call the bank`() {
         val cases = listOf(CallChannel.CELLULAR to true, CallChannel.CELLULAR to false, CallChannel.VOIP to true, CallChannel.VOIP to false)
@@ -34,27 +44,32 @@ class StopTextTest {
             cases.forEach { (channel, permission) ->
                 val text = stopText(trigger, onCall = false, channel, canEndCall = permission)
                 val case = "$trigger, $channel, permission $permission"
+                val callMyBank = StopButton(R.string.stop_call_my_bank, StopChoice.CALL_MY_BANK)
+                val expected = if (trigger == access) {
+                    listOf(StopButton(R.string.stop_remove_access, StopChoice.REMOVE_ACCESS), callMyBank)
+                } else {
+                    listOf(callMyBank)
+                }
                 assertWithMessage(case).that(text.situation).isEqualTo(R.string.stop_call_ended)
-                assertWithMessage(case).that(text.offerHangUp).isFalse()
-                assertWithMessage(case).that(text.callMyBank).isEqualTo(R.string.stop_call_my_bank)
+                assertWithMessage(case).that(text.buttons).containsExactlyElementsIn(expected).inOrder()
             }
         }
     }
 
     /**
      * A WhatsApp call (`endCall` ends cellular calls only), or any call without the permission: no "Hang up" that
-     * would lie, and no "Call my bank" that would put the scammer on hold (D-011). The advice says to hang up.
+     * would lie, and no "Call my bank" nor "Remove the access" that would leave the scammer on the line (D-011). The
+     * advice says to hang up.
      */
     @Test
-    fun `during a call the app cannot end, it offers neither to hang up nor to call the bank`() {
+    fun `during a call the app cannot end, it offers no button but Continue`() {
         val cannotEnd = listOf(CallChannel.VOIP to true, CallChannel.CELLULAR to false)
         SensitiveActionKind.entries.forEach { trigger ->
             cannotEnd.forEach { (channel, permission) ->
                 val text = stopText(trigger, onCall = true, channel, canEndCall = permission)
                 val case = "$trigger, $channel, permission $permission"
                 assertWithMessage(case).that(text.situation).isEqualTo(R.string.stop_on_call)
-                assertWithMessage(case).that(text.offerHangUp).isFalse()
-                assertWithMessage(case).that(text.callMyBank).isNull()
+                assertWithMessage(case).that(text.buttons).isEmpty()
             }
         }
     }
@@ -84,16 +99,21 @@ class StopTextTest {
         }
     }
 
-    /** Hanging up does not end a remote-control session: the phone must be switched off. */
+    /**
+     * Hanging up does not end a remote-control session: the phone must be switched off. An accessibility access
+     * outlives the restart: it is removed first (D-033).
+     */
     @Test
     fun `the advice follows the trigger and the state of the call`() {
         SensitiveActionKind.entries.forEach { trigger ->
-            val (during, after) = if (trigger in remote) {
-                R.string.stop_advice_remote_on_call to R.string.stop_advice_remote_after_call
-            } else {
-                R.string.stop_advice_on_call to R.string.stop_advice_after_call
+            val (during, after) = when (trigger) {
+                access -> R.string.stop_advice_accessibility_on_call to R.string.stop_advice_accessibility_after_call
+                in remote -> R.string.stop_advice_remote_on_call to R.string.stop_advice_remote_after_call
+                else -> R.string.stop_advice_on_call to R.string.stop_advice_after_call
             }
             assertWithMessage(trigger.name).that(stopText(trigger, onCall = true, CallChannel.CELLULAR, canEndCall = true).advice)
+                .isEqualTo(during)
+            assertWithMessage(trigger.name).that(stopText(trigger, onCall = true, CallChannel.VOIP, canEndCall = true).advice)
                 .isEqualTo(during)
             assertWithMessage(trigger.name).that(stopText(trigger, onCall = false, CallChannel.CELLULAR, canEndCall = true).advice)
                 .isEqualTo(after)
