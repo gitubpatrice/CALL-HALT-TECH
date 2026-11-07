@@ -119,9 +119,14 @@ des messages. »
 
 **Puis E-1 et le premier SMS au proche** : la phrase du fixe sur l'accueil, avec la limite existante, dès que la
 protection voit quelque chose (activée, ou affaiblie) — la limite n'était montrée qu'activée ; README et PROJET
-le disent ; « Il ne vous envoie rien d'autre » retiré. Relectures Claude et GPT Luna (0,010 $). **Ensuite** :
-FN-2 (l'aperçu masqué), FN-4 (et la notification balayée, relecture Gemini, 3), FN-3, N-3, l'écran Historique ;
-les mots d'E-2 (README) restent à proposer.
+le disent ; « Il ne vous envoie rien d'autre » retiré. Relectures Claude et GPT Luna (0,010 $).
+
+**Puis FN-2, l'aperçu masqué de l'appli SMS** (D-037) : SMS Tech réglée pour masquer écrit « Nouveau message »
+à la place de chaque message ; l'appli le reconnaît sur un message reçu, garde le nom de l'appli (jamais le
+texte), et l'accueil le dit en gras tant qu'elle est l'appli SMS par défaut, avec ce qu'il faut faire. Mesuré
+sur l'émulateur avec SMS Tech (masqué, rétabli, changement d'appli, écouteur reconnecté). Relectures Claude
+(3 réels) et GPT Luna (0,013 $). **607 tests.** **Ensuite** : FN-4 (et la notification balayée, relecture
+Gemini, 3), FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer.
 
 ## Le 2026-11-05
 
@@ -420,7 +425,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 600 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 607 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
