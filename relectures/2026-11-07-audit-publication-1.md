@@ -148,6 +148,18 @@ AnyDesk, D-026) et la relecture par des natifs.
 5. Les mots des textes nouveaux ou corrigés (E-1, E-2, FN-2, le premier SMS au proche) ; « achat » et « paiement »
    (M1).
 
+**Tranché par Patrice le 2026-11-07, les quatre recommandations** :
+1. Un STOP quitté sans réponse pendant un appel ou juste après **revient une fois** (notification plein écran), et le
+   proche reçoit « l'écran STOP a été quitté sans réponse ».
+2. Le STOP d'installation offre **« Désinstaller [appli] »** (sa page dans les réglages du téléphone), et
+   l'avertissement reste dans les notifications après l'appel.
+3. **Un STOP dédié** à une rafale de SMS de numéros différents pendant un appel ou juste après (« Vous recevez beaucoup
+   de SMS d'un coup : c'est peut-être pour cacher un code », mots à affiner).
+4. **Un écran « Historique »** : chaque alerte, lisible et partageable en texte (fonction 8).
+
+Pour le n° 5, « achat » et « paiement » restent tels quels (côté protecteur, ils gardent de vrais codes de paiement ;
+mon choix technique) ; les mots des textes viendront avec leurs corrections.
+
 ## 7. Plan
 
 1. **Avant tout** : FN-1 (bloquant), puis N-1, C1, #4, M1 à M4.
