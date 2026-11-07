@@ -76,15 +76,23 @@ class AccessibilitySensor @Inject constructor(
     private companion object {
         const val SETTING = Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
 
-        /** One of the phone's own features: of the list, and preinstalled. Unseen or not preinstalled: not one. */
+        /** One of the phone's own features ([isPhoneFeature]): preinstalled, or signed by its publisher. Unseen: not one. */
         fun isSystemSuite(context: Context, packageName: String): Boolean {
-            if (packageName !in SYSTEM_ACCESSIBILITY_SUITES) return false
-            return try {
-                context.packageManager.getApplicationInfo(packageName, 0).flags and ApplicationInfo.FLAG_SYSTEM != 0
-            } catch (unseen: PackageManager.NameNotFoundException) {
-                Timber.w(unseen, "Accessibility suite not seen: %s", packageName)
-                false
-            }
+            val packages = context.packageManager
+            val feature = isPhoneFeature(
+                packageName,
+                preinstalled = { pkg ->
+                    try {
+                        packages.getApplicationInfo(pkg, 0).flags and ApplicationInfo.FLAG_SYSTEM != 0
+                    } catch (unseen: PackageManager.NameNotFoundException) {
+                        Timber.w(unseen, "Accessibility suite not seen: %s", pkg)
+                        false
+                    }
+                },
+                signedWith = packages::isSignedWith,
+            )
+            if (feature) Timber.d("Accessibility access given to the phone's own %s: nothing", packageName)
+            return feature
         }
     }
 }

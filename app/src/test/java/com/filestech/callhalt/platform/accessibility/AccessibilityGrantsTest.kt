@@ -91,6 +91,58 @@ class AccessibilityGrantsTest {
             .isEqualTo("com.google.android.marvin.talkback")
     }
 
+    /** Google's suite installed from Play on a Samsung, which does not preinstall it (M4): signed by Google, exempt. */
+    @Test
+    fun `a feature not preinstalled but signed by its publisher is the phone's own`() {
+        val asked = mutableListOf<Pair<String, String>>()
+        val signedByPlay = { pkg: String, certificate: ByteArray ->
+            asked += pkg to certificate.toHexString()
+            certificate.toHexString() == TALKBACK_PLAY
+        }
+        assertThat(isPhoneFeature(TALKBACK_PACKAGE, preinstalled = { false }, signedByPlay)).isTrue()
+        assertThat(asked).contains(TALKBACK_PACKAGE to TALKBACK_PLAY)
+    }
+
+    /** Google's other key, the one of the copies a phone preinstalls (and of Android TV's): exempt as well. */
+    @Test
+    fun `a feature signed with its publisher's other key is the phone's own`() {
+        val signedAsPreinstalled = { _: String, certificate: ByteArray -> certificate.toHexString() == TALKBACK_PREINSTALLED }
+        assertThat(isPhoneFeature(TALKBACK_PACKAGE, preinstalled = { false }, signedAsPreinstalled)).isTrue()
+    }
+
+    /** An app that took TalkBack's id, signed with its own key: not exempt. */
+    @Test
+    fun `a feature's id signed by another key is an app`() {
+        assertThat(isPhoneFeature(TALKBACK_PACKAGE, preinstalled = { false }, signedWith = { _, _ -> false })).isFalse()
+    }
+
+    /** A TalkBack a phone maker or a ROM without Google preinstalls, signed with its own key: preinstalled, so exempt. */
+    @Test
+    fun `a feature preinstalled but signed by another key is the phone's own`() {
+        assertThat(isPhoneFeature(TALKBACK_PACKAGE, preinstalled = { true }, signedWith = { _, _ -> false })).isTrue()
+    }
+
+    /** Samsung's features have no certificate here: preinstalled on every Samsung, they are exempt only so. */
+    @Test
+    fun `a feature without a known certificate is exempt only preinstalled`() {
+        val signed = { _: String, _: ByteArray -> true }
+        assertThat(isPhoneFeature("com.samsung.accessibility", preinstalled = { false }, signed)).isFalse()
+        assertThat(isPhoneFeature("com.samsung.accessibility", preinstalled = { true }, signed)).isTrue()
+    }
+
+    /** Preinstalled or signed, an id off the list is never a feature: RustDesk preinstalled by a seller is still RustDesk. */
+    @Test
+    fun `an app off the list is never the phone's own`() {
+        assertThat(isPhoneFeature("com.carriez.flutter_hbb", preinstalled = { true }, signedWith = { _, _ -> true })).isFalse()
+    }
+
+    /** Every certificate is of a listed feature, and a SHA-256: 32 bytes. */
+    @Test
+    fun `the certificates are of listed features and are SHA-256 digests`() {
+        assertThat(SYSTEM_ACCESSIBILITY_SUITES).containsAtLeastElementsIn(SUITE_CERTIFICATES.keys)
+        SUITE_CERTIFICATES.values.flatten().forEach { assertThat(it.hexToByteArray()).hasLength(SHA_256_BYTES) }
+    }
+
     /** Two services in one change, a feature and RustDesk: RustDesk is the one. */
     @Test
     fun `a feature turned on with an app does not hide the app`() {
@@ -145,6 +197,10 @@ class AccessibilityGrantsTest {
         const val OWN = "com.filestech.callhalt"
         const val RUSTDESK_INPUT = "com.carriez.flutter_hbb/com.carriez.flutter_hbb.InputService"
         const val TALKBACK = "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
+        const val TALKBACK_PACKAGE = "com.google.android.marvin.talkback"
+        const val TALKBACK_PLAY = "7b5ad55180a48a1f30f35377c0f9e5f911bf942fb4cf83eba255a0ebf580beef"
+        const val TALKBACK_PREINSTALLED = "93c9fc6d5af13c4e802dc1caf68f2e00688475b0b28f29487852cc9d550b6f27"
+        const val SHA_256_BYTES = 32
         val T0: Instant = Instant.parse("2026-11-05T20:00:00Z")
     }
 }
