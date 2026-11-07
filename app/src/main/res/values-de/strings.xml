@@ -10,6 +10,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Während eines Telefonanrufs erscheint der STOP-Bildschirm, wenn Sie einen Code per SMS (auf Französisch oder Englisch) oder eine Sécur\'Pass-Freigabeanfrage erhalten (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Er sieht nicht alles, auch keine Anrufe über das Internet (WhatsApp…): Auch ohne STOP-Bildschirm gilt die Regel unten.</string>
+    <string name="home_on_landline">Ein Anruf auf Ihrem Festnetztelefon wird nicht erkannt. Werden Sie am Festnetz nach einem per SMS erhaltenen Code gefragt, ist das Betrug: Legen Sie auf.</string>
     <string name="home_off">Schutz ausgeschaltet</string>
     <string name="home_weakened">Schutz geschwächt</string>
     <string name="home_weakened_detail">Die App kann nicht mehr speichern, was sie sieht. Sie schützt Sie weiterhin, aber wenn das Telefon sie während eines Anrufs beendet, weiß sie nicht mehr, dass Sie telefonieren. Vielleicht ist das Telefon voll: Geben Sie Speicherplatz frei und kommen Sie dann hierher zurück. Hat es genug Platz, starten Sie es neu.</string>
@@ -109,7 +110,7 @@
     <string name="guardian_sms_stop_after_call">Automatische Nachricht der App Call Halt Tech: Kurz nach einem Anruf ist auf diesem Telefon gerade der STOP-Bildschirm erschienen (%1$s). Es ist vielleicht ein Betrug. Rufen Sie diese Nummer so bald wie möglich an.</string>
     <string name="guardian_sms_continue_during_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), während eines Anrufs. Rufen Sie diese Nummer sofort an.</string>
     <string name="guardian_sms_continue_after_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), kurz nach einem Anruf. Rufen Sie diese Nummer sofort an.</string>
-    <string name="guardian_sms_set_up">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie per SMS, wenn der STOP-Bildschirm erscheint, während eines Anrufs oder kurz danach, ein mögliches Zeichen für Betrug. Sonst sendet es Ihnen nichts.</string>
+    <string name="guardian_sms_set_up">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie per SMS, wenn der STOP-Bildschirm erscheint, während eines Anrufs oder kurz danach, ein mögliches Zeichen für Betrug.</string>
     <string name="guardian_sms_removed">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie nicht mehr. Wenn Sie das überrascht, rufen Sie diese Nummer an.</string>
     <string name="guardian_sms_what_code">ein per SMS erhaltener Code</string>
     <string name="guardian_sms_what_bank_validation">eine Freigabeanfrage der Bank</string>

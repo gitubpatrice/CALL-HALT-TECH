@@ -23,6 +23,10 @@ Raccrochez, puis appelez vous-même un numéro que vous connaissez.*
 
 Elle ne bloque rien. C'est une pause, au bon moment.
 
+Elle ne voit que les appels téléphoniques de ce téléphone, pas ceux par Internet (WhatsApp…) : un appel sur le fixe
+ou sur un autre téléphone n'est pas vu. L'accueil de l'appli le dit, dès qu'elle protège, avec la règle qui reste
+vraie : si, au fixe, on vous demande un code reçu par SMS, c'est une arnaque.
+
 ## Promesses, vérifiées par le build
 
 - **Aucune permission Internet**, jamais : la CI lit le manifeste fusionné de la release et le compare à

@@ -118,10 +118,8 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                 modifier = Modifier.semantics { heading() },
             )
             when (state.status) {
-                ProtectionStatus.ON -> {
+                ProtectionStatus.ON ->
                     Text(text = watched(state.afterCallMinutes), style = MaterialTheme.typography.bodyLarge)
-                    Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
-                }
                 ProtectionStatus.NO_ALERT -> {
                     Text(text = stringResource(R.string.home_weakened_alerts), style = MaterialTheme.typography.bodyLarge)
                     CardButton(R.string.home_activate, onActivate)
@@ -154,9 +152,23 @@ private fun ProtectionCard(state: ProtectionState, onActivate: () -> Unit) {
                     CardButton(R.string.home_activate, onActivate)
                 }
             }
+            // What it does not see, wherever it sees something: on, or weakened but working. The landline first — the
+            // scam that needs no call on this phone (E-1) — then the limit, which ends on "the rule below".
+            if (state.status in WATCHING) {
+                Text(text = stringResource(R.string.home_on_landline), style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(R.string.home_on_limit), style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
+
+/** The states in which the protection sees something: on, or weakened but working. */
+private val WATCHING = setOf(
+    ProtectionStatus.ON,
+    ProtectionStatus.NO_ALERT,
+    ProtectionStatus.STORAGE_FAILING,
+    ProtectionStatus.ALERT_ONLY,
+)
 
 @Composable
 private fun CardButton(@StringRes label: Int, onClick: () -> Unit) {

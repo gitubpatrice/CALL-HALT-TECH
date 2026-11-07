@@ -27,6 +27,7 @@
     <!-- PROJET.md, § 6: not 100 %. A code read in an open conversation posts no notification, an action on a computer
          touches no phone: the rule still holds. -->
     <string name="home_on_limit">It does not see everything, nor calls over the internet (WhatsApp…): even without a STOP screen, the rule below still holds.</string>
+    <string name="home_on_landline">A call on your landline is not seen. If, on the landline, you are asked for a code received by text, it is a scam: hang up.</string>
     <string name="home_off">Protection off</string>
     <!-- Storage failing (docs/ARCHITECTURE.md, P-10): the STOP is still decided, but a process restarted during a call forgets it. -->
     <string name="home_weakened">Protection weakened</string>
@@ -151,7 +152,7 @@
     <string name="guardian_sms_stop_after_call">Automatic message from the Call Halt Tech app: just after a call, the STOP screen has just appeared on this phone (%1$s). It may be a scam. Call this number as soon as you can.</string>
     <string name="guardian_sms_continue_during_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), during a call. Call this number right away.</string>
     <string name="guardian_sms_continue_after_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), just after a call. Call this number right away.</string>
-    <string name="guardian_sms_set_up">Automatic message from the Call Halt Tech app: this phone will text you if the STOP screen appears, during a call or just after it, a possible sign of a scam. It sends you nothing else.</string>
+    <string name="guardian_sms_set_up">Automatic message from the Call Halt Tech app: this phone will text you if the STOP screen appears, during a call or just after it, a possible sign of a scam.</string>
     <string name="guardian_sms_removed">Automatic message from the Call Halt Tech app: this phone will no longer alert you. If this surprises you, call this number.</string>
     <string name="guardian_sms_what_code">a code received by SMS</string>
     <string name="guardian_sms_what_bank_validation">a request from the bank to approve a transaction</string>

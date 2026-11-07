@@ -21,6 +21,10 @@ screen, it is a scam. Hang up, then call them yourself, on a number you know.*
 
 It blocks nothing. It is a pause at the right moment.
 
+It sees only phone calls on this phone, not calls over the internet (WhatsApp…): a call on the landline or on another
+phone is not seen. The app's home screen says so, whenever it protects, with the rule that still holds: if, on the
+landline, you are asked for a code received by text, it is a scam.
+
 ## Promises, checked by the build
 
 - **No internet permission**, ever: the CI reads the merged release manifest against an exact list

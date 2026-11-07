@@ -138,6 +138,11 @@ minSdk probable : 29 (Android 10, rôle de filtrage).
 
 - **Pas du 100 %** : l'appli n'entend pas l'appel. Une action faite sur un ordinateur, ou une carte remise
   à un « coursier », échappe au téléphone.
+- **Les appels d'un autre téléphone** : un appel sur le fixe (ou un autre téléphone) n'est pas vu ; le code
+  reçu par SMS pendant ce temps ne fait donc pas de STOP, sauf s'il arrive dans les minutes qui suivent un
+  appel sur ce téléphone. L'accueil le dit, dès que la protection voit quelque chose (activée, ou affaiblie)
+  (audit de publication n° 1, E-1 ; mots de Patrice, 2026-11-07) : « Si, au fixe, on vous demande un code
+  reçu par SMS, c'est une arnaque : raccrochez. »
 - **Accès lourds** : défendables pour une appli de protection sans Internet, mais Google Play la
   refuserait probablement, et les antivirus risquent de la signaler (vécu avec SMS Tech).
 - **Paramètres restreints** (Android 13+) : l'accès aux notifications est bloqué pour une appli installée
