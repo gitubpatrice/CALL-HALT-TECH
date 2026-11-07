@@ -102,6 +102,8 @@ ALLOWED = {
     "android.permission.USE_FULL_SCREEN_INTENT",
     # A text to the relative the user chose (platform/guardian, D-034). Sends only: never READ_SMS nor RECEIVE_SMS.
     "android.permission.SEND_SMS",
+    # Two short buzzes as a STOP opens (platform/stop/StopActivity, U4). Granted at install, reads nothing.
+    "android.permission.VIBRATE",
 }
 
 # Every component the system binds with a special access — (component, its BIND_* permission) — no more, no less.
