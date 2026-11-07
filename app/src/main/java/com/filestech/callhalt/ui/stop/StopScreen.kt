@@ -1,6 +1,7 @@
 package com.filestech.callhalt.ui.stop
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +22,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -53,8 +53,8 @@ const val CONTINUE_DELAY_SECONDS = 10
  * hides (docs/ARCHITECTURE.md, D-006). What each choice DOES (hang up, dial the bank once the call has
  * ended, open the accessibility settings) belongs to that host, not to this screen.
  *
- * The texts scroll; the buttons stay at the bottom, in sight whatever the length of the texts and the size
- * of the font.
+ * Laid out by [StopLayout]: the buttons at the bottom when all fits; otherwise the whole screen scrolls, the buttons
+ * right under the warning, so that they are in sight whatever the length of the texts and the size of the font.
  */
 @Composable
 fun StopScreen(
@@ -75,51 +75,51 @@ fun StopScreen(
         }
     }
 
-    Column(
+    // In order of importance, and in sight: StopLayout keeps the buttons at the bottom when all fits, and otherwise
+    // brings them up under the warning, the explanation after them (U2). On the S9 at the default font size
+    // (2026-11-01), the texts after the rule were out of sight; at 200 %, all after "If you are told to ignore".
+    StopLayout(
         modifier = Modifier
             .fillMaxSize()
             .background(StopBackground)
             .safeDrawingPadding()
             .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // In order of importance: what does not fit scrolls, and someone under pressure does not scroll. On the
-        // S9 at the default font size (2026-11-01), the texts after the rule were out of sight.
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            if (demo) {
-                Text(text = stringResource(R.string.stop_demo_banner), color = OnStop, style = MaterialTheme.typography.bodyMedium)
-            }
+        if (demo) {
             Text(
-                text = stringResource(R.string.stop_title),
+                text = stringResource(R.string.stop_demo_banner),
                 color = OnStop,
-                fontSize = 64.sp,
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics { heading() },
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.layoutId(StopPart.MESSAGE),
             )
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = stringResource(text.situation), color = OnStop, style = MaterialTheme.typography.titleLarge)
-                Text(text = stringResource(text.happened), color = OnStop, style = MaterialTheme.typography.titleLarge)
-            }
-            // The scammer is still on the line and will say "that is normal, press Continue": this comes first.
-            Text(
-                text = stringResource(R.string.stop_ignore_warning),
-                color = OnStop,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(text = stringResource(text.rule), color = OnStop, style = MaterialTheme.typography.bodyLarge)
-            Text(text = stringResource(R.string.stop_spoofed_number), color = OnStop, style = MaterialTheme.typography.bodyLarge)
-            // Last: the buttons below already say it.
-            Text(text = stringResource(text.advice), color = OnStop, style = MaterialTheme.typography.bodyLarge)
         }
+        Text(
+            text = stringResource(R.string.stop_title),
+            color = OnStop,
+            fontSize = 64.sp,
+            fontWeight = FontWeight.Black,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .layoutId(StopPart.MESSAGE)
+                .fillMaxWidth()
+                .semantics { heading() },
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.layoutId(StopPart.MESSAGE)) {
+            Text(text = stringResource(text.situation), color = OnStop, style = MaterialTheme.typography.titleLarge)
+            Text(text = stringResource(text.happened), color = OnStop, style = MaterialTheme.typography.titleLarge)
+        }
+        // The scammer is still on the line and will say "that is normal, press Continue": this comes first.
+        Text(
+            text = stringResource(R.string.stop_ignore_warning),
+            color = OnStop,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.layoutId(StopPart.MESSAGE),
+        )
+        StopExplanation(text.rule)
+        StopExplanation(R.string.stop_spoofed_number)
+        // Last of the texts: the buttons already say it.
+        StopExplanation(text.advice)
 
         // The safe ways out (StopText.buttons), the most protective first and filled; none during a call the app
         // cannot end (the advice then says to hang up).
@@ -130,7 +130,11 @@ fun StopScreen(
                 OutlinedButton(
                     onClick = { onAnswer(button.choice) },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = OnStop),
-                    modifier = Modifier.fillMaxWidth(),
+                    // The default outline, a pale grey, barely shows on the red (U3, WCAG 1.4.11): the text's colour.
+                    border = BorderStroke(2.dp, OnStop),
+                    modifier = Modifier
+                        .layoutId(StopPart.BUTTON)
+                        .fillMaxWidth(),
                 ) {
                     StopButtonLabel(button.label)
                 }
@@ -140,7 +144,9 @@ fun StopScreen(
             onClick = { onAnswer(StopChoice.CONTINUE) },
             enabled = secondsLeft == 0,
             colors = ButtonDefaults.textButtonColors(contentColor = OnStop, disabledContentColor = OnStop.copy(alpha = DISABLED_ALPHA)),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .layoutId(StopPart.CONTINUE)
+                .fillMaxWidth(),
         ) {
             Text(
                 text = if (secondsLeft == 0) {
@@ -156,11 +162,23 @@ fun StopScreen(
 }
 
 @Composable
+private fun StopExplanation(@StringRes text: Int) {
+    Text(
+        text = stringResource(text),
+        color = OnStop,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.layoutId(StopPart.EXPLANATION),
+    )
+}
+
+@Composable
 private fun StopFilledButton(@StringRes label: Int, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = OnStop, contentColor = StopBackground),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .layoutId(StopPart.BUTTON)
+            .fillMaxWidth(),
     ) {
         StopButtonLabel(label)
     }
@@ -168,7 +186,8 @@ private fun StopFilledButton(@StringRes label: Int, onClick: () -> Unit) {
 
 @Composable
 private fun StopButtonLabel(@StringRes label: Int) {
-    Text(text = stringResource(label), modifier = Modifier.padding(vertical = 8.dp))
+    // Centred when a large font wraps it, as "Continue" (200 %, 2026-11-07).
+    Text(text = stringResource(label), textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 8.dp))
 }
 
 private const val ONE_SECOND_MILLIS = 1_000L

@@ -3,7 +3,6 @@ package com.filestech.callhalt.ui.home
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +18,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
@@ -208,23 +206,23 @@ private fun watched(afterCallMinutes: Long): String = if (afterCallMinutes == 0L
     pluralStringResource(R.plurals.home_on_detail, afterCallMinutes.toInt(), afterCallMinutes.toInt())
 }
 
-/** Each access with its state in words, not in colour alone. */
+/**
+ * Each access with its state in words, not in colour alone; the state under the title, not beside it: at a font of
+ * 200 %, beside it left the title too narrow for its words, cut in the middle ("scherm/ata", U1).
+ */
 @Composable
 private fun AccessList(state: ProtectionState) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         state.applicable.forEach { access ->
             val granted = access in state.granted
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .semantics(mergeDescendants = true) {},
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = stringResource(accessText(access).title),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f),
                 )
                 Text(
                     text = stringResource(if (granted) R.string.access_granted else R.string.access_missing),

@@ -43,6 +43,8 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   retirer dans les réglages de notifications de l'appli. L'appli envoie une autre notification, hors appel : quand une
   appli qui permet à quelqu'un d'autre de contrôler le téléphone vient d'être installée (AnyDesk, TeamViewer
   QuickSupport, RustDesk…), elle la nomme et ouvre sa page dans les réglages du téléphone, où on la désinstalle.
+- **Vibreur** (`VIBRATE`) : deux vibrations brèves quand l'écran STOP s'ouvre, pour le sentir le téléphone à l'oreille.
+  Accordé à l'installation, sans question ; il ne lit rien.
 - **Envoyer des SMS** (`SEND_SMS`) : seulement si vous choisissez un proche à prévenir, et demandé sur cet écran, pas
   par l'activation. L'appli s'en sert pour envoyer, jamais pour lire : la question d'Android dit « envoyer et afficher
   des SMS », le nom de tout le groupe, mais l'appli ne demande aucune permission de lire vos messages (ce qu'elle lit

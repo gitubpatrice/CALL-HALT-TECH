@@ -49,6 +49,13 @@
         notification, D-021).
     -->
     <uses-permission android:name="android.permission.SEND_SMS" />
+
+    <!--
+        Two short buzzes as a STOP opens (platform/stop/StopActivity, publication audit U4): the phone against the
+        cheek, the user feels it. A normal permission, granted at install; the haptic feedback that needs none follows
+        the setting for touch vibrations, which many turn off.
+    -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!--
         SEND_SMS would otherwise make the phone's telephony REQUIRED, and keep the app from a device without it. Not
         needed: there, the relative is not texted (platform/guardian/TextSender), and nothing else changes.

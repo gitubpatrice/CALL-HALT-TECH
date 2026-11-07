@@ -41,6 +41,8 @@ change that adds it to the app, and the build checks the app asks for nothing el
   sends one other notification, outside a call: when an app that lets someone else control the phone has just been
   installed (AnyDesk, TeamViewer QuickSupport, RustDesk…), it names that app and opens its page in the phone's
   settings, where it is uninstalled.
+- **Vibration** (`VIBRATE`): two short buzzes as the STOP screen opens, to feel it with the phone at your ear. Granted
+  at install, nothing asked; it reads nothing.
 - **Send SMS** (`SEND_SMS`): only if you choose someone close to alert, and asked on that screen, not by the
   activation. The app uses it to send, never to read: Android's question says "send and view SMS messages", the name of
   the whole group, but the app asks for no permission to read your messages (what it reads of a code goes through the
