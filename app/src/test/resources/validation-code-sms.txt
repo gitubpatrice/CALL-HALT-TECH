@@ -138,3 +138,67 @@ A02|L|CAF : votre code confidentiel provisoire vous a été envoyé par courrier
 A03|L|Collège Jean Moulin : sortie au musée le jeudi 14 novembre 2026, code vestimentaire : tenue correcte.
 A04|L|Votre code a expiré. Pour en recevoir un nouveau, appelez le 3646.
 A05|L|Ta commande Vinted est arrivée au point relais Tabac Le Balto, 75011 Paris. Présente le QR code dans l'appli.
+
+# 2026-11-07, first publication audit (relectures/2026-11-07-audit-publication-1.md, M1 to M3, from the false-positive
+# auditor's measured corpus). M1: "personne" made a code again only as a warning ("à personne", "personne ne"), not a
+# delivery's or a booking's "une personne". M2: a card's last digits, a number to call, a date and a reference in the
+# four other languages too. M3: door and key-box codes in English, German, Italian and Spanish. The real codes they must
+# keep (K-like) come with them.
+W01|L|Votre colis vous attend au relais Pickup. Code de retrait : 4821. Une autre personne peut le retirer avec ce code et sa pièce d'identité.
+W02|L|Le code de la porte c'est 4821, il n'y aura personne avant 18h.
+W03|L|Restaurant Le Zinc : réservation confirmée pour 1 personne le 12/11 à 20h. Code de réservation : 4821
+W04|L|Chronopost : votre colis sera livré aujourd'hui. Code de livraison : 4821. Si vous êtes absent, une personne de votre choix peut le réceptionner.
+W05|C|Votre code : 482913. Personne ne doit le connaître, pas même le livreur.
+W06|C|Votre code de livraison est 4821. Ne le communiquez à personne d'autre que le livreur.
+W07|C|Votre code de livraison est 4821. Ne le donnez a personne.
+W10|L|We have cancelled your card ending 4821. Your new card will arrive in 3 to 5 working days and your PIN will be sent separately.
+W11|L|Wir haben Ihre Karte mit der Endung 4821 gesperrt. Ihre neue Karte und die PIN erhalten Sie getrennt per Post.
+W12|L|Abbiamo bloccato la tua carta che termina con 4821. La nuova carta e il PIN ti arriveranno separatamente.
+W13|L|Hemos bloqueado tu tarjeta terminada en 4821. Recibirás la nueva tarjeta y el PIN por separado.
+W14|L|Your PIN has been blocked after 3 incorrect attempts. To unblock it, call us on 0800 123 4567.
+W15|L|Your new card is on its way. Your PIN will arrive separately. Questions? Call 0345 300 0000
+W16|L|Sparkasse: Ihre neue PIN wurde am 12. Dezember 2026 per Post versandt.
+W17|L|Your new PIN was posted on 2 Dec 2026.
+W18|L|Votre nouveau code confidentiel vous a été envoyé par courrier le 2 nov. 2026.
+W19|L|Nous avons fait opposition sur votre carte nº 4821. Votre nouvelle carte et son code confidentiel vous seront envoyés séparément.
+W20|L|La tua nuova carta che termina con 4821 è stata attivata. Il PIN resta invariato.
+W21|L|Tu nueva tarjeta terminada en 4821 ya está activa. El PIN no cambia.
+W22|C|Your code is 482913. If you did not ask for it, call us on 0800 123 4567.
+W23|C|Code 482913 to confirm the payment of 49.90 GBP with your card ending 4821.
+W24|C|Ihr Code: 482913. Bei Fragen erreichen Sie uns unter 069 12345678.
+W25|C|Your verification code is 482913. Valid until 12 Dec 2026.
+W26|C|Tu PIN de acceso es 4821. Si no lo has solicitado, llama al 900 123 456.
+W30|L|Hi John, the lockbox code is 4821. Check-in from 3pm. Enjoy your stay!
+W31|L|The alarm code is 4821, the key is under the mat.
+W32|L|Der Code für die Haustür ist 4821. Bis später!
+W33|L|Die PIN für den Schlüsselkasten lautet 4821. Schönen Aufenthalt!
+W34|L|Der Code fürs Tor ist 2580, Garage links.
+W35|L|Il PIN della cassetta portachiavi è 4821. Buon soggiorno!
+W36|L|El PIN de la caja de llaves es 4821. ¡Feliz estancia!
+W37|C|Your security code for the lockbox app is 482913
+W38|C|Caja Rural: su PIN es 4821
+
+# Same audit, after the review of the change for missed codes (relectures/2026-11-07-regle-codes-langues.md): the real
+# codes the first version of M1 to M3 lost, and the delivery messages that must stay ordinary.
+W40|C|Votre code : 482913. Ne le donnez pas à une personne se présentant comme livreur ou conseiller.
+W41|C|Personne, pas même un livreur, ne doit vous demander ce code : 482913.
+W42|C|Votre code de livraison est 4821. Ne le communiquez à aucune personne.
+W43|C|Votre code : 482913. Personne de La Poste ne vous le demandera, ni un livreur.
+W44|C|Movistar: el nuevo PIN de tu buzón de voz es 1234.
+W45|C|Your new telephone banking PIN is 48291. Enter it on your phone keypad when you call us.
+W46|C|Your cash withdrawal code is 482913. Enter it on the ATM keypad within 24 hours.
+W47|C|Ihr Code: 482913. Wir schicken niemals Boten an Ihre Tür.
+W48|C|Ihr Code für die Zahlung von 49,90 EUR bei TOR-APOTHEKE: 482913
+W49|C|Your PIN No. is 4821
+W50|C|Mobile No. verification code: 482913
+W51|C|Mobile No. Verification OTP: 482913
+W52|C|Call 0800 123 456. 482913 is your verification code.
+W60|L|Toute personne munie de ce code pourra retirer votre colis : 4821
+W61|L|Une personne de votre choix ne pourra retirer le colis qu'avec le code 4821.
+W62|L|Une tierce personne peut retirer le colis avec le code de retrait 4821.
+W63|L|Toute personne se présentant au relais avec le code 4821 pourra retirer le colis.
+W64|L|Chronopost : votre colis sera livré demain. Si vous ne pouvez pas être présent, une personne de votre choix peut le réceptionner avec le code 4821.
+W65|L|Vous pouvez donner procuration à une personne de votre choix pour retirer le colis avec le code 4821.
+W66|L|Wir haben Ihre Karte mit Kartenendung 4821 gesperrt. Die neue PIN kommt per Post.
+W67|L|Ihre PIN wurde geändert. Kunden-Nr. 48291374
+W68|L|Your PIN has been changed. Customer No. 48291374
