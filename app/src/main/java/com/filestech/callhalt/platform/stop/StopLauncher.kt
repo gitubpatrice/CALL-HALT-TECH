@@ -41,6 +41,16 @@ class ActivityStopLauncher @Inject constructor(
     override suspend fun show(stop: Decision.ShowStop): Boolean {
         // A STOP notification still waiting: the screen started now stands for its triggers too, and removes it (N-1).
         val request = StopRequest(display.nextId(), stop.trigger, stop.call.isActive, stop.call.channel, notice.pending())
+        // A STOP left without an answer, coming back once (FN-4): by its notification alone — full screen on a locked or
+        // sleeping phone, at the top of it otherwise — not over what the user went to (Patrice, 2026-11-07).
+        return if (stop.returning) {
+            notified(request).also { if (!it) Timber.w("Returning STOP: notification not allowed") }
+        } else {
+            screenOrNotification(request)
+        }
+    }
+
+    private suspend fun screenOrNotification(request: StopRequest): Boolean {
         val started = starter.start(request)
         // Without the display over the others, Android blocks a screen started from the background, whatever the phone
         // (unless the app is in front, the screen then removes the notification): no wait, the notification at once — on

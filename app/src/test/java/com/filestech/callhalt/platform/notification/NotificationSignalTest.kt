@@ -21,6 +21,7 @@ import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.noGuardian
+import com.filestech.callhalt.platform.noWakeUps
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -52,7 +53,7 @@ class NotificationSignalTest {
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
         LiveCallSource { null },
-        AndroidDecisionExecutor(launcher, warnings, noGuardian),
+        AndroidDecisionExecutor(launcher, warnings, noGuardian, noWakeUps),
     )
 
     @ParameterizedTest

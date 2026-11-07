@@ -30,7 +30,11 @@ internal object DetectorMapping {
     private const val TYPE_WARNING = "WARNING"
     private const val TYPE_ANSWER = "ANSWER"
 
-    fun toState(calls: List<CallSessionEntity>, stops: List<PendingStopEntity>): DetectorState {
+    fun toState(
+        calls: List<CallSessionEntity>,
+        stops: List<PendingStopEntity>,
+        returns: List<StopReturnEntity> = emptyList(),
+    ): DetectorState {
         val sessions = calls.mapNotNull { row -> row.toCallSession()?.let { it to row.longCallWarned } }
         return DetectorState(
             calls = sessions.associate { (call, _) -> call.channel to call },
@@ -38,6 +42,7 @@ internal object DetectorMapping {
                 enumOrNull<SensitiveActionKind>(row.trigger)?.let { it to moment(row.shownAt, row.shownBoot, row.shownSinceBoot) }
             }.toMap(),
             longCallWarned = sessions.filter { (_, warned) -> warned }.map { (call, _) -> call.channel }.toSet(),
+            stopReturns = StopReturnMapping.returns(returns),
         )
     }
 
@@ -145,7 +150,7 @@ internal object DetectorMapping {
 }
 
 /** The uptime needs both its columns: one without the other reads as none, and the civil time decides (P-13). */
-private fun moment(wallMillis: Long, boot: Int?, sinceBootMillis: Long?) = Moment(
+internal fun moment(wallMillis: Long, boot: Int?, sinceBootMillis: Long?) = Moment(
     Instant.ofEpochMilli(wallMillis),
     if (boot == null || sinceBootMillis == null) null else Uptime(boot, Duration.ofMillis(sinceBootMillis)),
 )

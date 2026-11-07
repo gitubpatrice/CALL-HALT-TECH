@@ -15,6 +15,7 @@ import com.filestech.callhalt.platform.FakePhoneClock
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.SensorQueue
 import com.filestech.callhalt.platform.noGuardian
+import com.filestech.callhalt.platform.noWakeUps
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -117,7 +118,7 @@ class StopAnswersTest {
         { ProtectionSettings() },
         RestartSource { null },
         LiveCallSource { null },
-        AndroidDecisionExecutor({ true }, { error("no warning expected") }, noGuardian),
+        AndroidDecisionExecutor({ true }, { error("no warning expected") }, noGuardian, noWakeUps),
     )
 
     private val clock = FakePhoneClock(Moment(Instant.EPOCH))

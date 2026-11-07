@@ -112,7 +112,11 @@ class RoomDetectorStore @Inject constructor(
 
     /** What storage failed to keep is the truth until written back (the class comment); otherwise, what it holds. */
     private suspend fun base(dao: DetectorDao): DetectorState =
-        lastKnown.takeIf { unsaved } ?: DetectorMapping.toState(dao.callSessions(), dao.pendingStops())
+        lastKnown.takeIf { unsaved } ?: DetectorMapping.toState(
+            dao.callSessions(),
+            dao.pendingStops(),
+            database.stopReturnDao().stopReturns(),
+        )
 
     private fun saved() {
         unsaved = false
@@ -140,5 +144,8 @@ class RoomDetectorStore @Inject constructor(
         dao.insertCallSessions(DetectorMapping.callRows(state))
         dao.deletePendingStops()
         dao.insertPendingStops(DetectorMapping.stopRows(state))
+        val returns = database.stopReturnDao()
+        returns.deleteStopReturns()
+        returns.insertStopReturns(StopReturnMapping.rows(state))
     }
 }

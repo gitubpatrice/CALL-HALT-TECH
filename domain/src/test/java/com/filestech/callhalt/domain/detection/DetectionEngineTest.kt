@@ -251,6 +251,177 @@ class DetectionEngineTest {
         }
     }
 
+    /** FN-4 (Patrice, 2026-11-07): a STOP left without an answer comes back once; left again, the relative is told. */
+    @Nested
+    inner class LeftScreens {
+
+        private val withGuardian = ProtectionSettings(guardianAlerts = true)
+        private val code = SensitiveActionKind.CODE_MESSAGE
+
+        /** A contact: no long-call reminder asks for its own wake-up in these steps. */
+        private fun fromContact() = callStarted(counterpart = contact)
+
+        private fun left(minutes: Long, seconds: Long) = StopAnswered(at(minutes, seconds), code, StopChoice.LEFT)
+
+        private fun told(steps: List<Evaluation>) = steps.last().decisions.filterIsInstance<Decision.NotifyGuardian>()
+
+        @Test
+        fun `a screen left during a call asks to come back after the delay`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5))
+
+            assertThat(steps.last().decisions).containsExactly(Decision.ScheduleTick(at(1, 5).plus(DetectionEngine.RETURN_DELAY)))
+            assertThat(steps.last().state.stopReturns).containsExactly(code, StopReturn(leftAt = at(1, 5)))
+            // Freed at once, as before: a repeat shows a new screen.
+            assertThat(steps.last().state.pendingStops).isEmpty()
+        }
+
+        @Test
+        fun `due, with the call still going on, it comes back once by its notification`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 20)))
+
+            val back = steps.last().decisions.filterIsInstance<Decision.ShowStop>().single()
+            assertThat(back.trigger).isEqualTo(code)
+            assertThat(back.returning).isTrue()
+            assertThat(steps.last().decisions)
+                .contains(Decision.ScheduleTick(at(1, 20).plus(DetectionEngine.RETURN_ANSWER_WAIT)))
+            assertThat(steps.last().state.pendingStops).containsKey(code)
+            assertThat(steps.last().state.stopReturns[code]?.returnedAt).isEqualTo(at(1, 20))
+        }
+
+        /** Left to hang up from the call screen: an ordinary gesture, no return, no text (Patrice). */
+        @Test
+        fun `the call ended after the screen was left - the user hung up - nothing comes back`() {
+            val steps = run(
+                fromContact(),
+                action(code, minutes = 1),
+                left(1, 5),
+                CallEnded(at(1, 9), CallChannel.CELLULAR),
+                Tick(at(1, 20)),
+                settings = withGuardian,
+            )
+
+            assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        /** Shown just after the call, then left: no call to hang up, it comes back. */
+        @Test
+        fun `a screen left just after the call comes back`() {
+            val steps = run(
+                fromContact(),
+                CallEnded(at(1), CallChannel.CELLULAR),
+                action(code, minutes = 2),
+                left(2, 5),
+                Tick(at(2, 20)),
+            )
+
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>().single().returning).isTrue()
+        }
+
+        @Test
+        fun `left again once back, the relative is told`() {
+            val steps = run(
+                fromContact(),
+                action(code, minutes = 1),
+                left(1, 5),
+                Tick(at(1, 20)),
+                left(1, 30),
+                settings = withGuardian,
+            )
+
+            assertThat(told(steps)).containsExactly(Decision.NotifyGuardian(GuardianEvent.StopLeft(code, duringCall = true)))
+            assertThat(steps.last().state.stopReturns).isEmpty()
+            assertThat(steps.last().state.pendingStops).isEmpty()
+        }
+
+        @Test
+        fun `back and unanswered for the wait, the relative is told`() {
+            val steps = run(
+                fromContact(),
+                action(code, minutes = 1),
+                left(1, 5),
+                Tick(at(1, 20)),
+                Tick(at(1, 20).plus(DetectionEngine.RETURN_ANSWER_WAIT)),
+                settings = withGuardian,
+            )
+
+            assertThat(told(steps)).containsExactly(Decision.NotifyGuardian(GuardianEvent.StopLeft(code, duringCall = true)))
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        @Test
+        fun `back and answered, nothing more`() {
+            val steps = run(
+                fromContact(),
+                action(code, minutes = 1),
+                left(1, 5),
+                Tick(at(1, 20)),
+                StopAnswered(at(1, 30), code, StopChoice.HANG_UP),
+                Tick(at(1, 20).plus(DetectionEngine.RETURN_ANSWER_WAIT)),
+                settings = withGuardian,
+            )
+
+            assertThat(steps[4].decisions).isEmpty()
+            assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        /** Its notification could not be posted: the user can be told nothing more, the relative is. */
+        @Test
+        fun `back but not shown, the relative is told`() {
+            val steps = run(
+                fromContact(),
+                action(code, minutes = 1),
+                left(1, 5),
+                Tick(at(1, 20)),
+                StopNotShown(at(1, 21), code),
+                settings = withGuardian,
+            )
+
+            assertThat(told(steps)).containsExactly(Decision.NotifyGuardian(GuardianEvent.StopLeft(code, duringCall = true)))
+        }
+
+        @Test
+        fun `a tick that comes early asks again for the due time`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 10)))
+
+            assertThat(steps.last().decisions).containsExactly(Decision.ScheduleTick(at(1, 5).plus(DetectionEngine.RETURN_DELAY)))
+            assertThat(steps.last().state.stopReturns[code]?.returnedAt).isNull()
+        }
+
+        /** "Press Home and validate again": the new STOP is the screen; the one left does not come back on top of it. */
+        @Test
+        fun `a new STOP for the same trigger replaces the return`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), action(code, minutes = 1, seconds = 10), Tick(at(1, 20)))
+
+            assertThat(steps[3].decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
+            assertThat(steps[3].state.stopReturns).isEmpty()
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowStop>()).isEmpty()
+        }
+
+        @Test
+        fun `left outside the window of a call, it does not come back`() {
+            val window = ProtectionSettings().afterCallWindow
+            val steps = run(
+                fromContact(),
+                CallEnded(at(1), CallChannel.CELLULAR),
+                action(code, minutes = 2),
+                StopAnswered(at(2).plus(window), code, StopChoice.LEFT),
+            )
+
+            assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().state.stopReturns).isEmpty()
+        }
+
+        @Test
+        fun `without a relative set up, it still comes back and nobody is texted`() {
+            val steps = run(fromContact(), action(code, minutes = 1), left(1, 5), Tick(at(1, 20)), left(1, 30))
+
+            assertThat(steps[3].decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
+            assertThat(told(steps)).isEmpty()
+        }
+    }
+
     @Nested
     inner class TheRelative {
 
@@ -332,9 +503,9 @@ class DetectionEngineTest {
             assertThat(answer(StopChoice.CONTINUE))
                 .containsExactly(Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE, duringCall = true)))
             // Every other answer, removing the accessibility access included (D-033). Leaving the screen to hang up from
-            // the call screen is ordinary too: no false alarm to the relative.
+            // the call screen is ordinary too: no false alarm to the relative — the screen only asks to come back (FN-4).
             (StopChoice.entries - StopChoice.CONTINUE).forEach { choice ->
-                assertWithMessage(choice.name).that(answer(choice)).isEmpty()
+                assertWithMessage(choice.name).that(answer(choice).filterIsInstance<Decision.NotifyGuardian>()).isEmpty()
             }
         }
     }

@@ -1,0 +1,250 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "4ec5cdda69fef52ee330dfdd1a3a9215",
+    "entities": [
+      {
+        "tableName": "call_session",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channel` TEXT NOT NULL, `direction` TEXT NOT NULL, `counterpart_kind` TEXT NOT NULL, `counterpart_number` TEXT, `counterpart_in_contacts` INTEGER NOT NULL, `started_at` INTEGER NOT NULL, `ended_at` INTEGER, `long_call_warned` INTEGER NOT NULL, `started_boot` INTEGER, `started_since_boot` INTEGER, `ended_boot` INTEGER, `ended_since_boot` INTEGER, PRIMARY KEY(`channel`))",
+        "fields": [
+          {
+            "fieldPath": "channel",
+            "columnName": "channel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "direction",
+            "columnName": "direction",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "counterpartKind",
+            "columnName": "counterpart_kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "counterpartNumber",
+            "columnName": "counterpart_number",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "counterpartInContacts",
+            "columnName": "counterpart_in_contacts",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedAt",
+            "columnName": "started_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endedAt",
+            "columnName": "ended_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "longCallWarned",
+            "columnName": "long_call_warned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedBoot",
+            "columnName": "started_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "startedSinceBoot",
+            "columnName": "started_since_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "endedBoot",
+            "columnName": "ended_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "endedSinceBoot",
+            "columnName": "ended_since_boot",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "channel"
+          ]
+        }
+      },
+      {
+        "tableName": "pending_stop",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trigger` TEXT NOT NULL, `shown_at` INTEGER NOT NULL, `shown_boot` INTEGER, `shown_since_boot` INTEGER, PRIMARY KEY(`trigger`))",
+        "fields": [
+          {
+            "fieldPath": "trigger",
+            "columnName": "trigger",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shownAt",
+            "columnName": "shown_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shownBoot",
+            "columnName": "shown_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shownSinceBoot",
+            "columnName": "shown_since_boot",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "trigger"
+          ]
+        }
+      },
+      {
+        "tableName": "stop_return",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trigger` TEXT NOT NULL, `left_at` INTEGER NOT NULL, `left_boot` INTEGER, `left_since_boot` INTEGER, `returned_at` INTEGER, `returned_boot` INTEGER, `returned_since_boot` INTEGER, PRIMARY KEY(`trigger`))",
+        "fields": [
+          {
+            "fieldPath": "trigger",
+            "columnName": "trigger",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leftAt",
+            "columnName": "left_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leftBoot",
+            "columnName": "left_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "leftSinceBoot",
+            "columnName": "left_since_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "returnedAt",
+            "columnName": "returned_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "returnedBoot",
+            "columnName": "returned_boot",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "returnedSinceBoot",
+            "columnName": "returned_since_boot",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "trigger"
+          ]
+        }
+      },
+      {
+        "tableName": "journal_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `at` INTEGER NOT NULL, `type` TEXT NOT NULL, `trigger` TEXT, `warning` TEXT, `choice` TEXT, `source` TEXT, `counterpart_kind` TEXT, `counterpart_number` TEXT, `counterpart_in_contacts` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "at",
+            "columnName": "at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trigger",
+            "columnName": "trigger",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "warning",
+            "columnName": "warning",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "choice",
+            "columnName": "choice",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "counterpartKind",
+            "columnName": "counterpart_kind",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "counterpartNumber",
+            "columnName": "counterpart_number",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "counterpartInContacts",
+            "columnName": "counterpart_in_contacts",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_journal_entry_at",
+            "unique": false,
+            "columnNames": [
+              "at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_journal_entry_at` ON `${TABLE_NAME}` (`at`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4ec5cdda69fef52ee330dfdd1a3a9215')"
+    ]
+  }
+}

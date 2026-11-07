@@ -2,6 +2,8 @@ package com.filestech.callhalt.di
 
 import com.filestech.callhalt.platform.AndroidPhoneClock
 import com.filestech.callhalt.platform.PhoneClock
+import com.filestech.callhalt.platform.ProcessWakeUps
+import com.filestech.callhalt.platform.WakeUps
 import com.filestech.callhalt.platform.access.AccessChecker
 import com.filestech.callhalt.platform.access.AndroidAccessChecker
 import com.filestech.callhalt.platform.stop.ActivityScreenStarter
@@ -41,6 +43,9 @@ abstract class PlatformModule {
 
     @Binds
     abstract fun phoneClock(impl: AndroidPhoneClock): PhoneClock
+
+    @Binds
+    abstract fun wakeUps(impl: ProcessWakeUps): WakeUps
 
     @Binds
     abstract fun accessChecker(impl: AndroidAccessChecker): AccessChecker

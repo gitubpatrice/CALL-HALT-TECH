@@ -260,6 +260,11 @@
             android:name=".platform.guardian.SmsSentReceiver"
             android:exported="false" />
 
+        <!-- The STOP notification swiped away without being opened: the STOP left (FN-4). Its own intent only. -->
+        <receiver
+            android:name=".platform.stop.StopNotificationSwiped"
+            android:exported="false" />
+
         <!--
             A banking app's request to approve an operation, and a validation code arriving by SMS, seen in their
             notifications. Not a permission: an access the user grants in the phone's settings ("notification access", a

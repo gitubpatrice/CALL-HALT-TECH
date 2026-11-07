@@ -115,6 +115,8 @@
     <string name="guardian_sms_stop_after_call">Message automatique de l\'appli Call Halt Tech : juste après un appel, l\'écran STOP vient de s\'afficher sur ce téléphone (%1$s). C\'est peut-être une arnaque. Appelez ce numéro dès que possible.</string>
     <string name="guardian_sms_continue_during_call">Message automatique de l\'appli Call Halt Tech : «\u00A0Continuer\u00A0» a été choisi malgré l\'écran STOP (%1$s), pendant un appel. Appelez ce numéro sans attendre.</string>
     <string name="guardian_sms_continue_after_call">Message automatique de l\'appli Call Halt Tech : «\u00A0Continuer\u00A0» a été choisi malgré l\'écran STOP (%1$s), juste après un appel. Appelez ce numéro sans attendre.</string>
+    <string name="guardian_sms_left_during_call">Message automatique de l\'appli Call Halt Tech : l\'écran STOP a été quitté sans réponse (%1$s), pendant un appel. Appelez ce numéro sans attendre.</string>
+    <string name="guardian_sms_left_after_call">Message automatique de l\'appli Call Halt Tech : l\'écran STOP a été quitté sans réponse (%1$s), juste après un appel. Appelez ce numéro sans attendre.</string>
     <string name="guardian_sms_set_up">Message automatique de l\'appli Call Halt Tech : ce téléphone vous préviendra par SMS si l\'écran STOP s\'affiche, pendant un appel ou juste après, signe possible d\'une arnaque.</string>
     <string name="guardian_sms_removed">Message automatique de l\'appli Call Halt Tech : ce téléphone ne vous préviendra plus. Si cela vous étonne, appelez ce numéro.</string>
     <string name="guardian_sms_what_code">un code reçu par SMS</string>

@@ -107,9 +107,11 @@ enum class StopChoice {
     CONTINUE,
 
     /**
-     * The screen was left without an answer (Home, another app in front) — not a button. It frees the trigger: a
-     * repeat ("press Home and validate again") must show a NEW screen, not be absorbed by one nobody sees. No text
-     * to the relative: leaving to hang up from the call screen is an ordinary gesture.
+     * The screen was left without an answer (Home, another app in front, its notification swiped away) — not a
+     * button. It frees the trigger: a repeat ("press Home and validate again") must show a NEW screen, not be absorbed
+     * by one nobody sees. No text to the relative at once: leaving to hang up from the call screen is an ordinary
+     * gesture. During a call or just after it, the screen comes back once, unless the call ended meanwhile; left again,
+     * the relative is told (FN-4, D-038, [com.filestech.callhalt.domain.detection.StopReturns]).
      */
     LEFT,
 }

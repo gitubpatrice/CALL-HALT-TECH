@@ -93,6 +93,15 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(open)
             .setFullScreenIntent(open, true)
+            // Swiped away without being opened: the STOP left without an answer (FN-4).
+            .setDeleteIntent(
+                PendingIntent.getBroadcast(
+                    context,
+                    0,
+                    StopNotificationSwiped.intent(context, triggers),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            )
             .setAutoCancel(true)
             .build()
         return try {

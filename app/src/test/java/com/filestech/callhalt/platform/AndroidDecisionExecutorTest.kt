@@ -38,26 +38,28 @@ class AndroidDecisionExecutorTest {
             shown += asked
             true
         }
-        AndroidDecisionExecutor(launcher, warnings, noGuardian).execute(others + stop)
+        AndroidDecisionExecutor(launcher, warnings, noGuardian, noWakeUps).execute(others + stop)
         assertThat(shown).containsExactly(stop)
     }
 
     /** Android blocks a background start without a word: the engine must journal it as NOT shown. */
     @Test
     fun `a STOP that did not reach the front is reported by an exception`() = runTest {
-        assertThrows<IllegalStateException> { AndroidDecisionExecutor({ false }, warnings, noGuardian).execute(others + stop) }
+        assertThrows<IllegalStateException> {
+            AndroidDecisionExecutor({ false }, warnings, noGuardian, noWakeUps).execute(others + stop)
+        }
     }
 
     @Test
     fun `a warning is handed to the notification`() = runTest {
-        AndroidDecisionExecutor({ error("no STOP to show") }, warnings, noGuardian).execute(others)
+        AndroidDecisionExecutor({ error("no STOP to show") }, warnings, noGuardian, noWakeUps).execute(others)
         assertThat(posted).containsExactly(warning)
     }
 
     /** A STOP shown with it must not read as not shown because the phone threw while posting the warning. */
     @Test
     fun `a warning that throws leaves a shown STOP a success`() = runTest {
-        AndroidDecisionExecutor({ true }, { error("notification service gone") }, noGuardian).execute(others + stop)
+        AndroidDecisionExecutor({ true }, { error("notification service gone") }, noGuardian, noWakeUps).execute(others + stop)
     }
 
     /** The STOP first: the screen is what stops the scam, the text only tells someone. */
@@ -69,19 +71,19 @@ class AndroidDecisionExecutorTest {
             true
         }
         val guardian = GuardianNotifier { event -> order += "text ${(event as GuardianEvent.StopShown).trigger}" }
-        AndroidDecisionExecutor(launcher, warnings, guardian).execute(listOf(tell, stop))
+        AndroidDecisionExecutor(launcher, warnings, guardian, noWakeUps).execute(listOf(tell, stop))
         assertThat(order).containsExactly("stop", "text CODE_MESSAGE").inOrder()
     }
 
     /** A STOP shown with it must not read as not shown because the phone threw while texting. */
     @Test
     fun `a text that throws leaves a shown STOP a success`() = runTest {
-        AndroidDecisionExecutor({ true }, warnings) { error("no SMS on this phone") }.execute(listOf(stop, tell))
+        AndroidDecisionExecutor({ true }, warnings, { error("no SMS on this phone") }, noWakeUps).execute(listOf(stop, tell))
     }
 
     /** Thrown for anything else, it would make a STOP that was shown read as one that was not. */
     @Test
     fun `the decisions it does not carry out, or could not, throw nothing, and show no screen`() = runTest {
-        AndroidDecisionExecutor({ error("no STOP to show") }, { false }, noGuardian).execute(others)
+        AndroidDecisionExecutor({ error("no STOP to show") }, { false }, noGuardian, noWakeUps).execute(others)
     }
 }
