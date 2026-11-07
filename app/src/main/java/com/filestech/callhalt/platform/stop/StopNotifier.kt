@@ -32,7 +32,7 @@ import javax.inject.Singleton
  * is back on. One at a time: a later STOP takes its place, and any STOP screen shown removes it.
  */
 @Singleton
-class StopNotifier @Inject constructor(@ApplicationContext private val context: Context) {
+class StopNotifier @Inject constructor(@ApplicationContext private val context: Context) : StopNotice {
 
     private val manager = NotificationManagerCompat.from(context)
     private val main = Handler(Looper.getMainLooper())
@@ -52,7 +52,7 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
 
     /** The triggers of the STOP notification still waiting to be touched, oldest first; none once it is gone. */
     @Synchronized
-    fun pending(): List<SensitiveActionKind> = if (absorbed.isNotEmpty() && stillPosted()) absorbed else emptyList()
+    override fun pending(): List<SensitiveActionKind> = if (absorbed.isNotEmpty() && stillPosted()) absorbed else emptyList()
 
     /** At the app's start: the user then finds it by its name in the app's notification settings. Idempotent. */
     fun createChannel() {
@@ -70,7 +70,7 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
      */
     @SuppressLint("MissingPermission") // canPost reads POST_NOTIFICATIONS first.
     @Synchronized
-    fun post(request: StopRequest): Boolean {
+    override fun post(request: StopRequest): Boolean {
         if (!canPost(context)) return false
         val triggers = inArrivalOrder(pending() + request.earlier + request.trigger)
         val open = PendingIntent.getActivity(
@@ -114,7 +114,7 @@ class StopNotifier @Inject constructor(@ApplicationContext private val context: 
      * lost with it (Gemini review of 2026-11-07, 5); it stays, and opens its own.
      */
     @Synchronized
-    fun cancel(shownId: Long) {
+    override fun cancel(shownId: Long) {
         val later = postedId?.let { it > shownId } == true
         if (later) return
         manager.cancel(NOTIFICATION_ID)
