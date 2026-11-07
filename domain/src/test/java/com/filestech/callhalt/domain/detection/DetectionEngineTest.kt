@@ -20,6 +20,7 @@ import com.filestech.callhalt.domain.model.StopNotShown
 import com.filestech.callhalt.domain.model.Tick
 import com.filestech.callhalt.domain.model.WarningReason
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -330,10 +331,11 @@ class DetectionEngineTest {
 
             assertThat(answer(StopChoice.CONTINUE))
                 .containsExactly(Decision.NotifyGuardian(GuardianEvent.StopOverridden(SensitiveActionKind.CODE_MESSAGE, duringCall = true)))
-            assertThat(answer(StopChoice.HANG_UP)).isEmpty()
-            assertThat(answer(StopChoice.CALL_MY_BANK)).isEmpty()
-            // Leaving the screen to hang up from the call screen is ordinary: no false alarm to the relative.
-            assertThat(answer(StopChoice.LEFT)).isEmpty()
+            // Every other answer, removing the accessibility access included (D-033). Leaving the screen to hang up from
+            // the call screen is ordinary too: no false alarm to the relative.
+            (StopChoice.entries - StopChoice.CONTINUE).forEach { choice ->
+                assertWithMessage(choice.name).that(answer(choice)).isEmpty()
+            }
         }
     }
 

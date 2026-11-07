@@ -94,9 +94,13 @@
     <string name="stop_advice_after_call">Non faccia ciò che Le hanno chiesto. Chiami direttamente un numero che conosce: quello sulla Sua carta o su una lettera, mai quello che Le hanno dato.</string>
     <string name="stop_advice_remote_on_call">Riattacchi e spenga il telefono: qualcuno potrebbe vederlo o controllarlo. Avvisi poi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
     <string name="stop_advice_remote_after_call">Spenga il telefono: qualcuno potrebbe vederlo o controllarlo. Avvisi poi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
+    <string name="stop_advice_accessibility_on_call">Riattacchi e tolga questo accesso: nella pagina «Accessibilità» delle impostazioni, tocchi l\'app e la disattivi. Spenga poi il telefono: qualcuno potrebbe vederlo o controllarlo. Avvisi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
+    <string name="stop_advice_accessibility_after_call">Tolga questo accesso: nella pagina «Accessibilità» delle impostazioni, tocchi l\'app e la disattivi. Spenga poi il telefono: qualcuno potrebbe vederlo o controllarlo. Avvisi la Sua banca, se possibile da un altro telefono, al numero sulla Sua carta.</string>
     <string name="stop_hang_up">Riattaccare</string>
     <string name="stop_hang_up_and_call_my_bank">Riattaccare e chiamare la mia banca</string>
     <string name="stop_call_my_bank">Chiamare la mia banca</string>
+    <string name="stop_remove_access">Togliere l\'accesso</string>
+    <string name="stop_hang_up_and_remove_access">Riattaccare e togliere l\'accesso</string>
     <string name="stop_continue">Continuare</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continuare (tra %1$d secondo)</item>

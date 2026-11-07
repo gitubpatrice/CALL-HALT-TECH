@@ -43,6 +43,26 @@ class StopAnswersTest {
         assertThat(calls.ended).isEqualTo(1)
     }
 
+    /** D-033: the settings open after the call ended, as the dialler; the answer is journaled as itself. */
+    @Test
+    fun `removing the access ends the call during it, and nothing after it`() = runTest {
+        assertThat(answers().answer(session(onCall = true), StopChoice.REMOVE_ACCESS)).isTrue()
+        assertThat(answers().answer(session(onCall = false), StopChoice.REMOVE_ACCESS)).isTrue()
+        drain()
+        assertThat(calls.ended).isEqualTo(1)
+        assertThat(store.journal.map { (it as JournalEntry.Answer).choice })
+            .containsExactly(StopChoice.REMOVE_ACCESS, StopChoice.REMOVE_ACCESS)
+    }
+
+    /** Not the settings over a call still going on: the scammer would stay on the line, told it was cut. */
+    @Test
+    fun `removing the access when the call could not be ended is not an answer`() = runTest {
+        calls.succeeds = false
+        assertThat(answers().answer(session(onCall = true), StopChoice.REMOVE_ACCESS)).isFalse()
+        drain()
+        assertThat(store.journal).isEmpty()
+    }
+
     @Test
     fun `continuing ends nothing, and is journaled too`() = runTest {
         answers().answer(session(onCall = true), StopChoice.CONTINUE)

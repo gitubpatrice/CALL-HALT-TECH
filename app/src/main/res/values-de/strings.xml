@@ -91,9 +91,13 @@
     <string name="stop_advice_after_call">Tun Sie nicht, worum man Sie gebeten hat. Rufen Sie selbst eine Nummer an, die Sie kennen: die auf Ihrer Karte oder in einem Brief, nie die, die man Ihnen gegeben hat.</string>
     <string name="stop_advice_remote_on_call">Legen Sie auf und schalten Sie Ihr Telefon aus: Jemand sieht oder steuert es vielleicht. Warnen Sie danach Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
     <string name="stop_advice_remote_after_call">Schalten Sie Ihr Telefon aus: Jemand sieht oder steuert es vielleicht. Warnen Sie danach Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
+    <string name="stop_advice_accessibility_on_call">Legen Sie auf und entziehen Sie diesen Zugriff: Tippen Sie auf der Seite „Bedienungshilfen“ der Einstellungen auf die App und deaktivieren Sie sie. Schalten Sie danach Ihr Telefon aus: Jemand sieht oder steuert es vielleicht. Warnen Sie Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
+    <string name="stop_advice_accessibility_after_call">Entziehen Sie diesen Zugriff: Tippen Sie auf der Seite „Bedienungshilfen“ der Einstellungen auf die App und deaktivieren Sie sie. Schalten Sie danach Ihr Telefon aus: Jemand sieht oder steuert es vielleicht. Warnen Sie Ihre Bank, wenn möglich von einem anderen Telefon aus, unter der Nummer auf Ihrer Karte.</string>
     <string name="stop_hang_up">Auflegen</string>
     <string name="stop_hang_up_and_call_my_bank">Auflegen und meine Bank anrufen</string>
     <string name="stop_call_my_bank">Meine Bank anrufen</string>
+    <string name="stop_remove_access">Zugriff entziehen</string>
+    <string name="stop_hang_up_and_remove_access">Auflegen und Zugriff entziehen</string>
     <string name="stop_continue">Weiter</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Weiter (in %1$d Sekunde)</item>

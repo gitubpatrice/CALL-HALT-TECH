@@ -92,6 +92,10 @@
         <intent>
             <action android:name="android.settings.INTERNAL_STORAGE_SETTINGS" />
         </intent>
+        <!-- Nor this one: where the STOP screen sends the user to turn off an app's accessibility access (D-033). -->
+        <intent>
+            <action android:name="android.settings.ACCESSIBILITY_SETTINGS" />
+        </intent>
         <!-- Xiaomi's Security app, where its autostart is allowed (platform/access/Miui, D-025): a page, by its name. -->
         <package android:name="com.miui.securitycenter" />
         <intent>

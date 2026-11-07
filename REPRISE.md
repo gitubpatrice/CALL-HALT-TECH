@@ -37,8 +37,22 @@ SIM, à la décision de Patrice (le S24 est en observation).
 **Quatre relectures** (trois passes Claude, GPT 0,022 $) : 13 corrections, dont un « Continuer » touché le lendemain qui
 envoyait « juste après un appel », un SMS raté qui retenait le suivant, le « (0) » de « +49 (0)171… », un double toucher
 qui envoyait deux SMS ; gardé exprès : le SMS part même si l'écran STOP n'a pas pu s'afficher (le proche est alors la
-seule protection). **480 tests.** **Ensuite** : la proposition en attente (un bouton vers la page Accessibilité sur le
-STOP d'accessibilité, D-033), puis les audits vers 95/100 et la liste « avant toute publication ».
+seule protection). **480 tests.**
+
+**Puis, le même jour : « Retirer l'accès » sur le STOP d'accessibilité (D-033 ; Patrice : « fais ce qui te semble le
+mieux », « l'appli doit être facile, intuitive, solide, fiable »).** Éteindre coupe la session de l'escroc, pas l'accès,
+qui revient au démarrage — et le STOP, lui, ne revient pas. Ce STOP offre donc en premier « Retirer l'accès » (après
+l'appel) ou « Raccrocher et retirer l'accès » (pendant un appel que l'appli peut couper ; l'appel est coupé d'abord) :
+la page Accessibilité des réglages s'ouvre, celle du téléphone seulement (l'appli malveillante pourrait en imiter une),
+et le conseil dit « touchez l'appli, puis désactivez-la. Éteignez ensuite votre téléphone… ». **Trouvé en mesurant, et
+corrigé aussi pour « Appeler ma banque »** (défaut d'avant) : téléphone verrouillé par code, le composeur ou la page
+s'ouvrait derrière le verrou, le STOP parti, sans un mot — le code est maintenant demandé par-dessus le STOP ; et la
+page restait dans la tâche du STOP, d'où elle revenait après le « Continuer » d'un STOP suivant. **Mesuré** sur
+Android 15 et 16 (l'appel coupé avant la demande du code ; RustDesk désactivé en deux touches et une confirmation).
+**Trois relectures** (Claude justesse et sécurité, GPT 0,019 $) : aucune faille ; corrigés et mesurés, un second STOP
+perdu s'il arrivait pendant la demande du code (le SMS de code de l'escroc à ce moment-là) et l'écran recréé pendant
+cette demande (Android jette alors le rappel). **486 tests.** **Ensuite** : les audits vers 95/100 et la liste « avant
+toute publication ».
 
 ## Le 2026-11-05
 
@@ -337,7 +351,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 480 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 486 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
@@ -405,7 +419,8 @@ Brancher les capteurs un par un, chacun avec sa permission, sa vérification et 
 
 - ~~Renommer le dossier~~ — **fait par Patrice le 2026-11-01** : `J:\applications\call_halt_tech`.
 - **Faire relire les phrases de sécurité** allemandes, italiennes et espagnoles par quelqu'un dont c'est la
-  langue : une consigne mal traduite ferait faire l'inverse. Les SMS au proche (D-034) en font partie.
+  langue : une consigne mal traduite ferait faire l'inverse. Les SMS au proche (D-034) et « Retirer l'accès »
+  (D-033) en font partie.
 - **Mesurer la réception d'un SMS au proche sur un vrai téléphone** (D-034) : une SIM côté téléphone protégé, une
   autre côté proche ; le S24 est en observation, à ta décision.
 - ~~Trancher SMS au proche, F-Droid, Dependabot~~ — **tranché le 2026-11-01** : SMS au proche oui, F-Droid

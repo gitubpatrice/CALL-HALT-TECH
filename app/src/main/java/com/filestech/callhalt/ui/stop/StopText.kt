@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import com.filestech.callhalt.R
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopChoice
 
 /**
  * The words of one STOP screen: where the user is, what just happened, the rule that unmasks it, what to do,
@@ -18,14 +19,16 @@ internal data class StopText(
     @StringRes val happened: Int,
     @StringRes val rule: Int,
     @StringRes val advice: Int,
-    /** The app can end this call itself: "Hang up" comes first. */
-    val offerHangUp: Boolean,
     /**
-     * Null while a call goes on that the app cannot end: dialling then would put the scammer on hold instead of
-     * cutting him off (D-011) — the advice says to hang up. Otherwise it hangs up first when it can.
+     * The safe ways out, the most protective first; "Continue" is none of them and comes after. Empty while a call
+     * goes on that the app cannot end: dialling, or opening the settings, would leave the scammer on the line instead
+     * of cutting him off (D-011) — the advice says to hang up.
      */
-    @StringRes val callMyBank: Int?,
+    val buttons: List<StopButton>,
 )
+
+/** One safe way out: its words, and the answer it gives. */
+internal data class StopButton(@StringRes val label: Int, val choice: StopChoice)
 
 /**
  * [onCall] and [channel] are those of the decision's call ([com.filestech.callhalt.domain.model.Decision.ShowStop]);
@@ -33,25 +36,12 @@ internal data class StopText(
  */
 internal fun stopText(trigger: SensitiveActionKind, onCall: Boolean, channel: CallChannel, canEndCall: Boolean): StopText {
     val canHangUp = onCall && channel == CallChannel.CELLULAR && canEndCall
-    // Hanging up does not end a remote-control session, nor what an app given the accessibility access does: the advice
-    // for those triggers is to switch the phone off.
-    val remote = trigger in REMOTE_TRIGGERS
     return StopText(
         situation = if (onCall) R.string.stop_on_call else R.string.stop_call_ended,
         happened = happened(trigger),
         rule = rule(trigger),
-        advice = when {
-            remote && onCall -> R.string.stop_advice_remote_on_call
-            remote -> R.string.stop_advice_remote_after_call
-            onCall -> R.string.stop_advice_on_call
-            else -> R.string.stop_advice_after_call
-        },
-        offerHangUp = canHangUp,
-        callMyBank = when {
-            canHangUp -> R.string.stop_hang_up_and_call_my_bank
-            onCall -> null
-            else -> R.string.stop_call_my_bank
-        },
+        advice = advice(trigger, onCall),
+        buttons = buttons(trigger, onCall, canHangUp),
     )
 }
 
@@ -72,6 +62,44 @@ private fun rule(trigger: SensitiveActionKind): Int = when (trigger) {
     SensitiveActionKind.ACCESSIBILITY_ENABLED -> R.string.stop_rule_accessibility
     in REMOTE_TRIGGERS -> R.string.stop_rule_remote
     else -> R.string.stop_rule_codes
+}
+
+/**
+ * Hanging up does not end a remote-control session, nor what an app given the accessibility access does: the advice
+ * for those triggers is to switch the phone off. The access itself outlives the phone's restart: it is turned off
+ * first, in the phone's settings (D-033).
+ */
+@StringRes
+private fun advice(trigger: SensitiveActionKind, onCall: Boolean): Int = when {
+    trigger == SensitiveActionKind.ACCESSIBILITY_ENABLED ->
+        if (onCall) R.string.stop_advice_accessibility_on_call else R.string.stop_advice_accessibility_after_call
+    trigger in REMOTE_TRIGGERS -> if (onCall) R.string.stop_advice_remote_on_call else R.string.stop_advice_remote_after_call
+    onCall -> R.string.stop_advice_on_call
+    else -> R.string.stop_advice_after_call
+}
+
+/**
+ * The call ends first when the app can end it, and nothing else is offered while it goes on (D-011). After an app was
+ * given the accessibility access, removing it comes before calling the bank: in a few touches, it stops what the app
+ * can do in the user's place — the bank's operations included.
+ */
+private fun buttons(trigger: SensitiveActionKind, onCall: Boolean, canHangUp: Boolean): List<StopButton> {
+    val access = trigger == SensitiveActionKind.ACCESSIBILITY_ENABLED
+    return when {
+        canHangUp -> listOf(
+            if (access) {
+                StopButton(R.string.stop_hang_up_and_remove_access, StopChoice.REMOVE_ACCESS)
+            } else {
+                StopButton(R.string.stop_hang_up, StopChoice.HANG_UP)
+            },
+            StopButton(R.string.stop_hang_up_and_call_my_bank, StopChoice.CALL_MY_BANK),
+        )
+        onCall -> emptyList()
+        else -> listOfNotNull(
+            StopButton(R.string.stop_remove_access, StopChoice.REMOVE_ACCESS).takeIf { access },
+            StopButton(R.string.stop_call_my_bank, StopChoice.CALL_MY_BANK),
+        )
+    }
 }
 
 /** Someone may be seeing or controlling the phone: hanging up does not stop that. */

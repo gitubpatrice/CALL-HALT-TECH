@@ -14,8 +14,9 @@ change that adds it to the app, and the build checks the app asks for nothing el
   using — your banking app included — when a risky action happens during a call. The app draws no window
   over other apps: the STOP screen is a full screen of its own, excluded from screenshots and screen
   sharing.
-- **Answer phone calls** (`ANSWER_PHONE_CALLS`): only to end the call when you press "Hang up", or "Hang up
-  and call my bank", on the STOP screen. Without it, neither button is shown during a call. The app never
+- **Answer phone calls** (`ANSWER_PHONE_CALLS`): only to end the call when you press "Hang up", "Hang up and
+  call my bank" or "Hang up and remove the access" on the STOP screen. Without it, none of these buttons is shown
+  during a call. The app never
   answers or places a call by itself: "call my bank" opens the phone's dialler, and you press call.
 - **Ask to run in the background without restriction** (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`): only to show the
   phone's own question, "Let app always run in background?", during the activation. A protection app is hardly ever

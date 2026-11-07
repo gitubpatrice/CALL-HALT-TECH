@@ -127,10 +127,14 @@
     <!-- Hanging up does not end a remote-control session: switching the phone off does. -->
     <string name="stop_advice_remote_on_call">Hang up and switch off your phone: someone may be seeing or controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
     <string name="stop_advice_remote_after_call">Switch off your phone: someone may be seeing or controlling it. Then warn your bank, from another phone if you can, on the number on your card.</string>
+    <string name="stop_advice_accessibility_on_call">Hang up and remove this access: on the \"Accessibility\" page of the settings, touch the app, then turn it off. Then switch off your phone: someone may be seeing or controlling it. Warn your bank, from another phone if you can, on the number on your card.</string>
+    <string name="stop_advice_accessibility_after_call">Remove this access: on the \"Accessibility\" page of the settings, touch the app, then turn it off. Then switch off your phone: someone may be seeing or controlling it. Warn your bank, from another phone if you can, on the number on your card.</string>
     <string name="stop_hang_up">Hang up</string>
     <!-- During the call, the app hangs up BEFORE dialling: dialling first would put the scammer on hold (D-011). -->
     <string name="stop_hang_up_and_call_my_bank">Hang up and call my bank</string>
     <string name="stop_call_my_bank">Call my bank</string>
+    <string name="stop_remove_access">Remove the access</string>
+    <string name="stop_hang_up_and_remove_access">Hang up and remove the access</string>
     <string name="stop_continue">Continue</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continue (in %1$d second)</item>

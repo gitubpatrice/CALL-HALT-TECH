@@ -2,6 +2,7 @@ package com.filestech.callhalt.platform.stop
 
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopChoice
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -47,5 +48,35 @@ class StopSessionTest {
         val session = StopSession.of(code).afterCallNotEnded().answering().replacedBy(bankApp)
         assertThat(session.answered).isTrue()
         assertThat(session.callStillOn).isTrue()
+    }
+
+    /**
+     * A STOP arriving while the phone asks for the unlock (the first screen answered, its page waiting): a screen of
+     * its own, whose buttons answer it, with nothing to open over it (review of 2026-11-07: it was lost).
+     */
+    @Test
+    fun `a STOP arriving once the screen is answered is a screen of its own`() {
+        val waiting = StopSession.of(code).answering(opening = StopChoice.REMOVE_ACCESS)
+        val next = waiting.receiving(bankApp)
+        assertThat(next.current).isEqualTo(bankApp)
+        assertThat(next.triggers).containsExactly(SensitiveActionKind.BANK_APP_OPENED)
+        assertThat(next.answered).isFalse()
+        assertThat(next.opening).isNull()
+    }
+
+    @Test
+    fun `a STOP arriving before the answer takes the screen and joins its triggers`() {
+        val session = StopSession.of(code)
+        assertThat(session.receiving(bankApp)).isEqualTo(session.replacedBy(bankApp))
+    }
+
+    /** Two unlock callbacks, or a rebuilt screen asking again: the page opens once. */
+    @Test
+    fun `the page waiting for the unlock opens once`() {
+        val waiting = StopSession.of(code).answering(opening = StopChoice.CALL_MY_BANK)
+        assertThat(waiting.opening).isEqualTo(StopChoice.CALL_MY_BANK)
+        assertThat(waiting.opened().opening).isNull()
+        assertThat(waiting.opened().answered).isTrue()
+        assertThat(StopSession.of(code).answering().opening).isNull()
     }
 }

@@ -75,20 +75,31 @@ object AccessSettings {
     fun storage(): List<Intent> = listOf(Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS), Intent(Settings.ACTION_SETTINGS))
 
     /**
+     * Where an app's accessibility access is turned off, from the STOP screen (D-033): the list of the services — the
+     * page of one service is the system's own (`ACTION_ACCESSIBILITY_DETAILS_SETTINGS`, `@SystemApi`).
+     */
+    fun accessibility(): List<Intent> = listOf(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), Intent(Settings.ACTION_SETTINGS))
+
+    /**
      * Opens the first page this phone has. [context] must be the activity's: started without a new task, the page
      * goes back to the app with the Back key, and the phone's settings, if already open, cannot swallow it (measured:
      * started as a new task while they are in front, the intent reaches the page shown and nothing changes).
      */
     fun open(context: Context, pages: List<Intent>) {
-        for (page in pages) {
-            val system = systemSettings(context, page) ?: continue
-            if (start(context, system)) return
-        }
+        if (openOwn(context, pages)) return
         // No system page found (a phone this was not measured on): the first page as it is, rather than a button that
         // does nothing.
         Timber.w("No system settings page: %s left to the phone", pages.first().action)
         start(context, pages.first())
     }
+
+    /**
+     * As [open], but the phone's own settings only, never the page as it is: from the STOP screen, the app just given
+     * the accessibility access may declare the same page, and show its own words there ("keep it on"). False when
+     * none opened.
+     */
+    fun openOwn(context: Context, pages: List<Intent>): Boolean =
+        pages.any { page -> systemSettings(context, page)?.let { start(context, it) } == true }
 }
 
 /**
