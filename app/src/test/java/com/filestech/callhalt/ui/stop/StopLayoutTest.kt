@@ -6,6 +6,7 @@ import com.filestech.callhalt.ui.stop.StopPart.EXPLANATION
 import com.filestech.callhalt.ui.stop.StopPart.MESSAGE
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 /**
  * The STOP screen's arrangement (U2): the buttons at the bottom when all fits, and otherwise right under the warning,
@@ -63,8 +64,50 @@ class StopLayoutTest {
         assertThat(placement.ys).containsExactly(0, 112, 960).inOrder()
     }
 
+    /** The demonstration's banner is one more message, first: it stays first, the buttons still under the warning. */
+    @Test
+    fun `the demonstration's banner stays first`() {
+        val demo = listOf(MESSAGE) + parts
+        val placement = stopPlacement(demo, listOf(60) + heights, available = 500, TEXT, GROUP)
+
+        assertThat(placement.order).containsExactly(0, 1, 2, 3, 7, 8, 4, 5, 6, 9).inOrder()
+    }
+
+    /** One safe button (after the call, a remote-control app): under the warning too. */
+    @Test
+    fun `a single safe button comes under the warning`() {
+        val placement = stopPlacement(
+            listOf(MESSAGE, MESSAGE, EXPLANATION, BUTTON, CONTINUE),
+            listOf(300, 300, 300, 56, 40),
+            available = 600,
+            TEXT,
+            GROUP,
+        )
+
+        assertThat(placement.order).containsExactly(0, 1, 3, 2, 4).inOrder()
+    }
+
+    /** Whatever the heights and the room: no two pieces overlap, each comes once, and all are inside the height. */
+    @Test
+    fun `no two pieces ever overlap`() {
+        val random = Random(SEED)
+        repeat(RUNS) {
+            val sizes = parts.map { random.nextInt(1, 400) }
+            val placement = stopPlacement(parts, sizes, available = random.nextInt(0, 3_000), TEXT, GROUP)
+
+            assertThat(placement.order.sorted()).isEqualTo(parts.indices.toList())
+            val spans = placement.order.mapIndexed { at, index -> placement.ys[at] to placement.ys[at] + sizes[index] }
+                .sortedBy { it.first }
+            spans.zipWithNext().forEach { (above, below) -> assertThat(below.first).isAtLeast(above.second) }
+            assertThat(spans.first().first).isAtLeast(0)
+            assertThat(spans.last().second).isAtMost(placement.height)
+        }
+    }
+
     private companion object {
         const val TEXT = 12
         const val GROUP = 16
+        const val SEED = 20261107L
+        const val RUNS = 500
     }
 }

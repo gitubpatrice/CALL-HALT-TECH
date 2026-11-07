@@ -97,7 +97,9 @@ internal fun StopLayout(modifier: Modifier = Modifier, content: @Composable () -
                 textGap = TEXT_GAP.roundToPx(),
                 groupGap = GROUP_GAP.roundToPx(),
             )
-            layout(constraints.maxWidth, placement.height) {
+            // Unbounded width (a preview in a horizontal list): as wide as the widest piece.
+            val width = if (constraints.hasBoundedWidth) constraints.maxWidth else placeables.maxOfOrNull { it.width } ?: 0
+            layout(width, placement.height) {
                 placement.order.forEachIndexed { at, index -> placeables[index].place(0, placement.ys[at]) }
             }
         }
