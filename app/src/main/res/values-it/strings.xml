@@ -12,6 +12,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Durante una telefonata, la schermata STOP compare quando riceve un codice via SMS (in francese o in inglese) o una richiesta di conferma Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Non vede tutto, nemmeno le chiamate via Internet (WhatsApp…): anche senza schermata STOP, la regola qui sotto resta valida.</string>
+    <string name="home_sms_preview_hidden">La Sua app SMS nasconde il testo dei messaggi nelle notifiche: un codice ricevuto via SMS non viene visto. Nelle sue impostazioni, attivi l\'anteprima dei messaggi.</string>
     <string name="home_on_landline">Una chiamata sul Suo telefono fisso non viene vista. Se, al fisso, Le chiedono un codice ricevuto via SMS, è una truffa: riattacchi.</string>
     <string name="home_off">Protezione disattivata</string>
     <string name="home_weakened">Protezione indebolita</string>
