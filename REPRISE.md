@@ -62,8 +62,18 @@ l'appel, P-7) ; toute l'arnaque passe ensuite sans STOP, et l'escroc l'obtient d
 Mesuré aussi : 55 SMS de numéros distincts saturent Google Messages (plafond de 50 notifications d'Android) et cachent
 le code (N-3). Sécurité : 3 constats retenus sur 15 (le dernier écran perd « Retirer l'accès », N-1 ; une
 superposition, C-2 ; le canal Sécur'Pass imité, S-2). **18 / 100 avant corrections** ; environ 74 après les corrections
-techniques ; 95 avec les mesures sur de vrais téléphones et la relecture des natifs. **Ensuite** : FN-1, puis les
-corrections dans l'ordre du § 7 du rapport ; quatre décisions de Patrice (§ 6).
+techniques ; 95 avec les mesures sur de vrais téléphones et la relecture des natifs. Patrice a pris les quatre
+recommandations (§ 6 : le STOP quitté revient et prévient le proche ; « Désinstaller » sur le STOP d'installation ; un STOP
+pour une rafale de SMS ; un écran « Historique »), et les relectures externes peuvent aussi passer par Gemini ou l'API
+Claude.
+
+**FN-1 corrigé le même soir (D-035)** : l'état réel de l'appel est lu à chaque démarrage de l'appli et avant chaque action
+sensible, réduit à ce qui ne peut pas contredire la diffusion (un appel WhatsApp seul n'est dit dans aucun sens).
+**Mesuré** sur l'émulateur Android 16 : la demande Sécur'Pass pendant l'appel décroché avant le déverrouillage montre « Vous
+êtes au téléphone » ; sans action pendant l'appel, un code reçu après montre « Votre appel vient de se terminer ». Trois
+relectures (Claude justesse et robustesse, GPT Sol 0,437 $) : 6 corrections, 5 limites écrites. **501 tests** sur
+ordinateur, et un test sur l'appareil de plus. **Ensuite** : les corrections dans l'ordre du § 7 du rapport, en
+commençant par l'écran STOP qui perd « Retirer l'accès » (N-1).
 
 ## Le 2026-11-05
 
@@ -362,7 +372,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 486 tests sur ordinateur, 30 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 501 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

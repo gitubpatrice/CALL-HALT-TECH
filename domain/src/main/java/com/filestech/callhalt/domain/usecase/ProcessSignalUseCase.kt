@@ -3,10 +3,12 @@ package com.filestech.callhalt.domain.usecase
 import com.filestech.callhalt.domain.detection.DetectionEngine
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.PhoneRestarted
+import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.Signal
 import com.filestech.callhalt.domain.model.StopNotShown
 import com.filestech.callhalt.domain.port.DecisionExecutor
 import com.filestech.callhalt.domain.port.DetectorStore
+import com.filestech.callhalt.domain.port.LiveCallSource
 import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.port.SettingsSource
 import kotlin.coroutines.cancellation.CancellationException
@@ -14,7 +16,8 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * The single entry point of every adapter (call state, SMS, notifications, packages, the STOP screen):
  * one signal in, its consequences committed, then carried out — preceded, the first time after a restart of the
- * phone, by [PhoneRestarted]. No adapter calls the engine directly.
+ * phone, by [PhoneRestarted], and, for a sensitive action, by the call state the phone reports right now
+ * ([LiveCallSource]). No adapter calls the engine directly.
  *
  * Adapters run it in a scope that outlives them (the application's), not in a receiver's few seconds: a
  * cancellation between the commit and the screen leaves the STOP recorded but not shown, and only the
@@ -25,6 +28,7 @@ class ProcessSignalUseCase(
     private val store: DetectorStore,
     private val settings: SettingsSource,
     private val restarts: RestartSource,
+    private val liveCall: LiveCallSource,
     private val executor: DecisionExecutor,
 ) {
     suspend operator fun invoke(signal: Signal) {
@@ -36,7 +40,31 @@ class ProcessSignalUseCase(
             process(PhoneRestarted(minOf(restart.at, signal.at)))
             restart.record()
         }
+        // And the call going on right now, before an action looks for one: a call the broadcasts never told — answered
+        // before the first unlock after a start (FN-1) — would leave the whole scam without a STOP (P-7). After the
+        // restart, which ends the calls of the earlier boot; at the action's own moment, so that it falls within. A call
+        // answered between the action and this read is placed at the action: a STOP for an action a moment before the
+        // call, the protective side.
+        if (signal is SensitiveAction) tellLiveCall(signal)
         process(signal)
+    }
+
+    /**
+     * The call state right now, read and committed before [action]. Whatever fails in it — the read, against its port's
+     * contract, or the commit of what it read (GPT review of 2026-11-07, 3) — the action must still be handled: lost, it
+     * would be the very STOP this read exists for.
+     */
+    // A catch-all, by design: see above. Swallowed here, where nothing logs (the domain module has no log); the adapter
+    // logs its own failures.
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    private suspend fun tellLiveCall(action: SensitiveAction) {
+        try {
+            liveCall.stateAt(action.at)?.let { process(it) }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failed: Exception) {
+            // The action follows, on what the engine already knew.
+        }
     }
 
     // A catch-all, by design: whatever made the screen fail, the STOP must not stay recorded as shown.

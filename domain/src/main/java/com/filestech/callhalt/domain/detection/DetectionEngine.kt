@@ -1,5 +1,6 @@
 package com.filestech.callhalt.domain.detection
 
+import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallEnded
 import com.filestech.callhalt.domain.model.CallSession
 import com.filestech.callhalt.domain.model.CallStarted
@@ -66,7 +67,14 @@ class DetectionEngine {
         // reception on the uptime, in arrival order, only a sensor breaking Signal's contract could send one; a
         // civil clock set back between two calls no longer makes the second look like a repeat (P-13).
         val repeatOfEnded = current?.endedAt?.let { signal.at.isBefore(it) } == true
-        if (sameConversation || repeatOfEnded) return Evaluation(state)
+        if (sameConversation || repeatOfEnded) {
+            // The phone's call state, read when the process started, told this call first, its direction unknown
+            // (D-035); the broadcast that started the process tells it a moment later. Taken, not lost: the start stays.
+            val directionTold = current?.takeIf {
+                sameConversation && it.direction == CallDirection.UNKNOWN && signal.direction != CallDirection.UNKNOWN
+            }?.copy(direction = signal.direction)
+            return Evaluation(directionTold?.let { state.copy(calls = state.calls + (signal.channel to it)) } ?: state)
+        }
 
         val call = CallSession(signal.channel, signal.direction, signal.counterpart, startedAt = signal.at)
         val next = state.copy(

@@ -7,6 +7,7 @@ import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.port.LiveCallSource
 import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
 import com.filestech.callhalt.platform.AndroidDecisionExecutor
@@ -115,6 +116,7 @@ class StopAnswersTest {
         store,
         { ProtectionSettings() },
         RestartSource { null },
+        LiveCallSource { null },
         AndroidDecisionExecutor({ true }, { error("no warning expected") }, noGuardian),
     )
 

@@ -14,6 +14,7 @@ import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopAnswered
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.domain.port.LiveCallSource
 import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
@@ -47,6 +48,7 @@ class RemoteControlNoticesTest {
         store,
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
+        LiveCallSource { null },
         AndroidDecisionExecutor(launcher, WarningPoster { error("no warning expected") }, noGuardian),
     )
 
