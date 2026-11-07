@@ -13,6 +13,7 @@ import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.WarningReason
+import com.filestech.callhalt.domain.port.LiveCallSource
 import com.filestech.callhalt.domain.port.RestartSource
 import com.filestech.callhalt.domain.port.SettingsSource
 import com.filestech.callhalt.domain.usecase.ProcessSignalUseCase
@@ -54,6 +55,7 @@ class RemoteControlAppsTest {
         store,
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
+        LiveCallSource { null },
         AndroidDecisionExecutor(launcher, warnings, noGuardian),
     )
 
@@ -137,6 +139,7 @@ class RemoteControlAppsTest {
             store,
             SettingsSource { ProtectionSettings() },
             RestartSource { null },
+            LiveCallSource { null },
             AndroidDecisionExecutor(launcher, { false }, noGuardian),
         )
         refused(checkNotNull(installSignal(ANYDESK, replacing = false, at(0))))

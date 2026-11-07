@@ -5,6 +5,7 @@ import com.filestech.callhalt.domain.detection.Evaluation
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
+import com.filestech.callhalt.domain.model.Signal
 
 /**
  * The settings as the engine needs them, read fresh for each signal. An implementation that cannot read
@@ -27,6 +28,21 @@ fun interface SettingsSource {
 fun interface RestartSource {
     /** The current boot, unless it was already recorded. */
     suspend fun unreported(): Restart?
+}
+
+/**
+ * The phone's call state read right now, as the call signal its broadcast would have carried — asked before every
+ * sensitive action, so that what the broadcasts never told is told then (P-7). A call answered before the first unlock
+ * after a start: the app cannot run then, and Android does not send the broadcast again once it can (FN-1, measured).
+ * An end the app never heard: a call left "in progress" would make every action for hours look like one during a call.
+ *
+ * A call going on is a [com.filestech.callhalt.domain.model.CallStarted], none a
+ * [com.filestech.callhalt.domain.model.CallEnded], both stamped [at]; the engine absorbs the one it already knows (a
+ * start during the call, an end with no call in progress). Null when the phone only rings — nobody has answered yet —
+ * or cannot be asked. Nothing here throws.
+ */
+fun interface LiveCallSource {
+    suspend fun stateAt(at: Moment): Signal?
 }
 
 /**

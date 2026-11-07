@@ -47,6 +47,7 @@ class CallStateSensorTest {
             store,
             settings,
             { null },
+            { null },
             AndroidDecisionExecutor(noStop, noWarning, noGuardian),
         ),
         events,

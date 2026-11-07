@@ -431,6 +431,27 @@ class DetectionEngineTest {
             assertThat(steps.last().decisions).isEmpty()
         }
 
+        /** D-035: the state read at the process's start told the call first; the broadcast that started it tells more. */
+        @Test
+        fun `a second start tells the direction of a call known without one, and keeps its start`() {
+            val unknown = CallStarted(at(0), CallChannel.CELLULAR, CallDirection.UNKNOWN, Counterpart.Unreadable)
+            val outgoing = CallStarted(at(0, 1), CallChannel.CELLULAR, CallDirection.OUTGOING, Counterpart.Unreadable)
+
+            val steps = run(unknown, outgoing)
+
+            val call = steps.last().state.calls.getValue(CallChannel.CELLULAR)
+            assertThat(call.direction).isEqualTo(CallDirection.OUTGOING)
+            assertThat(call.startedAt).isEqualTo(at(0))
+            assertThat(steps.last().decisions).isEmpty()
+        }
+
+        @Test
+        fun `a known direction is not changed by a second start`() {
+            val steps = run(callStarted(), CallStarted(at(1), CallChannel.CELLULAR, CallDirection.OUTGOING, contact))
+
+            assertThat(steps.last().state.calls.getValue(CallChannel.CELLULAR).direction).isEqualTo(CallDirection.INCOMING)
+        }
+
         @Test
         fun `an end with no call in progress changes nothing`() {
             val steps = run(CallEnded(at(1), CallChannel.CELLULAR))
