@@ -12,6 +12,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Durante una telefonata, la schermata STOP compare quando riceve un codice via SMS (in francese o in inglese) o una richiesta di conferma Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Non vede tutto, nemmeno le chiamate via Internet (WhatsApp…): anche senza schermata STOP, la regola qui sotto resta valida.</string>
+    <string name="home_on_landline">Una chiamata sul Suo telefono fisso non viene vista. Se, al fisso, Le chiedono un codice ricevuto via SMS, è una truffa: riattacchi.</string>
     <string name="home_off">Protezione disattivata</string>
     <string name="home_weakened">Protezione indebolita</string>
     <string name="home_weakened_detail">L\'app non riesce più a salvare ciò che vede. La protegge ancora, ma se il telefono la chiude durante una chiamata, non saprà più che era al telefono. Forse il telefono è pieno: liberi un po\' di spazio, poi torni qui. Se lo spazio c\'è, lo riavvii.</string>
@@ -113,7 +114,7 @@
     <string name="guardian_sms_stop_after_call">Messaggio automatico dell\'app Call Halt Tech: subito dopo una chiamata, su questo telefono è appena comparsa la schermata STOP (%1$s). Potrebbe essere una truffa. Chiami questo numero appena possibile.</string>
     <string name="guardian_sms_continue_during_call">Messaggio automatico dell\'app Call Halt Tech: è stato scelto «Continuare» nonostante la schermata STOP (%1$s), durante una chiamata. Chiami subito questo numero.</string>
     <string name="guardian_sms_continue_after_call">Messaggio automatico dell\'app Call Halt Tech: è stato scelto «Continuare» nonostante la schermata STOP (%1$s), subito dopo una chiamata. Chiami subito questo numero.</string>
-    <string name="guardian_sms_set_up">Messaggio automatico dell\'app Call Halt Tech: questo telefono La avviserà via SMS se compare la schermata STOP, durante una chiamata o subito dopo, possibile segno di una truffa. Non Le invia nient\'altro.</string>
+    <string name="guardian_sms_set_up">Messaggio automatico dell\'app Call Halt Tech: questo telefono La avviserà via SMS se compare la schermata STOP, durante una chiamata o subito dopo, possibile segno di una truffa.</string>
     <string name="guardian_sms_removed">Messaggio automatico dell\'app Call Halt Tech: questo telefono non La avviserà più. Se La sorprende, chiami questo numero.</string>
     <string name="guardian_sms_what_code">un codice ricevuto via SMS</string>
     <string name="guardian_sms_what_bank_validation">una richiesta di conferma della banca</string>

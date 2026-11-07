@@ -11,6 +11,7 @@
     </plurals>
     <string name="home_on_detail_call_only">Pendant un appel téléphonique, l\'écran STOP s\'affiche quand vous recevez un code par SMS, ou une demande de validation Sécur\'Pass (Banque Populaire, Caisse d\'Épargne, Crédit Coopératif…).</string>
     <string name="home_on_limit">Elle ne voit pas tout, ni les appels par Internet (WhatsApp…) : même sans écran STOP, la règle ci-dessous reste vraie.</string>
+    <string name="home_on_landline">Un appel sur votre téléphone fixe n\'est pas vu. Si, au fixe, on vous demande un code reçu par SMS, c\'est une arnaque : raccrochez.</string>
     <string name="home_off">Protection désactivée</string>
     <string name="home_weakened">Protection affaiblie</string>
     <string name="home_weakened_detail">L\'appli n\'arrive plus à enregistrer ce qu\'elle voit. Elle vous protège encore, mais si le téléphone l\'arrête pendant un appel, elle ne saura plus que vous étiez au téléphone. Le téléphone est peut-être plein\u00A0: libérez de la place, puis revenez ici. S\'il en a, redémarrez-le.</string>
@@ -113,7 +114,7 @@
     <string name="guardian_sms_stop_after_call">Message automatique de l\'appli Call Halt Tech : juste après un appel, l\'écran STOP vient de s\'afficher sur ce téléphone (%1$s). C\'est peut-être une arnaque. Appelez ce numéro dès que possible.</string>
     <string name="guardian_sms_continue_during_call">Message automatique de l\'appli Call Halt Tech : «\u00A0Continuer\u00A0» a été choisi malgré l\'écran STOP (%1$s), pendant un appel. Appelez ce numéro sans attendre.</string>
     <string name="guardian_sms_continue_after_call">Message automatique de l\'appli Call Halt Tech : «\u00A0Continuer\u00A0» a été choisi malgré l\'écran STOP (%1$s), juste après un appel. Appelez ce numéro sans attendre.</string>
-    <string name="guardian_sms_set_up">Message automatique de l\'appli Call Halt Tech : ce téléphone vous préviendra par SMS si l\'écran STOP s\'affiche, pendant un appel ou juste après, signe possible d\'une arnaque. Il ne vous envoie rien d\'autre.</string>
+    <string name="guardian_sms_set_up">Message automatique de l\'appli Call Halt Tech : ce téléphone vous préviendra par SMS si l\'écran STOP s\'affiche, pendant un appel ou juste après, signe possible d\'une arnaque.</string>
     <string name="guardian_sms_removed">Message automatique de l\'appli Call Halt Tech : ce téléphone ne vous préviendra plus. Si cela vous étonne, appelez ce numéro.</string>
     <string name="guardian_sms_what_code">un code reçu par SMS</string>
     <string name="guardian_sms_what_bank_validation">une demande de validation de la banque</string>
