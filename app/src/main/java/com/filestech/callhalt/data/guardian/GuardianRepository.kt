@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,10 +22,12 @@ class GuardianRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) {
 
-    /** None when the file cannot be read: no number to text, as with none set up. */
+    /**
+     * None when the file cannot be read — for any failure, not only an I/O one: no number to text, as with none set up.
+     * Thrown, it would crash the screen choosing the relative, its buttons left off (3-axes audit of 2026-11-07, Q3).
+     */
     val guardian: Flow<Guardian?> = dataStore.data
         .catch { error ->
-            if (error !is IOException) throw error
             Timber.w(error, "Settings unreadable: no relative to text")
             emit(emptyPreferences())
         }

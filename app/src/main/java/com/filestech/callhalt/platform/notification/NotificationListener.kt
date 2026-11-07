@@ -122,15 +122,12 @@ class NotificationListener : NotificationListenerService() {
         return smsApp
     }
 
-    // A catch-all, by design: another app's notification is read here, and nothing in it may stop the listener.
-    @Suppress("TooGenericExceptionCaught")
-    private fun latestSms(sbn: StatusBarNotification, at: Instant): LatestSms? = try {
-        readLatestSms(sbn.notification, maskedText(), at)
-    } catch (failure: Exception) {
-        // The failure's class only: its message could quote the notification.
-        Timber.w("SMS notification unreadable: %s", failure.javaClass.name)
-        null
-    }
+    /** Unreadable, it counts as masked: never as "no code" (C1). */
+    private fun latestSms(sbn: StatusBarNotification, at: Instant): LatestSms? =
+        latestSmsOrMasked({ readLatestSms(sbn.notification, maskedText(), at) }) { failure ->
+            // The failure's class only: its message could quote the notification.
+            Timber.w("SMS notification unreadable, read as masked: %s", failure.javaClass.name)
+        }
 
     /** The same message of the same conversation, posted again (an update, a re-delivery): not a new code. */
     private fun isRepost(key: String, sentAtMillis: Long): Boolean {

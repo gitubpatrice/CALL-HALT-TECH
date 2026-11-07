@@ -78,6 +78,26 @@ class NotificationSignalTest {
             .isEqualTo(SensitiveAction(at(0), SensitiveActionKind.CODE_MESSAGE, source = SMS_APP))
     }
 
+    /** Coherence audit of 2026-11-07, C1: a failure to read leaned on the silent side. */
+    @Test
+    fun `an SMS notification the app cannot read counts as masked, so as a code, never as none`() {
+        var logged: Exception? = null
+        val read = latestSmsOrMasked({ error("a maker's own extras") }) { logged = it }
+
+        assertThat(logged).isNotNull()
+        assertThat(read?.message).isEqualTo(SmsMessage.Masked)
+        assertThat(read?.sentAtMillis).isEqualTo(0L)
+        assertThat(notificationSignal(SMS_APP, "incoming_messages", read?.message, at(0))?.kind)
+            .isEqualTo(SensitiveActionKind.CODE_MESSAGE)
+    }
+
+    @Test
+    fun `a notification read without failure is kept as read`() {
+        val read = latestSmsOrMasked({ null }) { error("no failure expected") }
+
+        assertThat(read).isNull()
+    }
+
     /** Android hides a code it recognised (English, measured): its placeholder has no digit, the masking is the sign. */
     @Test
     fun `a message Android masked is a code message`() {

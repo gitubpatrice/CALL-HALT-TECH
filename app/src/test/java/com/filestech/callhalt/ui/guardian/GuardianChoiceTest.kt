@@ -203,6 +203,16 @@ class GuardianChoiceTest {
         assertThat(repository.current()).isEqualTo(julie)
     }
 
+    /** 3-axes audit of 2026-11-07, Q3: a failure that is not the disk's left the screen busy, its buttons off. */
+    @Test
+    fun `any failure to keep the relative is said, not only the disk's`() = runTest {
+        val choice = choice(GuardianRepository(FailingPreferences(IllegalStateException("two stores on one file"))))
+        choice.on(GuardianMove.Picked(julie))
+        advanceUntilIdle()
+        assertThat(choice.now().step).isEqualTo(GuardianStep.SaveFailed)
+        assertThat(texts).isEmpty()
+    }
+
     /** A choice the app could not keep is said, and nothing is texted that would claim otherwise. */
     @Test
     fun `a relative the app could not keep is said, and nobody is texted`() = runTest {

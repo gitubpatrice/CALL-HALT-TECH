@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
-import java.io.IOException
 import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,10 +29,13 @@ class SettingsRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsSource {
 
-    /** The settings, with the protective defaults whenever the file cannot be read. */
+    /**
+     * The settings, with the protective defaults whenever the file cannot be read — for any failure, not only an I/O one:
+     * thrown, it would reach the engine and lose the signal, so the STOP (coherence audit of 2026-11-07, motif 12; the
+     * port's contract: it never throws). A cancellation is not caught here (`catch` lets it through).
+     */
     val settings: Flow<ProtectionSettings> = dataStore.data
         .catch { error ->
-            if (error !is IOException) throw error
             Timber.w(error, "Settings unreadable: protective defaults")
             emit(emptyPreferences())
         }
