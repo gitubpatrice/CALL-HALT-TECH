@@ -83,6 +83,29 @@ class ActivityStopLauncherTest {
         assertThat(notice.posted).isEmpty()
     }
 
+    /** FN-4: a STOP left without an answer comes back by its notification alone, never over what the user went to. */
+    @Test
+    fun `a returning STOP is posted as its notification, and no screen is started`() = runTest {
+        val starter = FakeStarter(overlay = true, created = true)
+        val notice = FakeNotice()
+
+        assertThat(ActivityStopLauncher(starter, display, notice).show(stop.copy(returning = true))).isTrue()
+
+        assertThat(starter.asked).isEmpty()
+        assertThat(notice.posted).hasSize(1)
+        assertThat(currentTime).isEqualTo(0)
+    }
+
+    /** Its notification refused: not shown — the engine then tells the relative (FN-4). */
+    @Test
+    fun `a returning STOP whose notification is refused is not shown`() = runTest {
+        val starter = FakeStarter(overlay = true, created = true)
+
+        assertThat(ActivityStopLauncher(starter, display, FakeNotice(allowed = false)).show(stop.copy(returning = true))).isFalse()
+
+        assertThat(starter.asked).isEmpty()
+    }
+
     /** Samsung, Xiaomi (D-024): the phone blocks the screen in silence. */
     @Test
     fun `a screen the phone blocks is waited for 5 seconds, then the notification`() = runTest {

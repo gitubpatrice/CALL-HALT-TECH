@@ -50,11 +50,12 @@ class DetectionEngine {
             is PhoneShuttingDown -> Evaluation(
                 state.calls.keys.fold(state) { current, channel -> onCallEnded(current, CallEnded(signal.at, channel)).state },
             )
-            is StopAnswered -> onStopAnswered(state, signal, settings)
-            is StopNotShown -> Evaluation(
-                state = state.copy(pendingStops = state.pendingStops - signal.trigger),
-                journal = listOf(JournalEntry.NotShown(signal.at.wall, signal.trigger)),
-            )
+            is StopAnswered -> if (signal.choice == StopChoice.LEFT) {
+                StopReturns.left(state, signal, settings)
+            } else {
+                onStopAnswered(state, signal, settings)
+            }
+            is StopNotShown -> StopReturns.notShown(state, signal, settings)
         }
 
     private fun onCallStarted(state: DetectorState, signal: CallStarted, settings: ProtectionSettings): Evaluation {
@@ -122,7 +123,9 @@ class DetectionEngine {
             if (call.startedAt.isOfEarlierBootThan(restart)) call.carriedOver(restart) else call
         }
         val pendingStops = state.pendingStops.filterValues { shownAt -> !shownAt.isOfEarlierBootThan(restart) }
-        return Evaluation(state.copy(calls = calls, pendingStops = pendingStops))
+        // A screen left before the restart is gone with it: it does not come back (FN-4).
+        val stopReturns = state.stopReturns.filterValues { back -> !back.leftAt.isOfEarlierBootThan(restart) }
+        return Evaluation(state.copy(calls = calls, pendingStops = pendingStops, stopReturns = stopReturns))
     }
 
     private fun onSensitiveAction(state: DetectorState, signal: SensitiveAction, settings: ProtectionSettings): Evaluation {
@@ -154,8 +157,12 @@ class DetectionEngine {
                 add(Decision.NotifyGuardian(GuardianEvent.StopShown(signal.kind, CallWindow.inProgress(call, signal.at))))
             }
         }
+        // A new screen for this trigger: the one left no longer comes back (FN-4).
         return Evaluation(
-            state = state.copy(pendingStops = state.pendingStops + (signal.kind to signal.at)),
+            state = state.copy(
+                pendingStops = state.pendingStops + (signal.kind to signal.at),
+                stopReturns = state.stopReturns - signal.kind,
+            ),
             journal = listOf(JournalEntry.Stop(signal.at.wall, signal.kind, signal.source, call.counterpart)),
             decisions = decisions,
         )
@@ -178,8 +185,10 @@ class DetectionEngine {
             -> Evaluation(state)
         }
 
+    /** The long-call reminder, and the STOP screens left that are due back ([StopReturns.due], FN-4). */
     private fun onTick(state: DetectorState, signal: Tick, settings: ProtectionSettings): Evaluation {
-        if (!settings.enabled) return Evaluation(state)
+        // Turned off meanwhile: nothing comes back.
+        if (!settings.enabled) return Evaluation(state.copy(stopReturns = emptyMap()))
         val watched = state.calls.values.filter {
             CallWindow.inProgress(it, signal.at) && it.isWithUnknown && it.channel !in state.longCallWarned
         }
@@ -196,15 +205,14 @@ class DetectionEngine {
             notYet.minOfOrNull { it.startedAt.plus(settings.longCallThreshold) }
                 ?.let { add(Decision.ScheduleTick(it)) }
         }
-        return Evaluation(
-            state = state.copy(longCallWarned = state.longCallWarned + reached.map { it.channel }),
-            journal = if (reached.isEmpty()) {
-                emptyList()
-            } else {
-                listOf(JournalEntry.Warning(signal.at.wall, WarningReason.LONG_CALL_WITH_UNKNOWN))
-            },
-            decisions = decisions,
-        )
+        val reminded = state.copy(longCallWarned = state.longCallWarned + reached.map { it.channel })
+        val journal = if (reached.isEmpty()) {
+            emptyList()
+        } else {
+            listOf(JournalEntry.Warning(signal.at.wall, WarningReason.LONG_CALL_WITH_UNKNOWN))
+        }
+        val returns = StopReturns.due(reminded, signal.at, settings)
+        return Evaluation(returns.state, journal + returns.journal, decisions + returns.decisions)
     }
 
     private fun onStopAnswered(state: DetectorState, signal: StopAnswered, settings: ProtectionSettings): Evaluation {
@@ -220,8 +228,9 @@ class DetectionEngine {
         } else {
             emptyList()
         }
+        // An answer, at last: nothing comes back (FN-4).
         return Evaluation(
-            state = state.copy(pendingStops = state.pendingStops - signal.trigger),
+            state = state.copy(pendingStops = state.pendingStops - signal.trigger, stopReturns = state.stopReturns - signal.trigger),
             journal = listOf(JournalEntry.Answer(signal.at.wall, signal.trigger, signal.choice)),
             decisions = decisions,
         )
@@ -233,6 +242,18 @@ class DetectionEngine {
          * probably killed without an answer, and the next signal shows a new one.
          */
         val UNANSWERED_STOP_HOLD: Duration = Duration.ofSeconds(60)
+
+        /**
+         * How long after a STOP was left it comes back (FN-4): long enough to hang up from the call screen — then it
+         * does not — short enough to be back before the code is read out.
+         */
+        val RETURN_DELAY: Duration = Duration.ofSeconds(RETURN_DELAY_SECONDS)
+
+        /** How long a STOP that came back may wait for an answer before the relative is told (FN-4). */
+        val RETURN_ANSWER_WAIT: Duration = Duration.ofMinutes(RETURN_ANSWER_WAIT_MINUTES)
+
+        private const val RETURN_DELAY_SECONDS = 15L
+        private const val RETURN_ANSWER_WAIT_MINUTES = 2L
 
         /**
          * How far before a call's start its end may be stamped and still be ITS end: two signals stamped by the

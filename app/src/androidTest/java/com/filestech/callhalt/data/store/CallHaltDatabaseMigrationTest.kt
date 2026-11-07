@@ -11,6 +11,8 @@ import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.domain.model.StopAnswered
+import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.domain.model.Uptime
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
@@ -25,8 +27,9 @@ import java.time.ZoneOffset
 
 /**
  * The migrations, replayed from the committed schemas (app/schemas): 1 → 2 adds the uptime beside each time the engine
- * decides on (docs/ARCHITECTURE.md, P-13). An update of the app in the middle of a call must keep the call: its rows,
- * written without an uptime, read on the civil clock, as before.
+ * decides on (docs/ARCHITECTURE.md, P-13); 2 → 3, the table of the STOP screens left that come back (FN-4). An update of
+ * the app in the middle of a call must keep the call: its rows, written without an uptime, read on the civil clock, as
+ * before.
  */
 @RunWith(AndroidJUnit4::class)
 class CallHaltDatabaseMigrationTest {
@@ -82,6 +85,38 @@ class CallHaltDatabaseMigrationTest {
             val stops = database.detectorDao().pendingStops().associateBy { it.trigger }
             assertThat(stops.getValue(SensitiveActionKind.BANK_VALIDATION_REQUEST.name).shownBoot).isEqualTo(9)
             assertThat(database.detectorDao().callSessions().single().startedBoot).isNull()
+        } finally {
+            database.close()
+        }
+    }
+
+    /**
+     * 2 → 3 adds the table of the STOP screens left that come back (FN-4): the call and its STOP survive, and a screen
+     * left during that call is kept to come back.
+     */
+    @Test
+    fun theTableOfReturnsIsAdded_andAScreenLeftIsKeptToComeBack() = runTest {
+        writeVersion1()
+        helper.runMigrationsAndValidate(NAME, 3, true).close()
+
+        val database = CallHaltDatabase.create(context, NAME)
+        try {
+            val dao = database.stopReturnDao()
+            assertThat(dao.stopReturns()).isEmpty()
+            val left = StopAnswered(
+                Moment(STARTED.plusSeconds(60), Uptime(9, Duration.ofHours(3))),
+                SensitiveActionKind.CODE_MESSAGE,
+                StopChoice.LEFT,
+            )
+            val decisions = RoomDetectorStore(database, Clock.fixed(STARTED.plusSeconds(60), ZoneOffset.UTC)).apply { state ->
+                DetectionEngine().process(state, left, ProtectionSettings())
+            }
+
+            assertThat(decisions.filterIsInstance<Decision.ScheduleTick>()).hasSize(1)
+            val back = dao.stopReturns().single()
+            assertThat(back.trigger).isEqualTo(SensitiveActionKind.CODE_MESSAGE.name)
+            assertThat(back.leftBoot).isEqualTo(9)
+            assertThat(back.returnedAt).isNull()
         } finally {
             database.close()
         }

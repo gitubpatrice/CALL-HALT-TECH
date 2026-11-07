@@ -111,6 +111,8 @@
     <string name="guardian_sms_stop_after_call">Automatische Nachricht der App Call Halt Tech: Kurz nach einem Anruf ist auf diesem Telefon gerade der STOP-Bildschirm erschienen (%1$s). Es ist vielleicht ein Betrug. Rufen Sie diese Nummer so bald wie möglich an.</string>
     <string name="guardian_sms_continue_during_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), während eines Anrufs. Rufen Sie diese Nummer sofort an.</string>
     <string name="guardian_sms_continue_after_call">Automatische Nachricht der App Call Halt Tech: Trotz des STOP-Bildschirms wurde „Weiter“ gewählt (%1$s), kurz nach einem Anruf. Rufen Sie diese Nummer sofort an.</string>
+    <string name="guardian_sms_left_during_call">Automatische Nachricht der App Call Halt Tech: Der STOP-Bildschirm wurde ohne Antwort verlassen (%1$s), während eines Anrufs. Rufen Sie diese Nummer sofort an.</string>
+    <string name="guardian_sms_left_after_call">Automatische Nachricht der App Call Halt Tech: Der STOP-Bildschirm wurde ohne Antwort verlassen (%1$s), kurz nach einem Anruf. Rufen Sie diese Nummer sofort an.</string>
     <string name="guardian_sms_set_up">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie per SMS, wenn der STOP-Bildschirm erscheint, während eines Anrufs oder kurz danach, ein mögliches Zeichen für Betrug.</string>
     <string name="guardian_sms_removed">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie nicht mehr. Wenn Sie das überrascht, rufen Sie diese Nummer an.</string>
     <string name="guardian_sms_what_code">ein per SMS erhaltener Code</string>

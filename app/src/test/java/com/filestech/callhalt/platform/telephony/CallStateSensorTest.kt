@@ -14,6 +14,7 @@ import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.InMemoryPreferences
 import com.filestech.callhalt.platform.noGuardian
+import com.filestech.callhalt.platform.noWakeUps
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -48,7 +49,7 @@ class CallStateSensorTest {
             settings,
             { null },
             { null },
-            AndroidDecisionExecutor(noStop, noWarning, noGuardian),
+            AndroidDecisionExecutor(noStop, noWarning, noGuardian, noWakeUps),
         ),
         events,
     )

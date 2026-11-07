@@ -21,6 +21,7 @@ import com.filestech.callhalt.platform.AndroidDecisionExecutor
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.accessibility.SYSTEM_ACCESSIBILITY_SUITES
 import com.filestech.callhalt.platform.noGuardian
+import com.filestech.callhalt.platform.noWakeUps
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -56,7 +57,7 @@ class RemoteControlAppsTest {
         SettingsSource { ProtectionSettings() },
         RestartSource { null },
         LiveCallSource { null },
-        AndroidDecisionExecutor(launcher, warnings, noGuardian),
+        AndroidDecisionExecutor(launcher, warnings, noGuardian, noWakeUps),
     )
 
     /** The remote-control apps (D-031), and the phone's own accessibility features (D-033): no more, no less. */
@@ -140,7 +141,7 @@ class RemoteControlAppsTest {
             SettingsSource { ProtectionSettings() },
             RestartSource { null },
             LiveCallSource { null },
-            AndroidDecisionExecutor(launcher, { false }, noGuardian),
+            AndroidDecisionExecutor(launcher, { false }, noGuardian, noWakeUps),
         )
         refused(checkNotNull(installSignal(ANYDESK, replacing = false, at(0))))
         assertThat(store.journal)

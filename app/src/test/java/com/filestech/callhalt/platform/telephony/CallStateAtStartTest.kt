@@ -16,6 +16,7 @@ import com.filestech.callhalt.platform.FakePhoneClock
 import com.filestech.callhalt.platform.InMemoryDetectorStore
 import com.filestech.callhalt.platform.SensorQueue
 import com.filestech.callhalt.platform.noGuardian
+import com.filestech.callhalt.platform.noWakeUps
 import com.filestech.callhalt.platform.stop.StopLauncher
 import com.filestech.callhalt.platform.warning.WarningPoster
 import com.google.common.truth.Truth.assertThat
@@ -48,6 +49,7 @@ class CallStateAtStartTest {
                 StopLauncher { error("no STOP expected") },
                 WarningPoster { error("no warning expected") },
                 noGuardian,
+                noWakeUps,
             ),
         )
     }

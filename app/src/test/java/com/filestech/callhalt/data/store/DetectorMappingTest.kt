@@ -1,6 +1,7 @@
 package com.filestech.callhalt.data.store
 
 import com.filestech.callhalt.domain.detection.DetectorState
+import com.filestech.callhalt.domain.detection.StopReturn
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.CallDirection
 import com.filestech.callhalt.domain.model.CallSession
@@ -45,10 +46,18 @@ class DetectorMappingTest {
         ),
         pendingStops = mapOf(SensitiveActionKind.CODE_MESSAGE to moment(120)),
         longCallWarned = setOf(CallChannel.CELLULAR),
+        // FN-4: one left and not back yet, one back.
+        stopReturns = mapOf(
+            SensitiveActionKind.BANK_VALIDATION_REQUEST to StopReturn(leftAt = moment(130)),
+            SensitiveActionKind.CODE_MESSAGE to StopReturn(leftAt = moment(100), returnedAt = moment(120)),
+        ),
     )
 
-    private fun roundTrip(state: DetectorState) =
-        DetectorMapping.toState(DetectorMapping.callRows(state), DetectorMapping.stopRows(state))
+    private fun roundTrip(state: DetectorState) = DetectorMapping.toState(
+        DetectorMapping.callRows(state),
+        DetectorMapping.stopRows(state),
+        StopReturnMapping.rows(state),
+    )
 
     @Test
     fun `a full state survives the round trip`() {

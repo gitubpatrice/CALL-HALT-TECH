@@ -22,14 +22,16 @@ import javax.inject.Singleton
  *   nothing, for the same reason. Sent even when that STOP reached the user neither way (the phone blocked the screen,
  *   its notifications turned off): the user then saw nothing, and the relative is all the protection left — the code
  *   or the request did arrive during the call (review of 2026-11-07, 1: its text then says a little more than happened).
- * - **Wake-up**: not carried out yet (docs/ARCHITECTURE.md, P-8). It is only asked for a long call with an unknown
- *   number, and the number is not read yet.
+ * - **Wake-up**: in this process ([WakeUps], D-038): the return of a STOP left without an answer, and the wait for its
+ *   answer (FN-4). Asked for a long call with an unknown number too, which the engine decides for no call today: the
+ *   number is not read yet (docs/ARCHITECTURE.md, P-8).
  */
 @Singleton
 class AndroidDecisionExecutor @Inject constructor(
     private val launcher: StopLauncher,
     private val warnings: WarningPoster,
     private val guardian: GuardianNotifier,
+    private val wakeUps: WakeUps,
 ) : DecisionExecutor {
 
     override suspend fun execute(decisions: List<Decision>) {
@@ -38,7 +40,9 @@ class AndroidDecisionExecutor @Inject constructor(
             when (decision) {
                 is Decision.ShowWarning -> if (!posted(decision)) Timber.w("Warning not posted: %s", decision.reason)
                 is Decision.NotifyGuardian -> told(decision)
-                else -> Timber.i("Not carried out at this step: %s", decision::class.simpleName)
+                is Decision.ScheduleTick -> wakeUps.at(decision.at)
+                // Taken out above: every STOP first.
+                is Decision.ShowStop -> Unit
             }
         }
         check(notShown == 0) { "STOP screen not shown: $notShown" }

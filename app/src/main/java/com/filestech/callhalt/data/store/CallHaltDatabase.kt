@@ -14,15 +14,18 @@ import timber.log.Timber
  * already covers it, and a Keystore that fails one morning must not cost the protection (D-009).
  */
 @Database(
-    entities = [CallSessionEntity::class, PendingStopEntity::class, JournalEntryEntity::class],
-    version = 2,
+    entities = [CallSessionEntity::class, PendingStopEntity::class, StopReturnEntity::class, JournalEntryEntity::class],
+    version = 3,
     exportSchema = true,
-    // 1 → 2: the uptime columns (P-13), nullable, added as they are — CallHaltDatabaseMigrationTest.
-    autoMigrations = [AutoMigration(from = 1, to = 2)],
+    // 1 → 2: the uptime columns (P-13), nullable, added as they are; 2 → 3: the table of the STOP screens left that come
+    // back (FN-4), added as it is — CallHaltDatabaseMigrationTest.
+    autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
 )
 abstract class CallHaltDatabase : RoomDatabase() {
 
     abstract fun detectorDao(): DetectorDao
+
+    abstract fun stopReturnDao(): StopReturnDao
 
     companion object {
         const val NAME = "call_halt.db"

@@ -58,6 +58,7 @@ internal class GuardianLimiter {
     private fun kind(event: GuardianEvent): GuardianEvent = when (event) {
         is GuardianEvent.StopShown -> event.copy(duringCall = false)
         is GuardianEvent.StopOverridden -> event.copy(duringCall = false)
+        is GuardianEvent.StopLeft -> event.copy(duringCall = false)
         GuardianEvent.LongCallWithUnknown -> event
     }
 

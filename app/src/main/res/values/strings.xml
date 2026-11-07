@@ -153,6 +153,8 @@
     <string name="guardian_sms_stop_after_call">Automatic message from the Call Halt Tech app: just after a call, the STOP screen has just appeared on this phone (%1$s). It may be a scam. Call this number as soon as you can.</string>
     <string name="guardian_sms_continue_during_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), during a call. Call this number right away.</string>
     <string name="guardian_sms_continue_after_call">Automatic message from the Call Halt Tech app: \"Continue\" was chosen despite the STOP screen (%1$s), just after a call. Call this number right away.</string>
+    <string name="guardian_sms_left_during_call">Automatic message from the Call Halt Tech app: the STOP screen was left without an answer (%1$s), during a call. Call this number right away.</string>
+    <string name="guardian_sms_left_after_call">Automatic message from the Call Halt Tech app: the STOP screen was left without an answer (%1$s), just after a call. Call this number right away.</string>
     <string name="guardian_sms_set_up">Automatic message from the Call Halt Tech app: this phone will text you if the STOP screen appears, during a call or just after it, a possible sign of a scam.</string>
     <string name="guardian_sms_removed">Automatic message from the Call Halt Tech app: this phone will no longer alert you. If this surprises you, call this number.</string>
     <string name="guardian_sms_what_code">a code received by SMS</string>

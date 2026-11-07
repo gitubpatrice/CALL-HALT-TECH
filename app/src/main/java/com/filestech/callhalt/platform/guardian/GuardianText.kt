@@ -28,6 +28,11 @@ internal fun guardianText(event: GuardianEvent): GuardianText? = when (event) {
         if (event.duringCall) R.string.guardian_sms_continue_during_call else R.string.guardian_sms_continue_after_call,
         what(event.trigger),
     )
+    // FN-4 (Patrice, 2026-11-07): "the STOP screen was left without an answer".
+    is GuardianEvent.StopLeft -> GuardianText(
+        if (event.duringCall) R.string.guardian_sms_left_during_call else R.string.guardian_sms_left_after_call,
+        what(event.trigger),
+    )
     GuardianEvent.LongCallWithUnknown -> null
 }
 

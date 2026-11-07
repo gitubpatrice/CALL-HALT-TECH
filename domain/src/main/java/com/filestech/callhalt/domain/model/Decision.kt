@@ -2,8 +2,12 @@ package com.filestech.callhalt.domain.model
 
 /** What the engine wants done. The app carries it out AFTER the state and the journal are committed. */
 sealed interface Decision {
-    /** The full-screen interruption. Its words follow [trigger], and whether [call] is still going on or just ended. */
-    data class ShowStop(val trigger: SensitiveActionKind, val call: CallSession) : Decision
+    /**
+     * The full-screen interruption. Its words follow [trigger], and whether [call] is still going on or just ended.
+     * [returning]: a STOP left without an answer, coming back once (FN-4) — by its full-screen notification, not over
+     * what the user went to.
+     */
+    data class ShowStop(val trigger: SensitiveActionKind, val call: CallSession, val returning: Boolean = false) : Decision
 
     /**
      * A notification, not an interruption: a risk worth telling, with no call to interrupt. [source] is what it is about
@@ -29,6 +33,9 @@ sealed interface GuardianEvent {
 
     /** "Continue" chosen despite the STOP screen. */
     data class StopOverridden(val trigger: SensitiveActionKind, val duringCall: Boolean) : GuardianEvent
+
+    /** The STOP screen left without an answer, and again once it came back (or it could not come back) (FN-4). */
+    data class StopLeft(val trigger: SensitiveActionKind, val duringCall: Boolean) : GuardianEvent
 
     data object LongCallWithUnknown : GuardianEvent
 }
