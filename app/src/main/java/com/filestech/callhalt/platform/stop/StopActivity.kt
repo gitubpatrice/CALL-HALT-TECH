@@ -84,8 +84,6 @@ class StopActivity : ComponentActivity() {
             return
         }
         session = created
-        // A new screen, not one rebuilt (a rotation, or the process died): felt as well as seen.
-        if (restored == null) buzzForStop()
         // Rebuilt while the phone asked for the unlock (unlockThen): Android drops the first screen's request with it
         // (KeyguardManager: no callback once the activity is destroyed). Asked again once this one is in front.
         reopening = created.opening
@@ -116,6 +114,9 @@ class StopActivity : ComponentActivity() {
                 }
             }
         }
+        // A new screen, not one rebuilt (a rotation, or the process died): felt as well as seen — last, once all the
+        // rest is in place.
+        if (restored == null) buzzForStop()
     }
 
     override fun onNewIntent(intent: Intent) {

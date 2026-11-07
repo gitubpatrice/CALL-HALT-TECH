@@ -7,28 +7,35 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import timber.log.Timber
 
 /**
  * Two short buzzes as a STOP opens (publication audit, U4; docs/ARCHITECTURE.md, D-036): the phone against the cheek,
  * its screen off, the user feels that something asks to be looked at. An alarm's vibration (`VIBRATE`, granted at
  * install, nothing asked): the view's haptic feedback, which needs no permission, follows the setting for touch
  * vibrations — off on the S9 (measured, 2026-11-07), and no app may ignore it from Android 13. Nothing on a phone
- * without a vibrator.
+ * without a vibrator. An aid only: whatever the vibrator throws (a maker's service, the permission taken back by a
+ * work profile) is caught, and the STOP shows all the same (review of 2026-11-07).
  */
+@Suppress("TooGenericExceptionCaught") // Anything the vibrator throws must not take the STOP screen down with it.
 internal fun Context.buzzForStop() {
-    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        getSystemService(VibratorManager::class.java)?.defaultVibrator
-    } else {
-        @Suppress("DEPRECATION")
-        getSystemService(Vibrator::class.java)
-    }
-    if (vibrator?.hasVibrator() != true) return
-    val effect = VibrationEffect.createWaveform(BUZZ, NO_REPEAT)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        vibrator.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM))
-    } else {
-        @Suppress("DEPRECATION")
-        vibrator.vibrate(effect, AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build())
+    try {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getSystemService(VibratorManager::class.java)?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Vibrator::class.java)
+        }
+        if (vibrator?.hasVibrator() != true) return
+        val effect = VibrationEffect.createWaveform(BUZZ, NO_REPEAT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            vibrator.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(effect, AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build())
+        }
+    } catch (failed: RuntimeException) {
+        Timber.w(failed, "STOP buzz failed")
     }
 }
 
