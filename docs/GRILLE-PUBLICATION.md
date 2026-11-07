@@ -23,7 +23,7 @@ Chaque axe part de 20 et ne descend pas sous 0. **Un axe dont l'audit n'a pas é
 | Axe | Ce qu'il mesure | D'où viennent les constats |
 |---|---|---|
 | **A. Sécurité** | ce qu'un escroc, une appli malveillante ou un SMS piégé peut obtenir | skill `audit-securite-mobile`, palier profond (panel adverse, 2 vérificateurs sur 3) |
-| **B. Justesse de la détection** | un STOP qui manque (l'arnaque passe) ou qui arrive à tort (l'appli est désactivée) | `regles-faux-positifs-auditor` sur toutes les règles du commit audité ; `android-motif-defauts-auditor` (garde mal visé, repli du mauvais côté) ; relecture externe |
+| **B. Justesse de la détection** | un STOP qui manque (l'arnaque passe) ou qui arrive à tort (l'appli est désactivée) | `regles-faux-positifs-auditor` sur toutes les règles du commit audité ; une passe des **faux négatifs** (des arnaques réelles, pas à pas, contre ce que l'appli dit surveiller) ; `android-motif-defauts-auditor` (garde mal visé, repli du mauvais côté) ; relecture externe |
 | **C. Solidité du code** | plantage, état perdu, course, fuite de ressource, test vert sur un chemin mort | `android-3-axes-auditor` sur l'appli entière ; `android-architecture-coherence-checker` ; `android-motif-defauts-auditor` |
 | **D. Fiabilité mesurée** | ce qui marche sur de vrais téléphones, pas seulement sur émulateur | la liste du § 4 |
 | **E. Textes, promesses, langues** | ce que disent l'appli, la politique de confidentialité, le README et la fiche, contre ce que fait le code ; les 5 langues | `android-motif-defauts-auditor` (motif 5) ; `android-i18n-strings-cleaner` ; relecture par des natifs |
@@ -42,7 +42,7 @@ correction a eu ses relectures (Claude, puis GPT) et sa mesure quand elle touche
 
 ## 3. Les audits, et leur ordre
 
-1. Claude, en parallèle : sécurité (A), faux positifs (B), motifs de défaut (B, C, E).
+1. Claude, en parallèle : sécurité (A), faux positifs et faux négatifs (B), motifs de défaut (B, C, E).
 2. Claude : 3 axes et cohérence (C), traductions (E).
 3. Corrections, avec leurs relectures, comme pour toute modification.
 4. Relecture externe du commit corrigé (B3).
