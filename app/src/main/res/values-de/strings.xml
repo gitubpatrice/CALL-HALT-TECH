@@ -159,4 +159,18 @@
     <string name="guardian_removed">Niemand wird mehr per SMS benachrichtigt.</string>
     <string name="guardian_save_failed">Die App konnte diese Wahl nicht speichern. Versuchen Sie es erneut.</string>
     <string name="guardian_done">Fertig</string>
+    <string name="history_title">Verlauf der Warnungen</string>
+    <string name="history_empty">Noch keine Warnung.</string>
+    <string name="history_share">Teilen</string>
+    <string name="history_share_heading">Call Halt Tech: Verlauf der Warnungen</string>
+    <string name="history_stop">STOP-Bildschirm: %1$s</string>
+    <string name="history_app">App: %1$s</string>
+    <string name="history_answer">Antwort: %1$s</string>
+    <string name="history_then">", dann "</string>
+    <string name="history_no_answer">Keine Antwort</string>
+    <string name="history_not_shown">Das Telefon hat verhindert, dass der STOP-Bildschirm erscheint</string>
+    <string name="history_answer_left">Ohne Antwort verlassen</string>
+    <string name="history_answer_uninstall">Deinstallieren</string>
+    <string name="history_warning">Warnung: %1$s</string>
+    <string name="history_long_call">ein langer Anruf mit einer unbekannten Nummer</string>
 </resources>

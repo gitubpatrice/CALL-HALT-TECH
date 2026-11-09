@@ -53,6 +53,7 @@ fun HomeScreen(
     onActivate: () -> Unit,
     onTryStop: () -> Unit,
     onGuardian: () -> Unit,
+    onHistory: () -> Unit,
     viewModel: ProtectionViewModel = hiltViewModel(),
     guardianViewModel: GuardianViewModel = hiltViewModel(),
 ) {
@@ -80,6 +81,10 @@ fun HomeScreen(
             ProtectionCard(state, onActivate)
             AccessList(state)
             GuardianSection(guardian, onGuardian)
+            // Each alert and what was chosen, to read or to give the bank (function 8, D-041; Patrice: on the home screen).
+            OutlinedButton(onClick = onHistory, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(R.string.history_title))
+            }
             Text(text = stringResource(R.string.home_rule), style = MaterialTheme.typography.bodyLarge)
             Button(onClick = onTryStop, colors = brandButtonColors(), modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(R.string.home_try_stop), modifier = Modifier.padding(vertical = 8.dp))

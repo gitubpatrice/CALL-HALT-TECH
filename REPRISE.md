@@ -151,8 +151,13 @@ pendant un appel ou juste après ; dès 45, l'accueil dit « Votre appli SMS a t
 « oui, sur l'accueil »). Une première version (10 conversations en 2 minutes) refaite après l'agent des faux
 positifs : SMS Tech fait une notification par message ; puis GPT Luna (0,014 $ : 3 corrigés, dont la rafale venue
 pendant l'absence de l'écouteur). Mesuré sur l'émulateur Android 16 (Google Messages) ; **660 tests**. P-23
-ouvert : la superposition et la liste blanche de veille trouvées retirées sur l'émulateur, sans cause.
-**Ensuite** : l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
+ouvert : la superposition et la liste blanche de veille trouvées retirées sur l'émulateur, sans cause. Fusionné (#56).
+
+**Puis l'historique des alertes** (D-041 ; Patrice, 2026-11-09 : une alerte et sa réponse par ligne, tout partager,
+un bouton sur l'accueil) : « Historique des alertes » sur l'accueil ; chaque STOP avec ce qu'il était, l'appli d'où il
+venait, et ses réponses dans l'ordre ; les avertissements ; « Partager » remet tout l'historique en texte au menu de
+partage d'Android. Mesuré sur l'émulateur Android 16 ; tests du regroupement (JVM) et des mots (appareil).
+**Ensuite** : les mots d'E-2 (README) restent à proposer. **Puis, avant la
 relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
 nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », « Désinstaller », N-3), et un
 `android-architecture-coherence-checker` (cohérence des motifs après cette série de corrections). Le gate local

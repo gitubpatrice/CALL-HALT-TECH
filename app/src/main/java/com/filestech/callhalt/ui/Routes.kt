@@ -6,4 +6,5 @@ object Routes {
     const val ACTIVATION = "activation"
     const val STOP_DEMO = "stop-demo"
     const val GUARDIAN = "guardian"
+    const val HISTORY = "history"
 }

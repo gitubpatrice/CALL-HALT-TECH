@@ -36,9 +36,12 @@ internal fun guardianText(event: GuardianEvent): GuardianText? = when (event) {
     GuardianEvent.LongCallWithUnknown -> null
 }
 
-/** Exhaustive on purpose, as the STOP screen's: a new trigger does not compile until the relative is told what it is. */
+/**
+ * What a trigger was, in a few words ("a code received by SMS"): for the relative's text, and the history's lines (D-041).
+ * Exhaustive on purpose, as the STOP screen's: a new trigger does not compile until the relative is told what it is.
+ */
 @StringRes
-private fun what(trigger: SensitiveActionKind): Int = when (trigger) {
+internal fun what(trigger: SensitiveActionKind): Int = when (trigger) {
     SensitiveActionKind.CODE_MESSAGE -> R.string.guardian_sms_what_code
     SensitiveActionKind.SMS_BURST -> R.string.guardian_sms_what_sms_burst
     SensitiveActionKind.BANK_VALIDATION_REQUEST -> R.string.guardian_sms_what_bank_validation

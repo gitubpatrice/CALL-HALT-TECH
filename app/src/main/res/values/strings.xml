@@ -204,4 +204,18 @@
     <string name="guardian_removed">No one is alerted by text any more.</string>
     <string name="guardian_save_failed">The app could not save this choice. Try again.</string>
     <string name="guardian_done">Done</string>
+    <string name="history_title">Alert history</string>
+    <string name="history_empty">No alert yet.</string>
+    <string name="history_share">Share</string>
+    <string name="history_share_heading">Call Halt Tech: alert history</string>
+    <string name="history_stop">STOP screen: %1$s</string>
+    <string name="history_app">App: %1$s</string>
+    <string name="history_answer">Answer: %1$s</string>
+    <string name="history_then">", then "</string>
+    <string name="history_no_answer">No answer</string>
+    <string name="history_not_shown">The phone did not let the STOP screen show</string>
+    <string name="history_answer_left">Left without an answer</string>
+    <string name="history_answer_uninstall">Uninstall</string>
+    <string name="history_warning">Warning: %1$s</string>
+    <string name="history_long_call">a long call with an unknown number</string>
 </resources>
