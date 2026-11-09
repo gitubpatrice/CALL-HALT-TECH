@@ -217,5 +217,6 @@
     <string name="history_answer_left">Left without an answer</string>
     <string name="history_answer_uninstall">Uninstall</string>
     <string name="history_warning">Warning: %1$s</string>
+    <string name="history_remote_installed">%1$s was installed</string>
     <string name="history_long_call">a long call with an unknown number</string>
 </resources>

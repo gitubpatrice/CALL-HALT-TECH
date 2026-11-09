@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
-import com.filestech.callhalt.ui.stop.UNINSTALL_TRIGGERS
 
 /**
  * What one STOP screen stands for, from its first request to its answer — pure, so that every rule of the screen

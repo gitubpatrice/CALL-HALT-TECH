@@ -176,5 +176,6 @@
     <string name="history_answer_left">Cerrada sin responder</string>
     <string name="history_answer_uninstall">Desinstalar</string>
     <string name="history_warning">Aviso: %1$s</string>
+    <string name="history_remote_installed">Se instaló %1$s</string>
     <string name="history_long_call">una llamada larga con un número desconocido</string>
 </resources>

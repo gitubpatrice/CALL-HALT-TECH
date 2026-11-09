@@ -96,6 +96,19 @@ class SmsAppNoticesTest {
         assertThat(notices.connected(SMS, old(40), now)).isFalse()
     }
 
+    /**
+     * A new process, a phone already past 30 with a few recent: as live, those older than the window were there before —
+     * no burst at each start of the process (coherence pass of 2026-11-09, 2). A flood of recent ones still is one.
+     */
+    @Test
+    fun `the first count of a process takes the older ones as there before`() {
+        val pastThirty = old(27) + (0 until RECENT_MIN - 1).associate { "recent $it" to now - 60_000L }
+        assertThat(SmsAppNotices().connected(SMS, pastThirty, now)).isFalse()
+
+        val flooded = old(10) + (0 until 25).associate { "new $it" to now - 60_000L }
+        assertThat(SmsAppNotices().connected(SMS, flooded, now)).isTrue()
+    }
+
     /** The civil clock moved forward since: a notification "posted" after now counts as posted now, not as unknown. */
     @Test
     fun `a time after the present is taken as the present`() {

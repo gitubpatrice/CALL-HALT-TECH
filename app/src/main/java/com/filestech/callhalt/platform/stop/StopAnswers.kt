@@ -33,7 +33,7 @@ class StopAnswers @Inject constructor(
         // First of all, the call: every second on the line is the scammer's. "Call my bank", "Remove the access" and
         // "Uninstall" during a call are only offered when the app can end it (StopText): the call ends BEFORE the dialler
         // or the settings open (D-011). The phone is asked again at the press: with no call left, there is nothing to end.
-        val endsTheCall = choice == StopChoice.HANG_UP || (choice in CALL_FIRST && session.current.onCall)
+        val endsTheCall = choice == StopChoice.HANG_UP || (choice in OPENING_CHOICES && session.current.onCall)
         if (endsTheCall && !calls.noCallGoingOn() && !calls.endCall()) {
             Timber.w("STOP answered %s, but the call was not ended: the screen stays", choice)
             return false
@@ -50,9 +50,11 @@ class StopAnswers @Inject constructor(
             queue.submit("STOP answered: $choice") { processSignal.get()(StopAnswered(at, trigger, choice)) }
         }
     }
-
-    private companion object {
-        /** The answers that open something else (the dialler, the settings): during a call, it ends first. */
-        val CALL_FIRST = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS, StopChoice.UNINSTALL)
-    }
 }
+
+/**
+ * The answers that open something else — the dialler, the settings: during a call, it ends first ([StopAnswers]), and the
+ * screen opens it once the phone is unlocked ([StopActivity]). One list for both (coherence pass of 2026-11-09, 1): an
+ * answer added to one and not the other would open a page over a call, or close the screen opening nothing.
+ */
+internal val OPENING_CHOICES = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS, StopChoice.UNINSTALL)

@@ -59,8 +59,10 @@ internal class HistoryText(private val resources: Resources) {
             .joinToString("\n\n")
 
     private fun warning(alert: Alert.Warning): String = when (alert.reason) {
+        // Its own words, not the notification's "has just been installed": read months later, or by the bank (i18n
+        // pass of 2026-11-09, 5).
         WarningReason.REMOTE_CONTROL_INSTALLED ->
-            resources.getString(R.string.warning_remote_installed_title, alert.source?.let(::appName).orEmpty())
+            resources.getString(R.string.history_remote_installed, alert.source?.let(::appName).orEmpty())
         WarningReason.LONG_CALL_WITH_UNKNOWN -> resources.getString(R.string.history_long_call)
     }
 

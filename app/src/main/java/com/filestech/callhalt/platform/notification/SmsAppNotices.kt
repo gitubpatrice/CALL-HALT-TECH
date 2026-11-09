@@ -24,8 +24,11 @@ import javax.inject.Singleton
 @Singleton
 class SmsAppNotices @Inject constructor() {
 
-    /** Each notification shown: its app, and when it was last posted (the monotonic clock, in ms). */
+    /** Each notification shown: its app, and when it first came (the monotonic clock, in ms). */
     private val notices = mutableMapOf<String, Notice>()
+
+    /** False until the listener's first count in this process: what was shown before it is not known. */
+    private var counted = false
 
     private val counts = MutableStateFlow<Map<String, Int>>(emptyMap())
 
@@ -39,7 +42,15 @@ class SmsAppNotices @Inject constructor() {
      * the call perhaps (GPT review of 2026-11-09, 1). A time after [atMillis] (the clock changed) is taken as [atMillis].
      */
     fun connected(packageName: String?, shown: Map<String, Long>, atMillis: Long): Boolean {
-        val before = packageName?.let(::countOf) ?: 0
+        // The first count of this process knows nothing of before: those older than the window were there, as the rule
+        // would have seen them live — not none, which made a phone already past 30 "burst" at each start of the process
+        // (coherence pass of 2026-11-09, 2).
+        val before = if (counted) {
+            packageName?.let(::countOf) ?: 0
+        } else {
+            shown.values.count { postedAt -> atMillis - minOf(postedAt, atMillis) > RECENT_MS }
+        }
+        counted = true
         notices.clear()
         if (packageName != null) shown.forEach { (key, postedAt) -> notices[key] = Notice(packageName, minOf(postedAt, atMillis)) }
         publish()

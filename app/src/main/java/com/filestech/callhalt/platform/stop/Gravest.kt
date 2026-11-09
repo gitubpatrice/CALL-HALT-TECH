@@ -31,3 +31,11 @@ internal fun gravity(kind: SensitiveActionKind): Int = when (kind) {
     SensitiveActionKind.BANK_APP_OPENED,
     -> 0
 }
+
+/**
+ * The triggers whose screen may offer to uninstall the remote-control app installed during the call (FN-3, D-039): its
+ * installation, and the app at work since — the same app, of the same [gravity]. With the screen's other rules here, read
+ * by its words ([com.filestech.callhalt.ui.stop.stopText]) and its session ([StopSession.uninstallable]); not in the
+ * words, which the session would then depend on (coherence pass of 2026-11-09, 3).
+ */
+internal val UNINSTALL_TRIGGERS = setOf(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, SensitiveActionKind.REMOTE_CONTROL_OPENED)

@@ -4,6 +4,7 @@ import com.filestech.callhalt.R
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.platform.stop.UNINSTALL_TRIGGERS
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test

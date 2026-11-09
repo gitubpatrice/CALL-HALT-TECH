@@ -158,12 +158,15 @@ un bouton sur l'accueil) : « Historique des alertes » sur l'accueil ; chaque S
 venait, et ses réponses dans l'ordre ; les avertissements ; « Partager » remet tout l'historique en texte au menu de
 partage d'Android ; chaque date avec son décalage UTC. Mesuré sur l'émulateur Android 16 ; relectures Claude (5
 corrigés, dont le journal lu par `id` et non par l'heure civile) et GPT Luna (0,015 $ : le fuseau lu à chaque date) ;
-**669 tests**.
-**Ensuite** : les mots d'E-2 (README) restent à proposer. **Puis, avant la
-relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
-nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », « Désinstaller », N-3), et un
-`android-architecture-coherence-checker` (cohérence des motifs après cette série de corrections). Le gate local
-est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
+**669 tests**. Fusionné (#57). **Les quatre décisions de l'audit sont faites.**
+
+**Puis les deux passages prévus avant la relecture finale** (`relectures/2026-11-09-claude-passage-traductions-
+coherence.md`) : traductions — aucun sens faux, l'historique dit « a été installée » (plus « vient d'être »), deux
+points à faire relire par un natif (DE/IT/ES) ; cohérence — une seule liste des réponses qui ouvrent une page,
+la première connexion de l'écouteur d'un processus ne fait plus de « rafale » d'un téléphone déjà plein, une
+dépendance inversée rangée. **670 tests.**
+**Ensuite** : les mots d'E-2 (README) restent à proposer ; C-2, S-2 et les points faibles de l'audit ; puis la
+relecture finale B3 (GPT Sol et Gemini) et la note. Le gate local est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
 (`testDebugUnitTest` seul ne lance pas les tests du domaine).
 
 ## Le 2026-11-05
@@ -463,7 +466,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 669 tests sur ordinateur, 45 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 670 tests sur ordinateur, 45 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

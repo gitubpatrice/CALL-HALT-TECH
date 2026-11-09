@@ -129,7 +129,7 @@
     <string name="guardian_sms_what_bank_app">l\'appli de la banque ouverte</string>
     <string name="guardian_sms_what_remote_installed">une appli de prise en main à distance installée</string>
     <string name="guardian_sms_what_remote_opened">une appli de prise en main à distance en marche</string>
-    <string name="guardian_sms_what_accessibility">une appli qui reçoit l\'accès accessibilité</string>
+    <string name="guardian_sms_what_accessibility">une appli qui reçoit l\'accès «\u00A0accessibilité\u00A0»</string>
 
     <string name="home_guardian_title">Prévenir un proche</string>
     <string name="home_guardian_none">Si l\'écran STOP s\'affiche, l\'appli peut prévenir un proche par SMS.</string>
@@ -176,5 +176,6 @@
     <string name="history_answer_left">Quitté sans réponse</string>
     <string name="history_answer_uninstall">Désinstaller</string>
     <string name="history_warning">Avertissement : %1$s</string>
+    <string name="history_remote_installed">%1$s a été installée</string>
     <string name="history_long_call">un long appel avec un numéro inconnu</string>
 </resources>
