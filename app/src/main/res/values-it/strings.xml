@@ -82,7 +82,8 @@
     <string name="stop_on_call">Sta telefonando.</string>
     <string name="stop_call_ended">La Sua chiamata è appena terminata.</string>
     <string name="stop_trigger_code">Ha appena ricevuto un codice.</string>
-    <string name="stop_trigger_sms_burst">Sta ricevendo molti SMS tutti insieme, da numeri diversi: tra questi potrebbe essere nascosto un codice.</string>
+    <string name="stop_trigger_sms_burst">Sta ricevendo molti SMS tutti insieme: tra questi potrebbe essere nascosto un codice.</string>
+    <string name="home_sms_app_full">La Sua app SMS ha troppi messaggi non letti: un codice ricevuto via SMS potrebbe non comparire. La apra e li legga.</string>
     <string name="stop_trigger_bank_validation">L\'app della Sua banca Le chiede di confermare un\'operazione.</string>
     <string name="stop_trigger_bank_app">L\'app della Sua banca si è appena aperta.</string>
     <string name="stop_trigger_remote_opened">È in funzione un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono.</string>

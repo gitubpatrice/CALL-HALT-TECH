@@ -79,7 +79,8 @@
     <string name="stop_on_call">Sie telefonieren gerade.</string>
     <string name="stop_call_ended">Ihr Anruf wurde gerade beendet.</string>
     <string name="stop_trigger_code">Sie haben gerade einen Code erhalten.</string>
-    <string name="stop_trigger_sms_burst">Sie erhalten viele SMS auf einmal, von verschiedenen Nummern: Vielleicht ist ein Code darunter versteckt.</string>
+    <string name="stop_trigger_sms_burst">Sie erhalten viele SMS auf einmal: Vielleicht ist ein Code darunter versteckt.</string>
+    <string name="home_sms_app_full">Ihre SMS-App hat zu viele ungelesene Nachrichten: Ein per SMS erhaltener Code wird vielleicht nicht angezeigt. Öffnen Sie sie und lesen Sie die Nachrichten.</string>
     <string name="stop_trigger_bank_validation">Die App Ihrer Bank bittet Sie, einen Auftrag freizugeben.</string>
     <string name="stop_trigger_bank_app">Die App Ihrer Bank wurde gerade geöffnet.</string>
     <string name="stop_trigger_remote_opened">Eine App, mit der jemand anderes Ihr Telefon sehen oder steuern kann, läuft gerade.</string>

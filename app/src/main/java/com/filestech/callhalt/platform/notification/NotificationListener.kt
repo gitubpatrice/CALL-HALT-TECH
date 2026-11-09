@@ -28,8 +28,8 @@ import javax.inject.Provider
  * Sees the notifications of every app, once the user grants notification access (a restricted setting for an app
  * installed from a file, docs/ARCHITECTURE.md, P-3), and hands the ones [notificationSignal] recognises to the
  * [SensorQueue]. Of each notification it reads the app and the channel; of the default SMS app's, the latest
- * message too, in memory, to recognise a validation code (D-021), and its key, to count a burst of conversations
- * ([SmsBurst], D-040) — of no other app's, the title or the text (PRIVACY.md).
+ * message too, in memory, to recognise a validation code (D-021), and its key, to count the ones shown ([SmsAppNotices],
+ * D-040) — of no other app's, the title or the text (PRIVACY.md).
  *
  * Bound by the system, which keeps the process alive while it is: no `goAsync()`, the queue's work runs in the
  * application's scope. The callbacks come on the main thread: the channel is compared first, and only the SMS app's
@@ -68,21 +68,30 @@ class NotificationListener : NotificationListenerService() {
     /** The remote-control apps' notifications still shown (D-032): the process's, which outlives this listener. */
     @Inject lateinit var remoteControl: RemoteControlNotices
 
-    /** The SMS app's conversations of the last two minutes (N-3, D-040): the process's too. */
-    @Inject lateinit var smsBurst: SmsBurst
+    /** The SMS app's notifications shown (N-3, D-040): the process's too. */
+    @Inject lateinit var smsNotices: SmsAppNotices
 
     override fun onListenerConnected() {
         // Debug builds only (no tree in release): for the measurements, when the system binds the listener.
         Timber.d("Notification listener connected")
         connection.connected(true)
         // What came while the listener was away came during the call perhaps (RemoteControlNotices.RECONNECTED_WITHIN).
-        val shown = shownNow() ?: return remoteControl.forget()
+        val shown = shownNow()
+        if (shown == null) {
+            remoteControl.forget()
+            smsNotices.connected(null, emptyMap())
+            return
+        }
         remoteControl.alreadyShown(shown.map { it.notice() }, clock.now()).forEach(::submit)
+        val smsApp = defaultSmsApp()
+        val smsAppShown = shown.filter { it.packageName == smsApp }
+        // Counted again from what is shown: removals may have been missed while the listener was away. Each at its age.
+        val sinceBoot = SystemClock.elapsedRealtime() - System.currentTimeMillis()
+        smsNotices.connected(smsApp, smsAppShown.associate { it.key to it.postTime + sinceBoot })
         // The SMS app's messages already shown, read for its previews only (FN-2, GPT review of 2026-11-07, 3): one that
         // came while the listener was away, or before its access was granted, tells it as well. Never a new code.
-        val smsApp = defaultSmsApp()
         val at = clock.now().wall
-        shown.filter { it.packageName == smsApp && it.notification.channelId !in BANK_REQUEST_CHANNELS }
+        smsAppShown.filter { it.notification.channelId !in BANK_REQUEST_CHANNELS }
             .sortedBy { it.postTime }
             .forEach { sbn -> latestSms(sbn, at)?.let { smsPreview.seen(sbn.packageName, it) } }
     }
@@ -96,8 +105,16 @@ class NotificationListener : NotificationListenerService() {
         // The phone's clocks at reception: the time every signal carries (Signal's contract).
         val at = clock.now()
         val notice = sbn.notice()
-        val signals = if (remoteControl.watches(notice)) listOfNotNull(remoteControl.posted(notice, at)) else bankRequestOrCode(sbn, at)
-        signals.forEach(::submit)
+        if (remoteControl.watches(notice)) {
+            remoteControl.posted(notice, at)?.let(::submit)
+            return
+        }
+        bankRequestOrCode(sbn, at)?.let(::submit)
+        // The SMS app's notifications, counted as Android caps them, whatever they say (N-3): a burst, a STOP during a call.
+        val smsApp = sbn.packageName == defaultSmsApp()
+        if (smsApp && smsNotices.posted(sbn.packageName, sbn.key, SystemClock.elapsedRealtime())) {
+            submit(SensitiveAction(at, SensitiveActionKind.SMS_BURST, source = sbn.packageName))
+        }
     }
 
     private fun submit(signal: SensitiveAction) {
@@ -106,23 +123,19 @@ class NotificationListener : NotificationListenerService() {
         queue.submit(reason = "notification ${signal.kind}") { processSignal.get()(signal) }
     }
 
-    /**
-     * A banking app's request, by its channel; or a code, in the default SMS app's latest message — and, of that message,
-     * whether its conversation completes a burst of different ones ([SmsBurst], N-3).
-     */
-    private fun bankRequestOrCode(sbn: StatusBarNotification, at: Moment): List<SensitiveAction> {
+    /** A banking app's request, by its channel; or a code, in the default SMS app's latest message. */
+    private fun bankRequestOrCode(sbn: StatusBarNotification, at: Moment): SensitiveAction? {
         val channel = sbn.notification.channelId
         val sms = if (channel !in BANK_REQUEST_CHANNELS && sbn.packageName == defaultSmsApp()) latestSms(sbn, at.wall) else null
         sms?.let { smsPreview.seen(sbn.packageName, it) }
         val signal = notificationSignal(sbn.packageName, channel, sms?.message, at)
         val repost = signal?.kind == SensitiveActionKind.CODE_MESSAGE && sms != null && isRepost(sbn.key, sms.sentAtMillis)
-        val burst = sms?.takeIf { smsBurst.received(sbn.key, SystemClock.elapsedRealtime()) }
-            ?.let { SensitiveAction(at, SensitiveActionKind.SMS_BURST, source = sbn.packageName) }
-        return listOfNotNull(signal.takeUnless { repost }, burst)
+        return signal.takeUnless { repost }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         remoteControl.removed(sbn.key)
+        smsNotices.removed(sbn.key)
     }
 
     /**

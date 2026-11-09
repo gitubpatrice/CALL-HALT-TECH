@@ -9,6 +9,7 @@ import com.filestech.callhalt.platform.access.Access
 import com.filestech.callhalt.platform.access.AccessChecker
 import com.filestech.callhalt.platform.access.PhoneSupport
 import com.filestech.callhalt.platform.notification.ListenerConnection
+import com.filestech.callhalt.platform.notification.SmsAppNotices
 import com.filestech.callhalt.platform.notification.SmsPreview
 import com.filestech.callhalt.platform.notification.previewHiddenNow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,6 +43,11 @@ data class ProtectionState(
     val listening: Boolean = true,
     /** [SmsPreview]: the default SMS app hides its messages, and so every code (FN-2). Not the protection's state. */
     val smsPreviewHidden: Boolean = false,
+    /**
+     * [SmsAppNotices]: the default SMS app shows so many notifications that Android is about to show its next ones no
+     * more, a code included (N-3, D-040). Not the protection's state.
+     */
+    val smsAppFull: Boolean = false,
 ) {
     /** In the order the activation asks for them. */
     val missing: List<Access> = applicable.filterNot { it in granted }
@@ -99,6 +105,7 @@ class ProtectionViewModel @Inject constructor(
     private val listener: ListenerConnection,
     settings: SettingsRepository,
     private val smsPreview: SmsPreview,
+    private val smsNotices: SmsAppNotices,
 ) : ViewModel() {
 
     private val read = MutableStateFlow(readAccesses())
@@ -115,14 +122,22 @@ class ProtectionViewModel @Inject constructor(
     val state: StateFlow<ProtectionState> =
         combine(read, settings.settings, store.failing, listener.connected, unbound) { now, current, failing, bound, gaveUp ->
             state(now, current.afterCallWindow.toMinutes(), failing, listening = bound || !gaveUp)
-        }.combine(combine(smsPreview.hiddenIn, defaultSms, ::previewHiddenNow)) { protection, hidden ->
-            protection.copy(smsPreviewHidden = hidden)
+        }.combine(combine(smsPreview.hiddenIn, smsNotices.shown, defaultSms, ::smsApp)) { protection, sms ->
+            sms(protection)
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            state(read.value, ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.toMinutes(), store.failing.value, listening = true)
-                .copy(smsPreviewHidden = previewHiddenNow(smsPreview.hiddenIn.value, defaultSms.value)),
+            smsApp(smsPreview.hiddenIn.value, smsNotices.shown.value, defaultSms.value)(
+                state(read.value, ProtectionSettings.DEFAULT_AFTER_CALL_WINDOW.toMinutes(), store.failing.value, listening = true),
+            ),
         )
+
+    /** What the default SMS app hides, or can no longer show (FN-2, N-3): the home screen's own warnings. */
+    private fun smsApp(hiddenIn: String?, shown: Map<String, Int>, defaultSmsApp: String?): (ProtectionState) -> ProtectionState {
+        val hidden = previewHiddenNow(hiddenIn, defaultSmsApp)
+        val full = SmsAppNotices.full(shown, defaultSmsApp)
+        return { it.copy(smsPreviewHidden = hidden, smsAppFull = full) }
+    }
 
     fun refresh() {
         read.value = readAccesses()

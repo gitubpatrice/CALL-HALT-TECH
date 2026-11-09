@@ -112,7 +112,8 @@
     <string name="stop_call_ended">Your call has just ended.</string>
     <!-- What just happened, one text per trigger (SensitiveActionKind). -->
     <string name="stop_trigger_code">You have just received a code.</string>
-    <string name="stop_trigger_sms_burst">You are receiving many SMS messages at once, from different numbers: a code may be hidden among them.</string>
+    <string name="stop_trigger_sms_burst">You are receiving many SMS messages at once: a code may be hidden among them.</string>
+    <string name="home_sms_app_full">Your SMS app has too many unread messages: a code received by SMS might not show. Open it and read them.</string>
     <string name="stop_trigger_bank_validation">Your bank\'s app is asking you to approve a transaction.</string>
     <string name="stop_trigger_bank_app">Your bank\'s app has just opened.</string>
     <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone is running.</string>
