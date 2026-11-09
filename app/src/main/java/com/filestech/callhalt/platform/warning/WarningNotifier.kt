@@ -6,9 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,6 +16,7 @@ import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.WarningReason
 import com.filestech.callhalt.platform.access.systemSettings
 import com.filestech.callhalt.platform.install.REMOTE_CONTROL_APPS
+import com.filestech.callhalt.platform.install.uninstallPages
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,7 +33,8 @@ fun interface WarningPoster {
  * D-031). Today a remote-control app installed outside a call (Patrice, 2026-11-05): the warning names it — by the
  * name of [REMOTE_CONTROL_APPS], never the one the app gives itself — and a touch opens its page in the phone's own
  * settings, where it is uninstalled. One per app. On a channel of its own: silencing it leaves the STOP's fallback
- * untouched.
+ * untouched. Installed during a call or just after it, the STOP says it first: the warning is then posted silent, and
+ * stays once the call is over (Patrice, 2026-11-07, FN-3, D-039).
  */
 @Singleton
 class WarningNotifier @Inject constructor(@ApplicationContext private val context: Context) : WarningPoster {
@@ -51,13 +51,18 @@ class WarningNotifier @Inject constructor(@ApplicationContext private val contex
         )
     }
 
+    /** The remote-control app [packageName] was uninstalled: its warning, if still there, goes with it. */
+    fun withdraw(packageName: String) {
+        manager.cancel(packageName, NOTIFICATION_ID)
+    }
+
     override fun show(warning: Decision.ShowWarning): Boolean = when (warning.reason) {
-        WarningReason.REMOTE_CONTROL_INSTALLED -> remoteControlInstalled(warning.source)
+        WarningReason.REMOTE_CONTROL_INSTALLED -> remoteControlInstalled(warning.source, silent = warning.withStop)
         // Not decided by the engine yet: the number of a call is not read (docs/ARCHITECTURE.md, P-8).
         WarningReason.LONG_CALL_WITH_UNKNOWN -> false
     }
 
-    private fun remoteControlInstalled(packageName: String?): Boolean {
+    private fun remoteControlInstalled(packageName: String?, silent: Boolean): Boolean {
         val name = packageName?.let(REMOTE_CONTROL_APPS::get)
         return when {
             packageName == null || name == null -> {
@@ -66,12 +71,16 @@ class WarningNotifier @Inject constructor(@ApplicationContext private val contex
                 false
             }
             !canPost() -> false
-            else -> post(packageName, name)
+            else -> post(packageName, name, silent)
         }
     }
 
+    /**
+     * [silent]: a STOP shows the same news — no sound, nothing over the screen where the user decides, the notification
+     * waits in the list for after the call.
+     */
     @SuppressLint("MissingPermission") // canPost read POST_NOTIFICATIONS first.
-    private fun post(packageName: String, name: String): Boolean {
+    private fun post(packageName: String, name: String, silent: Boolean): Boolean {
         val text = context.getString(R.string.warning_remote_installed_text)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stop_notification)
@@ -79,6 +88,7 @@ class WarningNotifier @Inject constructor(@ApplicationContext private val contex
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSilent(silent)
             // Nothing private in it: which app was installed, and what to do.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(appPage(packageName))
@@ -98,10 +108,7 @@ class WarningNotifier @Inject constructor(@ApplicationContext private val contex
      * action ([systemSettings]); else the phone's settings; else nothing to open, the text says what to do.
      */
     private fun appPage(packageName: String): PendingIntent? {
-        val page = systemSettings(
-            context,
-            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)),
-        ) ?: systemSettings(context, Intent(Settings.ACTION_SETTINGS)) ?: return null
+        val page = uninstallPages(packageName).firstNotNullOfOrNull { systemSettings(context, it) } ?: return null
         return PendingIntent.getActivity(
             context,
             0,

@@ -17,7 +17,9 @@ import com.filestech.callhalt.domain.model.StopChoice
  * - [callStillOn]: "Hang up" was pressed and the call could not be ended — the screen stays, without its
  *   call buttons, and the advice says to hang up;
  * - [opening]: the answer whose page (the dialler, the settings) waits for the phone to be unlocked — kept with the
- *   screen, so that a screen rebuilt meanwhile asks again: Android drops the first screen's request with it.
+ *   screen, so that a screen rebuilt meanwhile asks again: Android drops the first screen's request with it;
+ * - [installedApp]: the remote-control app installed that the screen offers to uninstall (FN-3, D-039) — kept when a
+ *   later STOP takes the screen, as its trigger is.
  */
 data class StopSession(
     val current: StopRequest,
@@ -25,7 +27,15 @@ data class StopSession(
     val answered: Boolean = false,
     val callStillOn: Boolean = false,
     val opening: StopChoice? = null,
+    val installedApp: String? = null,
 ) {
+    /**
+     * The app to uninstall, when the screen speaks of its installation ([shown]); null otherwise — a graver trigger's way
+     * out comes first.
+     */
+    val uninstallable: String?
+        get() = installedApp?.takeIf { shown == SensitiveActionKind.REMOTE_CONTROL_INSTALLED }
+
     /**
      * The trigger the screen speaks of: the gravest it absorbed, the newest among equals (publication audit, N-1). A
      * later, lesser STOP — a code the scammer texts on purpose, a notice an app posts to look like the bank's — must not
@@ -45,6 +55,7 @@ data class StopSession(
         current = next,
         triggers = inArrivalOrder(triggers + next.earlier + next.trigger).toSet(),
         callStillOn = false,
+        installedApp = next.installedApp ?: installedApp,
     )
 
     /**
@@ -76,6 +87,7 @@ data class StopSession(
         putBoolean(KEY_ANSWERED, answered)
         putBoolean(KEY_CALL_STILL_ON, callStillOn)
         putString(KEY_OPENING, opening?.name)
+        putString(KEY_INSTALLED_APP, installedApp)
     }
 
     companion object {
@@ -84,9 +96,11 @@ data class StopSession(
         private const val KEY_ANSWERED = "com.filestech.callhalt.stop.session.ANSWERED"
         private const val KEY_CALL_STILL_ON = "com.filestech.callhalt.stop.session.CALL_STILL_ON"
         private const val KEY_OPENING = "com.filestech.callhalt.stop.session.OPENING"
+        private const val KEY_INSTALLED_APP = "com.filestech.callhalt.stop.session.INSTALLED_APP"
 
         /** The screen of [first], standing also for the STOP notification it may come from ([StopRequest.earlier]). */
-        fun of(first: StopRequest): StopSession = StopSession(first, inArrivalOrder(first.earlier + first.trigger).toSet())
+        fun of(first: StopRequest): StopSession =
+            StopSession(first, inArrivalOrder(first.earlier + first.trigger).toSet(), installedApp = first.installedApp)
 
         /** Null when the bundle holds no whole session: the screen then starts again from its intent. */
         fun fromBundle(bundle: Bundle?): StopSession? {
@@ -102,6 +116,7 @@ data class StopSession(
                 answered = bundle?.getBoolean(KEY_ANSWERED) == true,
                 callStillOn = bundle?.getBoolean(KEY_CALL_STILL_ON) == true,
                 opening = opening,
+                installedApp = bundle?.getString(KEY_INSTALLED_APP) ?: current.installedApp,
             )
         }
     }

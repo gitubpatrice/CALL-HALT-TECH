@@ -596,11 +596,47 @@ class DetectionEngineTest {
         }
 
         @Test
-        fun `during a call the same install is a STOP, not a warning`() {
+        fun `during a call the same install is a STOP that knows the app, its warning waiting silent for after it`() {
             val steps = run(callStarted(), action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4))
 
+            val stop = steps.lastStops().single()
+            assertThat(stop.trigger).isEqualTo(SensitiveActionKind.REMOTE_CONTROL_INSTALLED)
+            assertThat(stop.source).isEqualTo("test")
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowWarning>())
+                .containsExactly(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, "test", withStop = true))
+            // The STOP is the journal's line: the warning is its way out, not a second alert.
+            assertThat(steps.last().journal.filterIsInstance<JournalEntry.Warning>()).isEmpty()
+        }
+
+        @Test
+        fun `just after a call the install is a STOP with its warning too`() {
+            val steps = run(
+                callStarted(),
+                CallEnded(at(2), CallChannel.CELLULAR),
+                action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 5),
+            )
+
             assertThat(steps.lastStops().single().trigger).isEqualTo(SensitiveActionKind.REMOTE_CONTROL_INSTALLED)
+            assertThat(steps.last().decisions.filterIsInstance<Decision.ShowWarning>().single().withStop).isTrue()
+        }
+
+        @Test
+        fun `another action during a call is a STOP without a warning`() {
+            val steps = run(callStarted(), action(SensitiveActionKind.REMOTE_CONTROL_OPENED, minutes = 4))
+
+            assertThat(steps.lastStops().single().trigger).isEqualTo(SensitiveActionKind.REMOTE_CONTROL_OPENED)
             assertThat(steps.last().decisions.filterIsInstance<Decision.ShowWarning>()).isEmpty()
+        }
+
+        @Test
+        fun `a repeat of the install absorbed by its STOP posts no second warning`() {
+            val steps = run(
+                callStarted(),
+                action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4),
+                action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4, seconds = 20),
+            )
+
+            assertThat(steps.last().decisions).isEmpty()
         }
     }
 

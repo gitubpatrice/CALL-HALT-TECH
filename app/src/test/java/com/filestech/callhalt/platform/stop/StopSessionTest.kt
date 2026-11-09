@@ -142,6 +142,46 @@ class StopSessionTest {
         assertThat(session.receiving(bankApp)).isEqualTo(session.replacedBy(bankApp))
     }
 
+    private val installed = StopRequest(
+        5,
+        SensitiveActionKind.REMOTE_CONTROL_INSTALLED,
+        onCall = true,
+        CallChannel.CELLULAR,
+        installedApp = "com.anydesk.anydeskandroid",
+    )
+
+    /** FN-3 (D-039): the app to uninstall stays with the screen, as its trigger does, when a lesser STOP takes it. */
+    @Test
+    fun `the install STOP offers its app even once a code took the screen`() {
+        val session = StopSession.of(installed).replacedBy(code)
+        assertThat(session.shown).isEqualTo(SensitiveActionKind.REMOTE_CONTROL_INSTALLED)
+        assertThat(session.uninstallable).isEqualTo("com.anydesk.anydeskandroid")
+        assertThat(StopSession.of(code).replacedBy(installed).uninstallable).isEqualTo("com.anydesk.anydeskandroid")
+    }
+
+    /** A graver trigger's way out comes first: the accessibility access is removed before anything else. */
+    @Test
+    fun `a graver trigger takes the uninstall away, the app kept for nothing else`() {
+        val session = StopSession.of(installed).replacedBy(access)
+        assertThat(session.shown).isEqualTo(SensitiveActionKind.ACCESSIBILITY_ENABLED)
+        assertThat(session.uninstallable).isNull()
+        assertThat(StopSession.of(code).uninstallable).isNull()
+    }
+
+    /** A STOP coming back does not know the app (the engine keeps no package): the screen offers none. */
+    @Test
+    fun `an install STOP without its app offers nothing to uninstall`() {
+        assertThat(StopSession.of(installed.copy(installedApp = null)).uninstallable).isNull()
+    }
+
+    /** Answered, a new STOP is a screen of its own: the earlier screen's app is not offered on it. */
+    @Test
+    fun `a screen of its own does not inherit the answered screen's app`() {
+        val answered = StopSession.of(installed).answering(opening = StopChoice.UNINSTALL)
+        assertThat(answered.receiving(code).uninstallable).isNull()
+        assertThat(answered.receiving(code).installedApp).isNull()
+    }
+
     /** Two unlock callbacks, or a rebuilt screen asking again: the page opens once. */
     @Test
     fun `the page waiting for the unlock opens once`() {

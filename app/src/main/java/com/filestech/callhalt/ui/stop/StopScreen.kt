@@ -45,13 +45,13 @@ const val CONTINUE_DELAY_SECONDS = 10
 /**
  * The STOP screen (PROJET.md, § 3). It blocks nothing: it is a pause, with the one check that holds on the
  * phone — hang up, then call back yourself on a number you know. Its words come from [stopText]: what just
- * happened ([trigger]), whether the call is still going on ([onCall]) and on which [channel], and whether the
- * app may end it ([canEndCall]).
+ * happened ([trigger]), whether the call is still going on ([onCall]) and on which [channel], whether the
+ * app may end it ([canEndCall]), and the name of the remote-control app it may offer to uninstall ([installedApp]).
  *
  * The same composable serves the demonstration ([demo] = true, nothing happened) and, once the adapters
  * exist, the real interruption shown by its own Activity — never an overlay window, which a banking app
  * hides (docs/ARCHITECTURE.md, D-006). What each choice DOES (hang up, dial the bank once the call has
- * ended, open the accessibility settings) belongs to that host, not to this screen.
+ * ended, open the accessibility settings or the installed app's page) belongs to that host, not to this screen.
  *
  * Laid out by [StopLayout]: the buttons at the bottom when all fits; otherwise the whole screen scrolls, the buttons
  * right under the warning, so that they are in sight whatever the length of the texts and the size of the font.
@@ -64,8 +64,9 @@ fun StopScreen(
     canEndCall: Boolean,
     demo: Boolean,
     onAnswer: (StopChoice) -> Unit,
+    installedApp: String? = null,
 ) {
-    val text = stopText(trigger, onCall, channel, canEndCall)
+    val text = stopText(trigger, onCall, channel, canEndCall, installedApp)
     // Saved across a rotation: turning the phone must not restart the wait, nor end it.
     var secondsLeft by rememberSaveable { mutableIntStateOf(CONTINUE_DELAY_SECONDS) }
     LaunchedEffect(Unit) {
@@ -125,7 +126,7 @@ fun StopScreen(
         // cannot end (the advice then says to hang up).
         text.buttons.forEachIndexed { index, button ->
             if (index == 0) {
-                StopFilledButton(button.label) { onAnswer(button.choice) }
+                StopFilledButton(button) { onAnswer(button.choice) }
             } else {
                 OutlinedButton(
                     onClick = { onAnswer(button.choice) },
@@ -136,7 +137,7 @@ fun StopScreen(
                         .layoutId(StopPart.BUTTON)
                         .fillMaxWidth(),
                 ) {
-                    StopButtonLabel(button.label)
+                    StopButtonLabel(button)
                 }
             }
         }
@@ -172,7 +173,7 @@ private fun StopExplanation(@StringRes text: Int) {
 }
 
 @Composable
-private fun StopFilledButton(@StringRes label: Int, onClick: () -> Unit) {
+private fun StopFilledButton(button: StopButton, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = OnStop, contentColor = StopBackground),
@@ -180,14 +181,15 @@ private fun StopFilledButton(@StringRes label: Int, onClick: () -> Unit) {
             .layoutId(StopPart.BUTTON)
             .fillMaxWidth(),
     ) {
-        StopButtonLabel(label)
+        StopButtonLabel(button)
     }
 }
 
 @Composable
-private fun StopButtonLabel(@StringRes label: Int) {
+private fun StopButtonLabel(button: StopButton) {
+    val label = button.app?.let { stringResource(button.label, it) } ?: stringResource(button.label)
     // Centred when a large font wraps it, as "Continue" (200 %, 2026-11-07).
-    Text(text = stringResource(label), textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 8.dp))
+    Text(text = label, textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 8.dp))
 }
 
 private const val ONE_SECOND_MILLIS = 1_000L

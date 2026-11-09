@@ -137,6 +137,8 @@
     <string name="stop_call_my_bank">Call my bank</string>
     <string name="stop_remove_access">Remove the access</string>
     <string name="stop_hang_up_and_remove_access">Hang up and remove the access</string>
+    <string name="stop_uninstall">Uninstall %1$s</string>
+    <string name="stop_hang_up_and_uninstall">Hang up and uninstall %1$s</string>
     <string name="stop_continue">Continue</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continue (in %1$d second)</item>

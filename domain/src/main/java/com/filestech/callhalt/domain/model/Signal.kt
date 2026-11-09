@@ -104,6 +104,12 @@ enum class StopChoice {
      * app off — the app cannot do it itself (docs/ARCHITECTURE.md, D-033). During a call, the call ends first.
      */
     REMOVE_ACCESS,
+
+    /**
+     * After a remote-control app was installed: its page in the phone's settings opens, where "Uninstall" is — the app
+     * cannot uninstall another one itself (FN-3, D-039). During a call, the call ends first.
+     */
+    UNINSTALL,
     CONTINUE,
 
     /**

@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.platform.access.AccessSettings
+import com.filestech.callhalt.platform.install.REMOTE_CONTROL_APPS
+import com.filestech.callhalt.platform.install.uninstallPages
 import com.filestech.callhalt.platform.telephony.CallEvents
 import com.filestech.callhalt.ui.stop.StopScreen
 import com.filestech.callhalt.ui.theme.CallHaltTheme
@@ -109,6 +111,7 @@ class StopActivity : ComponentActivity() {
                             canEndCall = permitted && !current.callStillOn,
                             demo = false,
                             onAnswer = ::answer,
+                            installedApp = current.uninstallable?.let(REMOTE_CONTROL_APPS::get),
                         )
                     }
                 }
@@ -215,7 +218,8 @@ class StopActivity : ComponentActivity() {
         session = current.opened()
         when (choice) {
             StopChoice.CALL_MY_BANK -> openDialler()
-            StopChoice.REMOVE_ACCESS -> openAccessibilitySettings()
+            StopChoice.REMOVE_ACCESS -> openOwnSettings(AccessSettings.accessibility())
+            StopChoice.UNINSTALL -> current.uninstallable?.let { openOwnSettings(uninstallPages(it)) }
             else -> Unit
         }
         finish()
@@ -235,22 +239,21 @@ class StopActivity : ComponentActivity() {
     }
 
     /**
-     * The phone's accessibility page, where the user turns the app off (D-033) — as the phone's OWN settings serve it:
-     * the app just given the access could declare the same page ([AccessSettings.openOwn]). In a task of its own, as the
-     * dialler, and that task cleared: the settings the user was just in (where the access was given) would otherwise
-     * keep their own page in front.
+     * A page of the phone's settings: the accessibility page, where the user turns the app off (D-033), or the page of the
+     * remote-control app just installed, where "Uninstall" is (FN-3, D-039) — as the phone's OWN settings serve it: the
+     * app just given the access, or just installed, could declare the same page ([AccessSettings.openOwn]). In a task of
+     * its own, as the dialler, and that task cleared: the settings the user was just in (where the access was given)
+     * would otherwise keep their own page in front.
      */
-    private fun openAccessibilitySettings() {
-        val pages = AccessSettings.accessibility().map { page ->
-            page.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-        if (!AccessSettings.openOwn(this, pages)) Timber.w("No accessibility settings")
+    private fun openOwnSettings(pages: List<Intent>) {
+        val cleared = pages.map { page -> page.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK) }
+        if (!AccessSettings.openOwn(this, cleared)) Timber.w("No system settings for %s", pages.first().action)
     }
 
     private companion object {
         const val KEY_SESSION = "com.filestech.callhalt.stop.SESSION"
 
         /** The answers that open something once the phone is unlocked. */
-        val OPENS = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS)
+        val OPENS = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS, StopChoice.UNINSTALL)
     }
 }

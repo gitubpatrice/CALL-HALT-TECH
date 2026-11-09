@@ -30,9 +30,9 @@ class StopAnswers @Inject constructor(
     fun answer(session: StopSession, choice: StopChoice): Boolean {
         // The phone's clocks at the answer: the time every signal carries.
         val at = clock.now()
-        // First of all, the call: every second on the line is the scammer's. "Call my bank" and "Remove the access"
-        // during a call are only offered when the app can end it (StopText): the call ends BEFORE the dialler or the
-        // settings open (D-011). The phone is asked again at the press: with no call left, there is nothing to end.
+        // First of all, the call: every second on the line is the scammer's. "Call my bank", "Remove the access" and
+        // "Uninstall" during a call are only offered when the app can end it (StopText): the call ends BEFORE the dialler
+        // or the settings open (D-011). The phone is asked again at the press: with no call left, there is nothing to end.
         val endsTheCall = choice == StopChoice.HANG_UP || (choice in CALL_FIRST && session.current.onCall)
         if (endsTheCall && !calls.noCallGoingOn() && !calls.endCall()) {
             Timber.w("STOP answered %s, but the call was not ended: the screen stays", choice)
@@ -53,6 +53,6 @@ class StopAnswers @Inject constructor(
 
     private companion object {
         /** The answers that open something else (the dialler, the settings): during a call, it ends first. */
-        val CALL_FIRST = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS)
+        val CALL_FIRST = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS, StopChoice.UNINSTALL)
     }
 }

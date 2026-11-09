@@ -202,5 +202,25 @@ class ActivityStopLauncherTest {
         assertThat(starter.asked.single().trigger).isEqualTo(SensitiveActionKind.CODE_MESSAGE)
     }
 
+    /**
+     * FN-3 (D-039): the install STOP carries its app to the screen, which offers to uninstall it — an app of the list
+     * only, and for that trigger only (any other source is a bank app, an SMS app, "adb").
+     */
+    @Test
+    fun `the install STOP carries its app of the list to the screen, nothing else does`() = runTest {
+        val install = Decision.ShowStop(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, call, source = "com.anydesk.anydeskandroid")
+
+        suspend fun asked(decision: Decision.ShowStop): StopRequest {
+            val starter = FakeStarter(overlay = true, created = true)
+            ActivityStopLauncher(starter, display, FakeNotice()).show(decision)
+            return starter.asked.single()
+        }
+
+        assertThat(asked(install).installedApp).isEqualTo("com.anydesk.anydeskandroid")
+        assertThat(asked(install.copy(source = "com.example.notlisted")).installedApp).isNull()
+        assertThat(asked(install.copy(source = null)).installedApp).isNull()
+        assertThat(asked(stop.copy(source = "com.anydesk.anydeskandroid")).installedApp).isNull()
+    }
+
     private val TestScope.currentTime: Long get() = testScheduler.currentTime
 }

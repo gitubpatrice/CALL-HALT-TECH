@@ -1,5 +1,8 @@
 package com.filestech.callhalt.platform.install
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import com.filestech.callhalt.domain.model.Moment
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
@@ -81,3 +84,13 @@ internal fun installSignal(packageName: String, replacing: Boolean, at: Moment):
     } else {
         SensitiveAction(at, SensitiveActionKind.REMOTE_CONTROL_INSTALLED, source = packageName)
     }
+
+/**
+ * Where a remote-control app just installed is uninstalled, from its STOP screen and its warning (D-031, D-039): its page
+ * in the phone's settings, else the settings — to be opened as the phone's OWN settings serve them
+ * (`platform.access.systemSettings`): the app itself could declare the same page.
+ */
+internal fun uninstallPages(packageName: String): List<Intent> = listOf(
+    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)),
+    Intent(Settings.ACTION_SETTINGS),
+)
