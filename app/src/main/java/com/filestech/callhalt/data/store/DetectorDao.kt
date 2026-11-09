@@ -41,7 +41,10 @@ interface DetectorDao {
     @Query("DELETE FROM journal_entry WHERE id <= (SELECT id FROM journal_entry ORDER BY id DESC LIMIT 1 OFFSET :keep)")
     suspend fun keepLastJournal(keep: Int)
 
-    /** Newest first; the id breaks ties between entries written in the same millisecond. */
-    @Query("SELECT * FROM journal_entry ORDER BY at DESC, id DESC")
+    /**
+     * In the order the lines were written: the id ([keepLastJournal]), never the civil clock — set back between a STOP and
+     * its answer, it would put the answer first, and the history would give it to another STOP (review of 2026-11-09, 1).
+     */
+    @Query("SELECT * FROM journal_entry ORDER BY id")
     fun journal(): Flow<List<JournalEntryEntity>>
 }

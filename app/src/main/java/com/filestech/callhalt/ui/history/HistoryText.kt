@@ -9,7 +9,7 @@ import com.filestech.callhalt.domain.model.WarningReason
 import com.filestech.callhalt.platform.guardian.what
 import com.filestech.callhalt.platform.install.REMOTE_CONTROL_APPS
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 
 /**
@@ -18,9 +18,17 @@ import java.time.format.FormatStyle
  */
 internal class HistoryText(private val resources: Resources) {
 
-    /** The day and the time, in the phone's zone and the app's language: "9 nov. 2026, 10:44". */
-    private val dates = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
-        .withLocale(resources.configuration.locales[0])
+    /**
+     * The day and the time, in the phone's zone and the app's language, with that zone's offset: "9 nov. 2026, 10:44
+     * (UTC+01:00)" — read by a bank elsewhere, after a journey, or in the hour the clocks go back, which comes twice
+     * (review of 2026-11-09, 2).
+     */
+    private val dates = DateTimeFormatterBuilder()
+        .appendLocalized(FormatStyle.MEDIUM, FormatStyle.SHORT)
+        .appendLiteral(" (UTC")
+        .appendOffset("+HH:MM", "")
+        .appendLiteral(")")
+        .toFormatter(resources.configuration.locales[0])
         .withZone(ZoneId.systemDefault())
 
     /** The alert's lines, its time first. */
