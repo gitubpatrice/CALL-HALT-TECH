@@ -77,8 +77,9 @@ enum class SensitiveActionKind {
     CODE_MESSAGE,
 
     /**
-     * Many SMS at once, from different numbers: a flood that buries the code among them — past 50 notifications, Android
-     * shows the SMS app's next ones no more, and the code goes unseen (publication audit, N-3, measured; D-040).
+     * Many SMS at once: a flood that buries the code among them — past 50 notifications, Android shows the SMS app's next
+     * ones no more, and the code goes unseen (publication audit, N-3, measured; D-040). Seen in the SMS app's
+     * notifications shown, going past 30, then 45.
      */
     SMS_BURST,
 

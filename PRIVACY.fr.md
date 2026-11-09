@@ -29,9 +29,10 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   appli donne à un type de notification). Elle reconnaît une demande de la banque à ce seul canal : aujourd'hui,
   les demandes Sécur'Pass (banques du groupe BPCE). **Des seules notifications de votre appli SMS**, elle lit aussi
   le dernier message, en mémoire, pour savoir si c'est un code de validation (« Votre code de validation est … ») ;
-  le texte est oublié aussitôt, jamais gardé, jamais envoyé. Pour reconnaître une rafale de SMS de numéros
-  différents, qui peut cacher un code, elle compte aussi les conversations de ces notifications, par l'identifiant que
-  l'appli SMS donne à chacune, en mémoire et deux minutes au plus ; jamais le texte. Des notifications des applis de prise en main de sa
+  le texte est oublié aussitôt, jamais gardé, jamais envoyé. Pour reconnaître une rafale de SMS, qui peut
+  cacher un code, et pour dire sur l'accueil quand l'appli SMS en montre trop, elle compte aussi les notifications de
+  l'appli SMS affichées : leur identifiant, et quand chacune est arrivée, en mémoire, tant qu'elles sont affichées ;
+  jamais le texte. Des notifications des applis de prise en main de sa
   liste (AnyDesk, RustDesk…), elle note aussi si chacune est nouvelle, jamais ce qu'elle dit : pendant un appel, une
   telle appli en marche ouvre l'écran STOP. Des notifications de toute autre appli, elle ne lit ni
   le titre ni le texte. L'écran d'activation ouvre pour lui la page des réglages du téléphone : vous seul pouvez

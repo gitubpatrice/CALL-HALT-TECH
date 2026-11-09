@@ -28,9 +28,9 @@ change that adds it to the app, and the build checks the app asks for nothing el
   recognises a bank's request by that channel alone: today, the requests of Sécur'Pass (banks of the BPCE group).
   **Of your SMS app's notifications only**, it also reads the latest message, in memory, to tell whether it is a
   validation code ("Votre code de validation est …"); the text is forgotten at once, never stored, never sent.
-  To recognise a burst of SMS from different numbers, which may hide a code, it also counts the conversations of
-  those notifications, by the identifier the SMS app gives each one, in memory and for two minutes at most; never
-  the text.
+  To recognise a burst of SMS, which may hide a code, and to say on the home screen when the SMS app shows too many,
+  it also counts the SMS app's notifications shown: their identifier, and when each one came, in memory, as long as
+  they are shown; never the text.
   Of the notifications of the remote-control apps of its list (AnyDesk, RustDesk…), it also notes whether each one
   is new, never what it says: during a call, such an app at work opens the STOP screen. Of every other app's
   notifications, it reads neither the title nor the text. The activation screen opens the phone's settings page
