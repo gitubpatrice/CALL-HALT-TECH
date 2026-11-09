@@ -78,7 +78,9 @@ class HistoryTextOnDeviceTest {
         val shared = text.shared(listOf(warning, stop))
 
         assertThat(shared).startsWith(resources.getString(R.string.history_share_heading) + "\n\n")
-        assertThat(shared).contains(resources.getString(R.string.warning_remote_installed_title, "AnyDesk"))
+        assertThat(shared).contains(resources.getString(R.string.history_remote_installed, "AnyDesk"))
+        // Not the notification's "has just been installed": the history is read months later.
+        assertThat(shared).doesNotContain(resources.getString(R.string.warning_remote_installed_title, "AnyDesk"))
         assertThat(shared).contains("com.credit_coop.android.mobilebanking")
         assertThat(shared.split("\n\n")).hasSize(3)
     }

@@ -5,6 +5,7 @@ import com.filestech.callhalt.R
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.platform.stop.UNINSTALL_TRIGGERS
 
 /**
  * The words of one STOP screen: where the user is, what just happened, the rule that unmasks it, what to do,
@@ -112,12 +113,6 @@ private fun buttons(trigger: SensitiveActionKind, onCall: Boolean, canHangUp: Bo
         )
     }
 }
-
-/**
- * The triggers whose screen may offer to uninstall the remote-control app installed during the call (FN-3, D-039): its
- * installation, and the app at work since — the same app, of the same weight on the screen (platform/stop/Gravest).
- */
-internal val UNINSTALL_TRIGGERS = setOf(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, SensitiveActionKind.REMOTE_CONTROL_OPENED)
 
 /** Someone may be seeing or controlling the phone: hanging up does not stop that. */
 private val REMOTE_TRIGGERS = setOf(

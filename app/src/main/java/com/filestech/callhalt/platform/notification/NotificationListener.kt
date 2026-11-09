@@ -28,8 +28,9 @@ import javax.inject.Provider
  * Sees the notifications of every app, once the user grants notification access (a restricted setting for an app
  * installed from a file, docs/ARCHITECTURE.md, P-3), and hands the ones [notificationSignal] recognises to the
  * [SensorQueue]. Of each notification it reads the app and the channel; of the default SMS app's, the latest
- * message too, in memory, to recognise a validation code (D-021), and its key, to count the ones shown ([SmsAppNotices],
- * D-040) — of no other app's, the title or the text (PRIVACY.md).
+ * message too, in memory, to recognise a validation code (D-021), and its key and when it came, to count the ones shown
+ * ([SmsAppNotices], D-040); of a remote-control app's, its key, when it came and whether it is a group summary
+ * ([RemoteControlNotices], D-032) — of no other app's, the title or the text (PRIVACY.md).
  *
  * Bound by the system, which keeps the process alive while it is: no `goAsync()`, the queue's work runs in the
  * application's scope. The callbacks come on the main thread: the channel is compared first, and only the SMS app's
@@ -59,17 +60,17 @@ class NotificationListener : NotificationListenerService() {
     /** Whether the SMS app hides its messages: the home screen says it (FN-2). */
     @Inject lateinit var smsPreview: SmsPreview
 
-    // All of what follows is touched on the main thread only, where the callbacks come.
-    private var smsApp: String? = null
-    private var smsAppReadAt: Long? = null
-    private var lastCode: Pair<String, Long>? = null
-    private var maskedTextCache: Pair<LocaleList, String>? = null
-
     /** The remote-control apps' notifications still shown (D-032): the process's, which outlives this listener. */
     @Inject lateinit var remoteControl: RemoteControlNotices
 
     /** The SMS app's notifications shown (N-3, D-040): the process's too. */
     @Inject lateinit var smsNotices: SmsAppNotices
+
+    // All of what follows is touched on the main thread only, where the callbacks come.
+    private var smsApp: String? = null
+    private var smsAppReadAt: Long? = null
+    private var lastCode: Pair<String, Long>? = null
+    private var maskedTextCache: Pair<LocaleList, String>? = null
 
     override fun onListenerConnected() {
         // Debug builds only (no tree in release): for the measurements, when the system binds the listener.
@@ -83,12 +84,12 @@ class NotificationListener : NotificationListenerService() {
             return
         }
         remoteControl.alreadyShown(shown.map { it.notice() }, clock.now()).forEach(::submit)
-        val smsApp = defaultSmsApp()
-        val smsAppShown = shown.filter { it.packageName == smsApp }
+        val defaultApp = defaultSmsApp()
+        val smsAppShown = shown.filter { it.packageName == defaultApp }
         // Counted again from what is shown: removals may have been missed while the listener was away; and a flood that
         // came meanwhile is told now (GPT review of 2026-11-09, 1).
-        if (smsNotices.connected(smsApp, smsAppShown.byMonotonicTime(), SystemClock.elapsedRealtime())) {
-            submit(SensitiveAction(clock.now(), SensitiveActionKind.SMS_BURST, source = smsApp))
+        if (smsNotices.connected(defaultApp, smsAppShown.byMonotonicTime(), SystemClock.elapsedRealtime())) {
+            submit(SensitiveAction(clock.now(), SensitiveActionKind.SMS_BURST, source = defaultApp))
         }
         // The SMS app's messages already shown, read for its previews only (FN-2, GPT review of 2026-11-07, 3): one that
         // came while the listener was away, or before its access was granted, tells it as well. Never a new code.
@@ -113,8 +114,8 @@ class NotificationListener : NotificationListenerService() {
         }
         bankRequestOrCode(sbn, at)?.let(::submit)
         // The SMS app's notifications, counted as Android caps them, whatever they say (N-3): a burst, a STOP during a call.
-        val smsApp = sbn.packageName == defaultSmsApp()
-        if (smsApp && smsNotices.posted(sbn.packageName, sbn.key, SystemClock.elapsedRealtime())) {
+        val fromSmsApp = sbn.packageName == defaultSmsApp()
+        if (fromSmsApp && smsNotices.posted(sbn.packageName, sbn.key, SystemClock.elapsedRealtime())) {
             submit(SensitiveAction(at, SensitiveActionKind.SMS_BURST, source = sbn.packageName))
         }
     }
@@ -153,7 +154,9 @@ class NotificationListener : NotificationListenerService() {
             smsApp = Telephony.Sms.getDefaultSmsPackage(this)
             smsAppReadAt = now
             Timber.d("Default SMS app: %s", smsApp)
-            // Another SMS app: its notifications of the last minute were not counted (GPT review of 2026-11-09, 3).
+            // Another SMS app: its notifications of the last minute were not counted (GPT review of 2026-11-09, 3). Counted
+            // now, not told: the change is the user's own gesture, and what the new app shows came before it was the one
+            // that receives the SMS (coherence pass of 2026-11-09, 2).
             if (before != null && smsApp != before) {
                 val app = smsApp
                 shownNow()?.let { shown -> smsNotices.connected(app, shown.filter { it.packageName == app }.byMonotonicTime(), now) }

@@ -172,5 +172,6 @@
     <string name="history_answer_left">Ohne Antwort verlassen</string>
     <string name="history_answer_uninstall">Deinstallieren</string>
     <string name="history_warning">Warnung: %1$s</string>
+    <string name="history_remote_installed">%1$s wurde installiert</string>
     <string name="history_long_call">ein langer Anruf mit einer unbekannten Nummer</string>
 </resources>

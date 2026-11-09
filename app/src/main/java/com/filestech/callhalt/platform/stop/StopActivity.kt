@@ -172,7 +172,7 @@ class StopActivity : ComponentActivity() {
         // The first answer only: finish() is not immediate, and a second tap must not end another call.
         val current = session?.takeUnless { it.answered } ?: return
         if (answers.answer(current, choice)) {
-            if (choice in OPENS) {
+            if (choice in OPENING_CHOICES) {
                 session = current.answering(opening = choice)
                 unlockThen(choice)
             } else {
@@ -216,11 +216,13 @@ class StopActivity : ComponentActivity() {
     private fun open(choice: StopChoice) {
         val current = session?.takeIf { it.opening == choice } ?: return
         session = current.opened()
+        // Exhaustive on purpose: an answer added to OPENING_CHOICES does not compile until it says what it opens.
         when (choice) {
             StopChoice.CALL_MY_BANK -> openDialler()
             StopChoice.REMOVE_ACCESS -> openOwnSettings(AccessSettings.accessibility())
             StopChoice.UNINSTALL -> current.uninstallable?.let { openOwnSettings(uninstallPages(it)) }
-            else -> Unit
+                ?: Timber.w("Uninstall answered, but no app to uninstall")
+            StopChoice.HANG_UP, StopChoice.CONTINUE, StopChoice.LEFT -> Unit
         }
         finish()
     }
@@ -235,6 +237,9 @@ class StopActivity : ComponentActivity() {
             startActivity(Intent(Intent.ACTION_DIAL).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } catch (missing: ActivityNotFoundException) {
             Timber.w(missing, "No dialler")
+        } catch (refused: SecurityException) {
+            // As the settings pages ([AccessSettings]): a maker's dialler not exported is no crash (coherence pass, 10).
+            Timber.w(refused, "Dialler refused")
         }
     }
 
@@ -252,8 +257,5 @@ class StopActivity : ComponentActivity() {
 
     private companion object {
         const val KEY_SESSION = "com.filestech.callhalt.stop.SESSION"
-
-        /** The answers that open something once the phone is unlocked. */
-        val OPENS = setOf(StopChoice.CALL_MY_BANK, StopChoice.REMOVE_ACCESS, StopChoice.UNINSTALL)
     }
 }
