@@ -25,5 +25,9 @@ internal fun gravity(kind: SensitiveActionKind): Int = when (kind) {
     // Someone may be seeing or controlling the phone: hanging up does not stop that (D-017).
     SensitiveActionKind.REMOTE_CONTROL_OPENED, SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> 1
     // Hang up, and call the bank: the same advice for each.
-    SensitiveActionKind.CODE_MESSAGE, SensitiveActionKind.BANK_VALIDATION_REQUEST, SensitiveActionKind.BANK_APP_OPENED -> 0
+    SensitiveActionKind.CODE_MESSAGE,
+    SensitiveActionKind.SMS_BURST,
+    SensitiveActionKind.BANK_VALIDATION_REQUEST,
+    SensitiveActionKind.BANK_APP_OPENED,
+    -> 0
 }

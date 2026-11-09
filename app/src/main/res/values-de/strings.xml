@@ -79,6 +79,7 @@
     <string name="stop_on_call">Sie telefonieren gerade.</string>
     <string name="stop_call_ended">Ihr Anruf wurde gerade beendet.</string>
     <string name="stop_trigger_code">Sie haben gerade einen Code erhalten.</string>
+    <string name="stop_trigger_sms_burst">Sie erhalten viele SMS auf einmal, von verschiedenen Nummern: Vielleicht ist ein Code darunter versteckt.</string>
     <string name="stop_trigger_bank_validation">Die App Ihrer Bank bittet Sie, einen Auftrag freizugeben.</string>
     <string name="stop_trigger_bank_app">Die App Ihrer Bank wurde gerade geöffnet.</string>
     <string name="stop_trigger_remote_opened">Eine App, mit der jemand anderes Ihr Telefon sehen oder steuern kann, läuft gerade.</string>
@@ -118,6 +119,7 @@
     <string name="guardian_sms_set_up">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie per SMS, wenn der STOP-Bildschirm erscheint, während eines Anrufs oder kurz danach, ein mögliches Zeichen für Betrug.</string>
     <string name="guardian_sms_removed">Automatische Nachricht der App Call Halt Tech: Dieses Telefon benachrichtigt Sie nicht mehr. Wenn Sie das überrascht, rufen Sie diese Nummer an.</string>
     <string name="guardian_sms_what_code">ein per SMS erhaltener Code</string>
+    <string name="guardian_sms_what_sms_burst">viele auf einmal erhaltene SMS</string>
     <string name="guardian_sms_what_bank_validation">eine Freigabeanfrage der Bank</string>
     <string name="guardian_sms_what_bank_app">die App der Bank geöffnet</string>
     <string name="guardian_sms_what_remote_installed">eine Fernsteuerungs-App installiert</string>

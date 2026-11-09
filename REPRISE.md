@@ -140,8 +140,11 @@ ou juste après offre « Raccrocher et désinstaller RustDesk » (l'appel coupé
 qui ouvre sa page dans les réglages du système ; l'avertissement part aussi, silencieux, reste après l'appel, et
 est retiré à la désinstallation ; mesuré sur l'émulateur Android 16 avec RustDesk (pendant l'appel, juste après,
 le silence contre un témoin) ; relectures Claude (3 réels corrigés) et GPT Luna (0,023 $ : 2 corrigés, 1 non
-retenu sur mesure) ; **644 tests**, dont 2 nouveaux tests sur l'appareil. **À soumettre à Patrice** : un STOP
-« appli en marche » seul (rien d'installé pendant l'appel) n'offre pas de désinstaller.
+retenu sur mesure) ; CodeQL : une fausse alerte de PendingIntent implicite, levée en écrivant une boucle simple ;
+**644 tests**, dont 2 nouveaux tests sur l'appareil. Fusionné (#55). **Tranché par Patrice le 2026-11-09** : un
+STOP « appli en marche » seul (rien d'installé pendant l'appel) n'offre pas de désinstaller — laissé ainsi ; N-3
+dira « Vous recevez beaucoup de SMS d'un coup, de numéros différents : un code est peut-être caché parmi eux. »
+(la règle et le conseil d'un code ; le seuil, choix technique).
 **Ensuite** : N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
 relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
 nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », « Désinstaller », N-3), et un

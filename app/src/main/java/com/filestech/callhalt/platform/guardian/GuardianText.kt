@@ -40,6 +40,7 @@ internal fun guardianText(event: GuardianEvent): GuardianText? = when (event) {
 @StringRes
 private fun what(trigger: SensitiveActionKind): Int = when (trigger) {
     SensitiveActionKind.CODE_MESSAGE -> R.string.guardian_sms_what_code
+    SensitiveActionKind.SMS_BURST -> R.string.guardian_sms_what_sms_burst
     SensitiveActionKind.BANK_VALIDATION_REQUEST -> R.string.guardian_sms_what_bank_validation
     SensitiveActionKind.BANK_APP_OPENED -> R.string.guardian_sms_what_bank_app
     SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> R.string.guardian_sms_what_remote_installed

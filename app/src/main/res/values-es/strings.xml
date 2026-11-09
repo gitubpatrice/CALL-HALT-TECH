@@ -82,6 +82,7 @@
     <string name="stop_on_call">Está al teléfono.</string>
     <string name="stop_call_ended">Su llamada acaba de terminar.</string>
     <string name="stop_trigger_code">Acaba de recibir un código.</string>
+    <string name="stop_trigger_sms_burst">Está recibiendo muchos SMS a la vez, de números distintos: puede que haya un código escondido entre ellos.</string>
     <string name="stop_trigger_bank_validation">La app de su banco le pide que confirme una operación.</string>
     <string name="stop_trigger_bank_app">La app de su banco acaba de abrirse.</string>
     <string name="stop_trigger_remote_opened">Está en marcha una app que permite a otra persona ver o controlar su teléfono.</string>
@@ -122,6 +123,7 @@
     <string name="guardian_sms_set_up">Mensaje automático de la app Call Halt Tech: este teléfono le avisará por SMS si aparece la pantalla STOP, durante una llamada o justo después, posible señal de una estafa.</string>
     <string name="guardian_sms_removed">Mensaje automático de la app Call Halt Tech: este teléfono ya no le avisará. Si le sorprende, llame a este número.</string>
     <string name="guardian_sms_what_code">un código recibido por SMS</string>
+    <string name="guardian_sms_what_sms_burst">muchos SMS recibidos a la vez</string>
     <string name="guardian_sms_what_bank_validation">una solicitud de confirmación del banco</string>
     <string name="guardian_sms_what_bank_app">la app del banco abierta</string>
     <string name="guardian_sms_what_remote_installed">una app de control remoto instalada</string>

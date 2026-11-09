@@ -584,6 +584,19 @@ class DetectionEngineTest {
     @Nested
     inner class OutsideACall {
 
+        /** N-3 (D-040): many texts at once, during a call, is the flood that buries a code; outside, an ordinary day. */
+        @Test
+        fun `a burst of SMS is a STOP during a call or just after, nothing outside`() {
+            val during = run(callStarted(), action(SensitiveActionKind.SMS_BURST, minutes = 3))
+            val after = run(callStarted(), CallEnded(at(2), CallChannel.CELLULAR), action(SensitiveActionKind.SMS_BURST, minutes = 6))
+            val outside = run(action(SensitiveActionKind.SMS_BURST, minutes = 0))
+
+            assertThat(during.lastStops().single().trigger).isEqualTo(SensitiveActionKind.SMS_BURST)
+            assertThat(after.lastStops().single().call.isActive).isFalse()
+            assertThat(outside.last().decisions).isEmpty()
+            assertThat(outside.last().journal).isEmpty()
+        }
+
         @Test
         fun `a remote-control app installed outside a call is warned about`() {
             val steps = run(action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 0))

@@ -76,6 +76,12 @@ enum class SensitiveActionKind {
     /** An SMS carrying a validation code (PROJET.md, § 4.3). */
     CODE_MESSAGE,
 
+    /**
+     * Many SMS at once, from different numbers: a flood that buries the code among them — past 50 notifications, Android
+     * shows the SMS app's next ones no more, and the code goes unseen (publication audit, N-3, measured; D-040).
+     */
+    SMS_BURST,
+
     /** A banking app's notification asking to confirm an operation. */
     BANK_VALIDATION_REQUEST,
 
