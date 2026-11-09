@@ -56,6 +56,20 @@ class StopAnswersTest {
             .containsExactly(StopChoice.REMOVE_ACCESS, StopChoice.REMOVE_ACCESS)
     }
 
+    /** FN-3 (D-039): the app's page opens after the call ended, as the accessibility settings; never over the call. */
+    @Test
+    fun `uninstalling ends the call during it, nothing after it, and not at all if the call stays`() = runTest {
+        assertThat(answers().answer(session(onCall = true), StopChoice.UNINSTALL)).isTrue()
+        assertThat(answers().answer(session(onCall = false), StopChoice.UNINSTALL)).isTrue()
+        drain()
+        assertThat(calls.ended).isEqualTo(1)
+        assertThat(store.journal.map { (it as JournalEntry.Answer).choice })
+            .containsExactly(StopChoice.UNINSTALL, StopChoice.UNINSTALL)
+
+        calls.succeeds = false
+        assertThat(answers().answer(session(onCall = true), StopChoice.UNINSTALL)).isFalse()
+    }
+
     /** Not the settings over a call still going on: the scammer would stay on the line, told it was cut. */
     @Test
     fun `removing the access when the call could not be ended is not an answer`() = runTest {

@@ -74,6 +74,40 @@ class StopTextTest {
         }
     }
 
+    /**
+     * After a remote-control app was installed, the screen that knows it offers to uninstall it, by name, first — the
+     * call ending first, as for the accessibility (FN-3, D-039); during a call the app cannot end, nothing (D-011).
+     */
+    @Test
+    fun `the install STOP that knows the app offers to uninstall it first, the call ending first`() {
+        val installed = SensitiveActionKind.REMOTE_CONTROL_INSTALLED
+        val during = stopText(installed, onCall = true, CallChannel.CELLULAR, canEndCall = true, installedApp = "AnyDesk")
+        val after = stopText(installed, onCall = false, CallChannel.CELLULAR, canEndCall = true, installedApp = "AnyDesk")
+        val cannotEnd = stopText(installed, onCall = true, CallChannel.VOIP, canEndCall = true, installedApp = "AnyDesk")
+
+        assertThat(during.buttons).containsExactly(
+            StopButton(R.string.stop_hang_up_and_uninstall, StopChoice.UNINSTALL, "AnyDesk"),
+            StopButton(R.string.stop_hang_up_and_call_my_bank, StopChoice.CALL_MY_BANK),
+        ).inOrder()
+        assertThat(after.buttons).containsExactly(
+            StopButton(R.string.stop_uninstall, StopChoice.UNINSTALL, "AnyDesk"),
+            StopButton(R.string.stop_call_my_bank, StopChoice.CALL_MY_BANK),
+        ).inOrder()
+        assertThat(cannotEnd.buttons).isEmpty()
+    }
+
+    /** An app's name offered for any other trigger is ignored: only an installation is undone by uninstalling. */
+    @Test
+    fun `no other trigger offers to uninstall`() {
+        SensitiveActionKind.entries.filter { it != SensitiveActionKind.REMOTE_CONTROL_INSTALLED }.forEach { trigger ->
+            listOf(true, false).forEach { onCall ->
+                val text = stopText(trigger, onCall, CallChannel.CELLULAR, canEndCall = true, installedApp = "AnyDesk")
+                assertWithMessage("$trigger, on call $onCall").that(text.buttons.map { it.choice })
+                    .doesNotContain(StopChoice.UNINSTALL)
+            }
+        }
+    }
+
     @Test
     fun `each trigger says what just happened in its own words, whatever the state of the call`() {
         val during = SensitiveActionKind.entries.map { trigger ->

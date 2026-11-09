@@ -103,15 +103,20 @@ class RemoteControlAppsTest {
     }
 
     @Test
-    fun `during a call, an install shows a STOP`() = runTest {
-        startCall()
-        install(at(20))
-        assertThat(shown.map { it.trigger }).containsExactly(SensitiveActionKind.REMOTE_CONTROL_INSTALLED)
-        assertThat(store.journal).containsExactly(
-            JournalEntry.Stop(at(20).wall, SensitiveActionKind.REMOTE_CONTROL_INSTALLED, ANYDESK, Counterpart.Unreadable),
-        )
-        assertThat(warned).isEmpty()
-    }
+    fun `during a call, an install shows a STOP that offers to uninstall it, and its warning silent for after the call`() =
+        runTest {
+            startCall()
+            install(at(20))
+            assertThat(shown.map { it.trigger to it.source })
+                .containsExactly(SensitiveActionKind.REMOTE_CONTROL_INSTALLED to ANYDESK)
+            assertThat(store.journal).containsExactly(
+                JournalEntry.Stop(at(20).wall, SensitiveActionKind.REMOTE_CONTROL_INSTALLED, ANYDESK, Counterpart.Unreadable),
+            )
+            // FN-3 (D-039): the warning, which opens the app's page, stays once the call is over.
+            assertThat(warned).containsExactly(
+                Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, ANYDESK, withStop = true),
+            )
+        }
 
     /** The adviser has the victim hang up, then guides the install by text, or calls back. */
     @Test

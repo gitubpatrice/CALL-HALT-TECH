@@ -152,7 +152,12 @@ class DetectionEngine {
 
     private fun stopDuring(call: CallSession, state: DetectorState, signal: SensitiveAction, settings: ProtectionSettings): Evaluation {
         val decisions = buildList {
-            add(Decision.ShowStop(signal.kind, call))
+            add(Decision.ShowStop(signal.kind, call, source = signal.source))
+            // A remote-control app installed: the STOP offers to uninstall it, and its warning stays in the notifications
+            // once the call is over — the way out of an app the user may not uninstall at once (FN-3, D-039).
+            if (signal.kind == SensitiveActionKind.REMOTE_CONTROL_INSTALLED) {
+                add(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, signal.source, withStop = true))
+            }
             if (settings.guardianAlerts) {
                 add(Decision.NotifyGuardian(GuardianEvent.StopShown(signal.kind, CallWindow.inProgress(call, signal.at))))
             }

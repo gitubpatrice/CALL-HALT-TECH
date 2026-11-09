@@ -103,6 +103,8 @@
     <string name="stop_call_my_bank">Chiamare la mia banca</string>
     <string name="stop_remove_access">Togliere l\'accesso</string>
     <string name="stop_hang_up_and_remove_access">Riattaccare e togliere l\'accesso</string>
+    <string name="stop_uninstall">Disinstallare %1$s</string>
+    <string name="stop_hang_up_and_uninstall">Riattaccare e disinstallare %1$s</string>
     <string name="stop_continue">Continuare</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Continuare (tra %1$d secondo)</item>

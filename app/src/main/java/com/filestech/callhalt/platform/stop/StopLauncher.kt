@@ -2,6 +2,7 @@ package com.filestech.callhalt.platform.stop
 
 import com.filestech.callhalt.domain.model.Decision
 import com.filestech.callhalt.domain.model.SensitiveActionKind
+import com.filestech.callhalt.platform.install.REMOTE_CONTROL_APPS
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,7 +41,14 @@ class ActivityStopLauncher @Inject constructor(
 
     override suspend fun show(stop: Decision.ShowStop): Boolean {
         // A STOP notification still waiting: the screen started now stands for its triggers too, and removes it (N-1).
-        val request = StopRequest(display.nextId(), stop.trigger, stop.call.isActive, stop.call.channel, notice.pending())
+        val request = StopRequest(
+            id = display.nextId(),
+            trigger = stop.trigger,
+            onCall = stop.call.isActive,
+            channel = stop.call.channel,
+            earlier = notice.pending(),
+            installedApp = installedApp(stop),
+        )
         // A STOP left without an answer, coming back once (FN-4): by its notification alone — full screen on a locked or
         // sleeping phone, at the top of it otherwise — not over what the user went to (Patrice, 2026-11-07).
         return if (stop.returning) {
@@ -89,5 +97,12 @@ class ActivityStopLauncher @Inject constructor(
          * queue (8 s at most, SensorQueue).
          */
         val SHOW_TIMEOUT = 5.seconds
+
+        /**
+         * The remote-control app a STOP offers to uninstall (FN-3, D-039): an app of the list only — the screen names it
+         * by the list's name, and nothing else is offered for uninstalling.
+         */
+        fun installedApp(stop: Decision.ShowStop): String? =
+            stop.source?.takeIf { stop.trigger == SensitiveActionKind.REMOTE_CONTROL_INSTALLED && it in REMOTE_CONTROL_APPS }
     }
 }

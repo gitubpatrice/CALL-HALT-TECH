@@ -27,21 +27,29 @@ internal data class StopText(
     val buttons: List<StopButton>,
 )
 
-/** One safe way out: its words, and the answer it gives. */
-internal data class StopButton(@StringRes val label: Int, val choice: StopChoice)
+/** One safe way out: its words — with [app], the name they hold, if any — and the answer it gives. */
+internal data class StopButton(@StringRes val label: Int, val choice: StopChoice, val app: String? = null)
 
 /**
  * [onCall] and [channel] are those of the decision's call ([com.filestech.callhalt.domain.model.Decision.ShowStop]);
- * [canEndCall] says whether the app holds the permission to end a call.
+ * [canEndCall] says whether the app holds the permission to end a call. [installedApp]: the name of the remote-control
+ * app just installed, when the screen can offer to uninstall it (FN-3, D-039).
  */
-internal fun stopText(trigger: SensitiveActionKind, onCall: Boolean, channel: CallChannel, canEndCall: Boolean): StopText {
+internal fun stopText(
+    trigger: SensitiveActionKind,
+    onCall: Boolean,
+    channel: CallChannel,
+    canEndCall: Boolean,
+    installedApp: String? = null,
+): StopText {
     val canHangUp = onCall && channel == CallChannel.CELLULAR && canEndCall
+    val uninstall = installedApp?.takeIf { trigger == SensitiveActionKind.REMOTE_CONTROL_INSTALLED }
     return StopText(
         situation = if (onCall) R.string.stop_on_call else R.string.stop_call_ended,
         happened = happened(trigger),
         rule = rule(trigger),
         advice = advice(trigger, onCall),
-        buttons = buttons(trigger, onCall, canHangUp),
+        buttons = buttons(trigger, onCall, canHangUp, uninstall),
     )
 }
 
@@ -81,22 +89,24 @@ private fun advice(trigger: SensitiveActionKind, onCall: Boolean): Int = when {
 /**
  * The call ends first when the app can end it, and nothing else is offered while it goes on (D-011). After an app was
  * given the accessibility access, removing it comes before calling the bank: in a few touches, it stops what the app
- * can do in the user's place — the bank's operations included.
+ * can do in the user's place — the bank's operations included. After a remote-control app was installed, uninstalling
+ * it ([uninstall], its name) comes first likewise: no one can then use it (Patrice, 2026-11-07, FN-3).
  */
-private fun buttons(trigger: SensitiveActionKind, onCall: Boolean, canHangUp: Boolean): List<StopButton> {
+private fun buttons(trigger: SensitiveActionKind, onCall: Boolean, canHangUp: Boolean, uninstall: String?): List<StopButton> {
     val access = trigger == SensitiveActionKind.ACCESSIBILITY_ENABLED
     return when {
         canHangUp -> listOf(
-            if (access) {
-                StopButton(R.string.stop_hang_up_and_remove_access, StopChoice.REMOVE_ACCESS)
-            } else {
-                StopButton(R.string.stop_hang_up, StopChoice.HANG_UP)
+            when {
+                access -> StopButton(R.string.stop_hang_up_and_remove_access, StopChoice.REMOVE_ACCESS)
+                uninstall != null -> StopButton(R.string.stop_hang_up_and_uninstall, StopChoice.UNINSTALL, uninstall)
+                else -> StopButton(R.string.stop_hang_up, StopChoice.HANG_UP)
             },
             StopButton(R.string.stop_hang_up_and_call_my_bank, StopChoice.CALL_MY_BANK),
         )
         onCall -> emptyList()
         else -> listOfNotNull(
             StopButton(R.string.stop_remove_access, StopChoice.REMOVE_ACCESS).takeIf { access },
+            uninstall?.let { StopButton(R.string.stop_uninstall, StopChoice.UNINSTALL, it) },
             StopButton(R.string.stop_call_my_bank, StopChoice.CALL_MY_BANK),
         )
     }

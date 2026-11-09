@@ -100,6 +100,8 @@
     <string name="stop_call_my_bank">Meine Bank anrufen</string>
     <string name="stop_remove_access">Zugriff entziehen</string>
     <string name="stop_hang_up_and_remove_access">Auflegen und Zugriff entziehen</string>
+    <string name="stop_uninstall">%1$s deinstallieren</string>
+    <string name="stop_hang_up_and_uninstall">Auflegen und %1$s deinstallieren</string>
     <string name="stop_continue">Weiter</string>
     <plurals name="stop_continue_in">
         <item quantity="one">Weiter (in %1$d Sekunde)</item>

@@ -5,15 +5,23 @@ sealed interface Decision {
     /**
      * The full-screen interruption. Its words follow [trigger], and whether [call] is still going on or just ended.
      * [returning]: a STOP left without an answer, coming back once (FN-4) — by its full-screen notification, not over
-     * what the user went to.
+     * what the user went to. [source]: what the action came from, when known (a package name) — the STOP of a
+     * remote-control app installed offers to uninstall it (FN-3, D-039); a STOP coming back does not know it.
      */
-    data class ShowStop(val trigger: SensitiveActionKind, val call: CallSession, val returning: Boolean = false) : Decision
+    data class ShowStop(
+        val trigger: SensitiveActionKind,
+        val call: CallSession,
+        val returning: Boolean = false,
+        val source: String? = null,
+    ) : Decision
 
     /**
      * A notification, not an interruption: a risk worth telling, with no call to interrupt. [source] is what it is about
-     * when there is one — the remote-control app installed (a package name), which the warning names.
+     * when there is one — the remote-control app installed (a package name), which the warning names. [withStop]: a STOP
+     * says it first, during the call or just after it; the notification waits, silent, and stays once the call is over
+     * (FN-3, D-039).
      */
-    data class ShowWarning(val reason: WarningReason, val source: String? = null) : Decision
+    data class ShowWarning(val reason: WarningReason, val source: String? = null, val withStop: Boolean = false) : Decision
 
     /** A text to the trusted relative (PROJET.md, § 4.7), only when the user set one up. */
     data class NotifyGuardian(val event: GuardianEvent) : Decision

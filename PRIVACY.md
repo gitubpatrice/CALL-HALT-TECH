@@ -61,8 +61,8 @@ When you pick that person among your contacts, your contacts app hands the app t
 and nothing else: the app has no access to your contacts.
 
 To see those installations, the app may see whether one of the remote-control apps of its list (about fifty, named
-in its code and its manifest) is installed, and Android tells it when one is. It does not see the phone's other
-apps, and does not ask to.
+in its code and its manifest) is installed, and Android tells it when one is installed or uninstalled (uninstalled,
+its warning is taken away; nothing is kept). It does not see the phone's other apps, and does not ask to.
 
 To show its help with Android's "restricted settings" only where it may be needed, the app also reads how it was
 installed on this phone — by a store, or from a file. It keeps nothing of it. On a Xiaomi phone, it reads in the same

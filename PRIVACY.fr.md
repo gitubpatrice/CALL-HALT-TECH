@@ -63,8 +63,9 @@ Quand vous choisissez ce proche dans vos contacts, votre appli de contacts trans
 seul contact, et rien d'autre : l'appli n'a pas accès à vos contacts.
 
 Pour voir ces installations, l'appli peut voir si une des applis de prise en main de sa liste (une cinquantaine,
-nommées dans son code et son manifeste) est installée, et Android lui dit quand l'une d'elles l'est. Elle ne voit pas
-les autres applis du téléphone, et ne demande pas à les voir.
+nommées dans son code et son manifeste) est installée, et Android lui dit quand l'une d'elles est installée ou
+désinstallée (désinstallée, son avertissement est retiré ; rien n'est gardé). Elle ne voit pas les autres applis du
+téléphone, et ne demande pas à les voir.
 
 Pour n'afficher son aide sur les « paramètres restreints » d'Android que là où elle peut servir, l'appli lit aussi
 comment elle a été installée sur ce téléphone : par une boutique, ou depuis un fichier. Elle n'en garde rien. Sur un
