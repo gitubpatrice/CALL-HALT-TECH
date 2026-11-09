@@ -79,15 +79,17 @@ class NotificationListener : NotificationListenerService() {
         val shown = shownNow()
         if (shown == null) {
             remoteControl.forget()
-            smsNotices.connected(null, emptyMap())
+            smsNotices.connected(null, emptyMap(), SystemClock.elapsedRealtime())
             return
         }
         remoteControl.alreadyShown(shown.map { it.notice() }, clock.now()).forEach(::submit)
         val smsApp = defaultSmsApp()
         val smsAppShown = shown.filter { it.packageName == smsApp }
-        // Counted again from what is shown: removals may have been missed while the listener was away. Each at its age.
-        val sinceBoot = SystemClock.elapsedRealtime() - System.currentTimeMillis()
-        smsNotices.connected(smsApp, smsAppShown.associate { it.key to it.postTime + sinceBoot })
+        // Counted again from what is shown: removals may have been missed while the listener was away; and a flood that
+        // came meanwhile is told now (GPT review of 2026-11-09, 1).
+        if (smsNotices.connected(smsApp, smsAppShown.byMonotonicTime(), SystemClock.elapsedRealtime())) {
+            submit(SensitiveAction(clock.now(), SensitiveActionKind.SMS_BURST, source = smsApp))
+        }
         // The SMS app's messages already shown, read for its previews only (FN-2, GPT review of 2026-11-07, 3): one that
         // came while the listener was away, or before its access was granted, tells it as well. Never a new code.
         val at = clock.now().wall
@@ -147,9 +149,15 @@ class NotificationListener : NotificationListenerService() {
     private fun defaultSmsApp(): String? {
         val now = SystemClock.elapsedRealtime()
         if (smsApp == null || smsAppReadAt.let { it == null || now - it > SMS_APP_LOOKUP_MS }) {
+            val before = smsApp
             smsApp = Telephony.Sms.getDefaultSmsPackage(this)
             smsAppReadAt = now
             Timber.d("Default SMS app: %s", smsApp)
+            // Another SMS app: its notifications of the last minute were not counted (GPT review of 2026-11-09, 3).
+            if (before != null && smsApp != before) {
+                val app = smsApp
+                shownNow()?.let { shown -> smsNotices.connected(app, shown.filter { it.packageName == app }.byMonotonicTime(), now) }
+            }
         }
         return smsApp
     }
@@ -194,6 +202,15 @@ class NotificationListener : NotificationListenerService() {
         /** A change of SMS app is seen within a minute. */
         const val SMS_APP_LOOKUP_MS = 60_000L
     }
+}
+
+/**
+ * Each notification's key, with when it was posted on the monotonic clock ([SmsAppNotices]): its wall time moved by the
+ * present gap between the two clocks — wrong by as much as the civil clock was changed since (D-040, a limit).
+ */
+private fun List<StatusBarNotification>.byMonotonicTime(): Map<String, Long> {
+    val gap = SystemClock.elapsedRealtime() - System.currentTimeMillis()
+    return associate { it.key to it.postTime + gap }
 }
 
 private fun StatusBarNotification.notice() = RemoteControlNotices.Notice(

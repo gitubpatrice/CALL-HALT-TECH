@@ -33,23 +33,29 @@ class SmsAppNotices @Inject constructor() {
     val shown: StateFlow<Map<String, Int>> = counts.asStateFlow()
 
     /**
-     * The listener connected, and [packageName] shows [shown] now — each key with when it was posted (the monotonic
-     * clock): they replace what was kept, which the listener may have missed while away. Never a burst by itself.
+     * The listener connected, or the default SMS app changed, and [packageName] shows [shown] at [atMillis] — each key
+     * with when it was posted (the monotonic clock): they replace what was kept, which the listener may have missed while
+     * away. True when they make a burst against what was kept: a flood that came while the listener was away came during
+     * the call perhaps (GPT review of 2026-11-09, 1). A time after [atMillis] (the clock changed) is taken as [atMillis].
      */
-    fun connected(packageName: String?, shown: Map<String, Long>) {
+    fun connected(packageName: String?, shown: Map<String, Long>, atMillis: Long): Boolean {
+        val before = packageName?.let(::countOf) ?: 0
         notices.clear()
-        if (packageName != null) shown.forEach { (key, postedAt) -> notices[key] = Notice(packageName, postedAt) }
+        if (packageName != null) shown.forEach { (key, postedAt) -> notices[key] = Notice(packageName, minOf(postedAt, atMillis)) }
         publish()
+        return packageName != null && burst(packageName, before, atMillis)
     }
 
-    /** [packageName] posted [key] at [atMillis]: true when that makes a burst. */
+    /**
+     * [packageName] posted [key] at [atMillis]: true when that makes a burst. A notification updated keeps the time it
+     * first came: a new message in a conversation already shown is not one more notification, nor a new one (GPT review
+     * of 2026-11-09, 2).
+     */
     fun posted(packageName: String, key: String, atMillis: Long): Boolean {
         val before = countOf(packageName)
-        notices[key] = Notice(packageName, atMillis)
-        val after = countOf(packageName)
+        if (key !in notices) notices[key] = Notice(packageName, atMillis)
         publish()
-        val recent = notices.values.count { it.packageName == packageName && atMillis - it.postedAt in 0..RECENT_MS }
-        return STOP_AT.any { before < it && after >= it } && recent >= RECENT_MIN
+        return burst(packageName, before, atMillis)
     }
 
     fun removed(key: String) {
@@ -57,6 +63,13 @@ class SmsAppNotices @Inject constructor() {
     }
 
     private fun countOf(packageName: String) = notices.values.count { it.packageName == packageName }
+
+    /** Gone past a mark, upward, from [before], with enough of them come in the last [RECENT_MS]. */
+    private fun burst(packageName: String, before: Int, atMillis: Long): Boolean {
+        val after = countOf(packageName)
+        val recent = notices.values.count { it.packageName == packageName && atMillis - it.postedAt in 0..RECENT_MS }
+        return STOP_AT.any { before < it && after >= it } && recent >= RECENT_MIN
+    }
 
     private fun publish() {
         counts.value = notices.values.groupingBy { it.packageName }.eachCount()
