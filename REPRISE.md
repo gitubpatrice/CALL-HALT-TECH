@@ -133,11 +133,21 @@ au démarrage), la notification balayée (`StopNotificationSwiped`), le SMS « q
 mesuré sur l'émulateur Android 16 (retour 15 s après, SMS au balayage ; raccroché → rien ; **touchée → l'écran,
 aucun SMS**, 2026-11-09) ; relecture Claude (1 grave et 4 réels corrigés) puis GPT Sol (0,529 $ : 3 limites très
 rares écrites, KDoc corrigée ; `relectures/2026-11-09-gpt-stop-revient.md`) ; tests de stockage verts sur
-l'appareil (17, migration comprise) ; **628 tests**.
-**Ensuite** : FN-3, N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
+l'appareil (17, migration comprise) ; **628 tests**. Fusionné (#54).
+
+**Puis FN-3, « Désinstaller [appli] »** (D-039) : le STOP d'une appli de prise en main installée pendant un appel
+ou juste après offre « Raccrocher et désinstaller RustDesk » (l'appel coupé d'abord) ou « Désinstaller RustDesk »,
+qui ouvre sa page dans les réglages du système ; l'avertissement part aussi, silencieux, reste après l'appel, et
+est retiré à la désinstallation ; mesuré sur l'émulateur Android 16 avec RustDesk (pendant l'appel, juste après,
+le silence contre un témoin) ; relectures Claude (3 réels corrigés) et GPT Luna (0,023 $ : 2 corrigés, 1 non
+retenu sur mesure) ; **644 tests**, dont 2 nouveaux tests sur l'appareil. **À soumettre à Patrice** : un STOP
+« appli en marche » seul (rien d'installé pendant l'appel) n'offre pas de désinstaller.
+**Ensuite** : N-3, l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
 relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
-nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », N-3), et un `android-architecture-coherence-checker`
-(cohérence des motifs après cette série de corrections).
+nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », « Désinstaller », N-3), et un
+`android-architecture-coherence-checker` (cohérence des motifs après cette série de corrections). Le gate local
+est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
+(`testDebugUnitTest` seul ne lance pas les tests du domaine).
 
 ## Le 2026-11-05
 
@@ -436,7 +446,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 628 tests sur ordinateur, 31 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 644 tests sur ordinateur, 40 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.

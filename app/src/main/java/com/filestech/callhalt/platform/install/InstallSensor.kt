@@ -42,7 +42,11 @@ class InstallSensor @Inject constructor(
             val replacing = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
             when (intent.action) {
                 Intent.ACTION_PACKAGE_ADDED -> installed(packageName, replacing)
-                Intent.ACTION_PACKAGE_REMOVED -> if (withdrawsWarning(packageName, replacing)) warnings.withdraw(packageName)
+                // Through the queue, after any installation still waiting in it: withdrawn at once, a warning posted a
+                // moment later by that installation would stay (GPT review of 2026-11-09, 1).
+                Intent.ACTION_PACKAGE_REMOVED -> if (withdrawsWarning(packageName, replacing)) {
+                    queueAsync(queue, reason = "remote-control app uninstalled") { warnings.withdraw(packageName) }
+                }
             }
         }
 
