@@ -60,7 +60,8 @@ internal object StopReturns {
     /**
      * The returns due at [at]. A STOP left [RETURN_DELAY] ago comes back once, by its full-screen notification — unless
      * the call it stood for ended since it was left (the user went to hang up: no alarm for that), or that call's window
-     * is over, or another call is now going on. Back and still unanswered [RETURN_ANSWER_WAIT] later, the relative is
+     * is over (a call begun since is another one, which does not bring it back). The call is picked as for a first STOP
+     * ([CallWindow.callAt]: the earliest-started one). Back and still unanswered [RETURN_ANSWER_WAIT] later, the relative is
      * told. Not due yet (a wake-up that came early): asked again for its own time. Due long ago — more than
      * [RETURN_LATE_LIMIT] late: the process was killed, or the phone slept through the wait — it is dropped, without a
      * STOP nor a text: hours later, both would speak of a call that is no longer the one (review of 2026-11-07, 2).
