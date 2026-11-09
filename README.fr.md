@@ -15,8 +15,9 @@ fiable.
 
 Ne jamais se fier au numéro de l'appelant : il s'usurpe en quelques secondes. S'appuyer plutôt sur ce que
 l'escroc ne peut pas éviter. Il faut que la victime **fasse quelque chose d'irréversible sur son téléphone,
-pendant l'appel ou juste après** : donner un code reçu par SMS, valider une opération dans l'appli de la
-banque, installer une appli de prise en main à distance. Si cela arrive pendant un appel ou juste après,
+pendant l'appel ou juste après** : donner un code reçu par SMS, valider une opération demandée par la banque
+(aujourd'hui, la demande Sécur'Pass des banques du groupe BPCE), installer une appli de prise en main à
+distance. Si cela arrive pendant un appel ou juste après,
 l'appli interrompt avec un écran STOP : *ni votre banque, ni la police, ni les impôts, ni votre assurance
 ne vous appelleront jamais pour vous demander cela. Si on vous dit d'ignorer cet écran, c'est une arnaque.
 Raccrochez, puis appelez vous-même un numéro que vous connaissez.*

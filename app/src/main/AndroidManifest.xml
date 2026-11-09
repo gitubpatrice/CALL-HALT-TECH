@@ -57,6 +57,12 @@
     -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!--
+        Other apps' windows drawn over the STOP screen are hidden while it shows (platform/stop/StopActivity, publication
+        audit C-2, Android 12+): an app given "display over other apps" could cover it without closing it. A normal
+        permission, granted at install.
+    -->
+    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
+    <!--
         SEND_SMS would otherwise make the phone's telephony REQUIRED, and keep the app from a device without it. Not
         needed: there, the relative is not texted (platform/guardian/TextSender), and nothing else changes.
     -->

@@ -50,6 +50,10 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   retirée quand l'appli est désinstallée.
 - **Vibreur** (`VIBRATE`) : deux vibrations brèves quand l'écran STOP s'ouvre, pour le sentir le téléphone à l'oreille.
   Accordé à l'installation, sans question ; il ne lit rien.
+- **Masquer les superpositions des autres applis** (`HIDE_OVERLAY_WINDOWS`, Android 12 et après) : tant que l'écran
+  STOP est affiché, une appli qui a « l'affichage par-dessus les autres applis » ne peut pas le couvrir. Les fenêtres
+  du système, et celles d'un service d'accessibilité, restent possibles. Accordé à l'installation, sans question ; il
+  ne lit rien.
 - **Envoyer des SMS** (`SEND_SMS`) : seulement si vous choisissez un proche à prévenir, et demandé sur cet écran, pas
   par l'activation. L'appli s'en sert pour envoyer, jamais pour lire : la question d'Android dit « envoyer et afficher
   des SMS », le nom de tout le groupe, mais l'appli ne demande aucune permission de lire vos messages (ce qu'elle lit

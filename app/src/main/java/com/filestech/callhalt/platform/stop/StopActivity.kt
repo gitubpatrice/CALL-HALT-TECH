@@ -37,7 +37,10 @@ import javax.inject.Inject
  *
  * - **Out of screenshots and screen sharing** (`FLAG_SECURE`): a remote-control app streaming the screen sees it
  *   black. From Android 14, **closed to accessibility services that are not accessibility tools**: such an app
- *   can neither read it nor press "Continue" (P-15; TalkBack, an accessibility tool, still reads it).
+ *   can neither read it nor press "Continue" (P-15; TalkBack, an accessibility tool, still reads it). From Android 12,
+ *   **other apps' overlays hidden** while it shows: an app given "display over other apps" cannot cover it (publication
+ *   audit, C-2) — the system's windows, and an accessibility service's, still can (an accessibility service given
+ *   during a call is a STOP of its own, D-033).
  * - **Over the lock screen**: during a call the screen sleeps against the cheek; the STOP is there when the user
  *   looks. Sleeping is not leaving. What opens another app (the dialler, the settings) asks for the unlock first.
  * - **Back does not close it**: an answer is a choice. Leaving it otherwise (Home, another app in front) closes it
@@ -70,6 +73,11 @@ class StopActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             window.decorView.setAccessibilityDataSensitive(View.ACCESSIBILITY_DATA_SENSITIVE_YES)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Another app's window drawn over this one (its own "display over other apps") is hidden while it shows:
+            // it could cover the STOP without closing it (publication audit, C-2). The system's own windows stay.
+            window.setHideOverlayWindows(true)
         }
         setShowWhenLocked(true)
         enableEdgeToEdge()

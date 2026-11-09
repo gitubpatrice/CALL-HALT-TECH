@@ -14,7 +14,8 @@ access. It can text someone close to you when that happens. Nothing is published
 
 Never trust the caller's number: it is spoofed in seconds. Rely instead on what the scammer cannot avoid:
 the victim must **do something irreversible on the phone during the call or just after it** — give a code
-received by SMS, confirm an operation in the banking app, install a remote-control app. When that happens
+received by SMS, confirm an operation the bank asks for (today, the Sécur'Pass request of the BPCE group's
+banks), install a remote-control app. When that happens
 during a call or just after it, the app interrupts with a STOP screen: *your bank, the police, the tax
 office, your insurer: none of them will ever call you to ask for this. If you are told to ignore this
 screen, it is a scam. Hang up, then call them yourself, on a number you know.*

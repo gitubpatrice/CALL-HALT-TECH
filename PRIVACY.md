@@ -47,6 +47,9 @@ change that adds it to the app, and the build checks the app asks for nothing el
   stays for after the call. It is taken away once the app is uninstalled.
 - **Vibration** (`VIBRATE`): two short buzzes as the STOP screen opens, to feel it with the phone at your ear. Granted
   at install, nothing asked; it reads nothing.
+- **Hide other apps' overlays** (`HIDE_OVERLAY_WINDOWS`, Android 12+): while the STOP screen shows, an app given
+  "display over other apps" cannot cover it. The system's own windows, and an accessibility service's, remain
+  possible. Granted at install, nothing asked; it reads nothing.
 - **Send SMS** (`SEND_SMS`): only if you choose someone close to alert, and asked on that screen, not by the
   activation. The app uses it to send, never to read: Android's question says "send and view SMS messages", the name of
   the whole group, but the app asks for no permission to read your messages (what it reads of a code goes through the
