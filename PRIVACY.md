@@ -98,7 +98,9 @@ On this phone only, in the app's private storage:
   erased: the 13 months the law leaves you to contest a payment with your bank, counted from its debit, and one more
   for a card debited at the end of the month — the journal shows that a call was in progress, or had just ended,
   when it was asked for.
-  Never more than 10,000 lines: past that, the oldest go first;
+  Never more than 10,000 lines: past that, the oldest go first. You read it in the "Alert history" screen, from the
+  home screen; its "Share" button hands it, as text, to the app you pick in Android's share menu (a text, an e-mail,
+  for your bank or the police) — only when you touch it, and only where you send it;
 - when your SMS app hides the text of messages in its notifications, its package name (such as
   `com.filestech.sms`), to say so on the home screen while it is your SMS app; never the text of a message.
 

@@ -163,4 +163,18 @@
     <string name="guardian_removed">Nessuno viene più avvisato via SMS.</string>
     <string name="guardian_save_failed">L\'app non è riuscita a salvare questa scelta. Riprovi.</string>
     <string name="guardian_done">Fatto</string>
+    <string name="history_title">Cronologia degli avvisi</string>
+    <string name="history_empty">Ancora nessun avviso.</string>
+    <string name="history_share">Condividi</string>
+    <string name="history_share_heading">Call Halt Tech: cronologia degli avvisi</string>
+    <string name="history_stop">Schermata STOP: %1$s</string>
+    <string name="history_app">App: %1$s</string>
+    <string name="history_answer">Risposta: %1$s</string>
+    <string name="history_then">", poi "</string>
+    <string name="history_no_answer">Nessuna risposta</string>
+    <string name="history_not_shown">Il telefono ha impedito alla schermata STOP di comparire</string>
+    <string name="history_answer_left">Chiusa senza risposta</string>
+    <string name="history_answer_uninstall">Disinstallare</string>
+    <string name="history_warning">Avviso: %1$s</string>
+    <string name="history_long_call">una lunga chiamata con un numero sconosciuto</string>
 </resources>

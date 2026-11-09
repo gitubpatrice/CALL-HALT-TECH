@@ -102,7 +102,9 @@ Sur ce téléphone seulement, dans l'espace privé de l'appli :
   gardée **14 mois**, puis effacée : les 13 mois que la loi vous laisse pour contester une opération auprès de votre
   banque, comptés depuis son débit, et un de plus pour une carte débitée en fin de mois — le journal montre qu'un
   appel était en cours, ou venait de finir, quand elle a été demandée. Jamais plus de 10 000 lignes : au-delà, les plus anciennes partent
-  d'abord ;
+  d'abord. Vous le lisez dans l'écran « Historique des alertes », depuis l'accueil ; son bouton « Partager » le remet,
+  en texte, à l'appli que vous choisissez dans le menu de partage d'Android (un SMS, un e-mail, pour votre banque ou
+  la police) — seulement quand vous le touchez, et seulement là où vous l'envoyez ;
 - quand votre appli SMS cache le texte des messages dans ses notifications, son nom de paquet (comme
   `com.filestech.sms`), pour le dire sur l'accueil tant qu'elle est votre appli SMS ; jamais le texte d'un message.
 

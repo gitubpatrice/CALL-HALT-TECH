@@ -163,4 +163,18 @@
     <string name="guardian_removed">Plus personne n\'est prévenu par SMS.</string>
     <string name="guardian_save_failed">L\'appli n\'a pas pu enregistrer ce choix. Réessayez.</string>
     <string name="guardian_done">Terminé</string>
+    <string name="history_title">Historique des alertes</string>
+    <string name="history_empty">Aucune alerte pour l\'instant.</string>
+    <string name="history_share">Partager</string>
+    <string name="history_share_heading">Call Halt Tech : historique des alertes</string>
+    <string name="history_stop">Écran STOP : %1$s</string>
+    <string name="history_app">Appli : %1$s</string>
+    <string name="history_answer">Réponse : %1$s</string>
+    <string name="history_then">", puis "</string>
+    <string name="history_no_answer">Sans réponse</string>
+    <string name="history_not_shown">Le téléphone a empêché l\'écran STOP de s\'afficher</string>
+    <string name="history_answer_left">Quitté sans réponse</string>
+    <string name="history_answer_uninstall">Désinstaller</string>
+    <string name="history_warning">Avertissement : %1$s</string>
+    <string name="history_long_call">un long appel avec un numéro inconnu</string>
 </resources>
