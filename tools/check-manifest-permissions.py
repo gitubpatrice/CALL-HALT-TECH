@@ -104,6 +104,9 @@ ALLOWED = {
     "android.permission.SEND_SMS",
     # Two short buzzes as a STOP opens (platform/stop/StopActivity, U4). Granted at install, reads nothing.
     "android.permission.VIBRATE",
+    # Other apps' overlays hidden over the STOP screen (platform/stop/StopActivity, audit C-2, Android 12+). Granted at
+    # install, reads nothing.
+    "android.permission.HIDE_OVERLAY_WINDOWS",
 }
 
 # Every component the system binds with a special access — (component, its BIND_* permission) — no more, no less.

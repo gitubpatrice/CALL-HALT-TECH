@@ -78,4 +78,6 @@ strict nécessaire ; GPT : `gpt-5.6-sol` effort `high`, plafond 2 $ par relectur
 
 | 2026-11-09 | Claude, agents `android-i18n-strings-cleaner` et `android-architecture-coherence-checker` (passages prévus avant la relecture finale) | toute l'appli, `main` = `553c4f8` | 0 $ (sous-agents) | [claude-passage-traductions-coherence](2026-11-09-claude-passage-traductions-coherence.md) | traductions : aucun sens faux ; 2 corrigés (l'historique « a été installée » ; des guillemets) ; 2 à faire relire par un natif. Cohérence : 5 corrigés (une seule liste des réponses qui ouvrent une page ; la première connexion de l'écouteur ; une dépendance inversée ; KDoc ; le composeur) |
 
-**Cumul des relectures payantes : 2,592 $** (GPT et Gemini).
+| 2026-11-09 | Claude, agent `android-code-quality-deep-dive` (sécurité), puis GPT `gpt-5.6-luna` (high) | les superpositions masquées sur l'écran STOP (audit C-2), le texte de S-2, le README (E-2) | 0,013 $ | [superpositions](2026-11-09-superpositions.md) | aucun défaut de code ; 3 imprécisions de rédaction corrigées (le limiteur ; ce que le masquage ne couvre pas : fenêtres du système et d'accessibilité) |
+
+**Cumul des relectures payantes : 2,605 $** (GPT et Gemini).

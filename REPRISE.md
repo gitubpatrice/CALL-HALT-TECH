@@ -165,8 +165,15 @@ coherence.md`) : traductions — aucun sens faux, l'historique dit « a été in
 points à faire relire par un natif (DE/IT/ES) ; cohérence — une seule liste des réponses qui ouvrent une page,
 la première connexion de l'écouteur d'un processus ne fait plus de « rafale » d'un téléphone déjà plein, une
 dépendance inversée rangée. **670 tests.**
-**Ensuite** : les mots d'E-2 (README) restent à proposer ; C-2, S-2 et les points faibles de l'audit ; puis la
-relecture finale B3 (GPT Sol et Gemini) et la note. Le gate local est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
+Fusionné (#58).
+
+**Puis C-2 et S-2** (sécurité, faibles) : les superpositions d'autres applis masquées sur l'écran STOP (Android 12+,
+`HIDE_OVERLAY_WINDOWS`, mesuré) ; S-2 laissé par choix (D-019 : par le canal, sans liste de paquets jamais mesurés),
+son texte devenu faux depuis D-034 corrigé (un faux STOP envoie aussi un SMS au proche, borné).
+**E-2** (Patrice, 2026-11-09 : « préciser dans la phrase ») : la méthode du README dit « valider une opération
+demandée par la banque (aujourd'hui, la demande Sécur'Pass des banques du groupe BPCE) ».
+**Ensuite** : les points faibles de l'audit ; puis la relecture finale
+B3 (GPT Sol et Gemini) et la note. Le gate local est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
 (`testDebugUnitTest` seul ne lance pas les tests du domaine).
 
 ## Le 2026-11-05

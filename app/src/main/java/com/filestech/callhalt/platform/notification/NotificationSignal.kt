@@ -10,8 +10,10 @@ import com.filestech.callhalt.domain.model.SensitiveActionKind
  * Recognised by the CHANNEL, never by the words: a channel is the identifier the app gave in its code, the same in
  * every language and every version of its texts, and reading it reads nothing of what the notification says. From
  * any app: Sécur'Pass is common to the BPCE group's banks, and a channel name no other app uses costs nothing
- * where it does not appear — a false STOP on the protective side at worst, never a request missed for a package
- * name nobody measured.
+ * where it does not appear — never a request missed for a package name nobody measured. The price (publication audit,
+ * S-2): an app installed on the phone may name a channel so on purpose — during a call, a STOP, and since D-034 a text
+ * to the relative, which the limiter bounds (`GuardianLimiter`: one "STOP shown" text for the same alert within a
+ * quarter of an hour; 20 texts a day in all). An app able to do that is on the phone already, the worse threat.
  */
 internal val BANK_REQUEST_CHANNELS = setOf(
     // Sécur'Pass, measured on the S24 FE on 2026-11-02: the Crédit Coopératif app (BPCE group), "Vous allez
