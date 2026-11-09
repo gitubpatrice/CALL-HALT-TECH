@@ -105,7 +105,7 @@
     <string name="stop_channel_name">STOP screen blocked</string>
     <string name="stop_channel_description">When the phone prevents the STOP screen from showing: a notification that opens it.</string>
     <string name="warning_channel_name">Remote-control apps</string>
-    <string name="warning_channel_description">When an app that lets someone else see or control your phone is installed outside a call.</string>
+    <string name="warning_channel_description">When an app that lets someone else see or control your phone is installed (during a call, silently, after the STOP screen).</string>
     <string name="warning_remote_installed_title">%1$s has just been installed</string>
     <string name="warning_remote_installed_text">This app lets someone else see or control your phone. Your bank, the police, the tax office, your insurer: none of them will ever call you to ask you to install it. If you did not install it of your own accord, uninstall it.</string>
     <string name="stop_on_call">You are on the phone.</string>

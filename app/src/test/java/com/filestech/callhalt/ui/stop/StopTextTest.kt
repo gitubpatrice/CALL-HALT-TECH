@@ -96,10 +96,17 @@ class StopTextTest {
         assertThat(cannotEnd.buttons).isEmpty()
     }
 
+    /** The app installed during the call, now at work: the screen speaks of it at work, and still offers to uninstall it. */
+    @Test
+    fun `the STOP of the installed app at work offers to uninstall it too`() {
+        val text = stopText(SensitiveActionKind.REMOTE_CONTROL_OPENED, onCall = false, CallChannel.CELLULAR, canEndCall = true, "AnyDesk")
+        assertThat(text.buttons.first()).isEqualTo(StopButton(R.string.stop_uninstall, StopChoice.UNINSTALL, "AnyDesk"))
+    }
+
     /** An app's name offered for any other trigger is ignored: only an installation is undone by uninstalling. */
     @Test
     fun `no other trigger offers to uninstall`() {
-        SensitiveActionKind.entries.filter { it != SensitiveActionKind.REMOTE_CONTROL_INSTALLED }.forEach { trigger ->
+        SensitiveActionKind.entries.filter { it !in UNINSTALL_TRIGGERS }.forEach { trigger ->
             listOf(true, false).forEach { onCall ->
                 val text = stopText(trigger, onCall, CallChannel.CELLULAR, canEndCall = true, installedApp = "AnyDesk")
                 assertWithMessage("$trigger, on call $onCall").that(text.buttons.map { it.choice })

@@ -86,6 +86,12 @@ internal fun installSignal(packageName: String, replacing: Boolean, at: Moment):
     }
 
 /**
+ * Whether the removal of [packageName] takes its warning away (D-039): an app of the list uninstalled — not updated
+ * ([replacing]: Android removes it, then adds it back), which would leave the app in place and its warning gone.
+ */
+internal fun withdrawsWarning(packageName: String, replacing: Boolean): Boolean = !replacing && packageName in REMOTE_CONTROL_APPS
+
+/**
  * Where a remote-control app just installed is uninstalled, from its STOP screen and its warning (D-031, D-039): its page
  * in the phone's settings, else the settings — to be opened as the phone's OWN settings serve them
  * (`platform.access.systemSettings`): the app itself could declare the same page.

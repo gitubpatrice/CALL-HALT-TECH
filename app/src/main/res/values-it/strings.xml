@@ -76,7 +76,7 @@
     <string name="stop_channel_name">Schermata STOP bloccata</string>
     <string name="stop_channel_description">Quando il telefono impedisce alla schermata STOP di comparire: una notifica che la apre.</string>
     <string name="warning_channel_name">App di controllo remoto</string>
-    <string name="warning_channel_description">Quando, fuori da una chiamata, viene installata un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono.</string>
+    <string name="warning_channel_description">Quando viene installata un\'app che permette a un\'altra persona di vedere o controllare il Suo telefono (durante una chiamata, in silenzio, dopo la schermata STOP).</string>
     <string name="warning_remote_installed_title">%1$s è appena stata installata</string>
     <string name="warning_remote_installed_text">Questa app permette a un\'altra persona di vedere o controllare il Suo telefono. La Sua banca, la polizia, il fisco o la Sua assicurazione non La chiameranno mai per chiederLe di installarla. Se non l\'ha installata di Sua iniziativa, la disinstalli.</string>
     <string name="stop_on_call">Sta telefonando.</string>

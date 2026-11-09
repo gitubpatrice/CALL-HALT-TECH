@@ -102,6 +102,17 @@ class RemoteControlAppsTest {
             .forEach { packageName -> assertThat(installSignal(packageName, replacing = false, at(0))).isNull() }
     }
 
+    /**
+     * D-039: an app of the list uninstalled takes its warning away; updated (removed, then added back), it keeps it — the
+     * app is still there; any other app's removal touches nothing (Claude review of 2026-11-09, 4).
+     */
+    @Test
+    fun `only an app of the list uninstalled, not updated, takes its warning away`() {
+        assertThat(withdrawsWarning(ANYDESK, replacing = false)).isTrue()
+        assertThat(withdrawsWarning(ANYDESK, replacing = true)).isFalse()
+        assertThat(withdrawsWarning("com.example.other", replacing = false)).isFalse()
+    }
+
     @Test
     fun `during a call, an install shows a STOP that offers to uninstall it, and its warning silent for after the call`() =
         runTest {

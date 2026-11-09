@@ -76,7 +76,7 @@
     <string name="stop_channel_name">Pantalla STOP bloqueada</string>
     <string name="stop_channel_description">Cuando el teléfono impide que aparezca la pantalla STOP: una notificación que la abre.</string>
     <string name="warning_channel_name">Apps de control remoto</string>
-    <string name="warning_channel_description">Cuando, fuera de una llamada, se instala una app que permite a otra persona ver o controlar su teléfono.</string>
+    <string name="warning_channel_description">Cuando se instala una app que permite a otra persona ver o controlar su teléfono (durante una llamada, en silencio, tras la pantalla STOP).</string>
     <string name="warning_remote_installed_title">Se acaba de instalar %1$s</string>
     <string name="warning_remote_installed_text">Esta app permite a otra persona ver o controlar su teléfono. Ni su banco, ni la policía, ni Hacienda, ni su aseguradora le llamarán nunca para pedirle que la instale. Si no la ha instalado por iniciativa propia, desinstálela.</string>
     <string name="stop_on_call">Está al teléfono.</string>

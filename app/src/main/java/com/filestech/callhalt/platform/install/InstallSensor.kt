@@ -42,9 +42,7 @@ class InstallSensor @Inject constructor(
             val replacing = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
             when (intent.action) {
                 Intent.ACTION_PACKAGE_ADDED -> installed(packageName, replacing)
-                Intent.ACTION_PACKAGE_REMOVED -> if (!replacing && packageName in REMOTE_CONTROL_APPS) {
-                    warnings.withdraw(packageName)
-                }
+                Intent.ACTION_PACKAGE_REMOVED -> if (withdrawsWarning(packageName, replacing)) warnings.withdraw(packageName)
             }
         }
 

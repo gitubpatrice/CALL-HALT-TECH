@@ -133,8 +133,11 @@ class DetectionEngine {
         val call = CallWindow.callAt(state, signal.at, settings.afterCallWindow)
         return when {
             call == null -> outsideCall(state, signal)
-            isSameBurst(state, signal, call) -> Evaluation(state)
-            else -> stopDuring(call, state, signal, settings)
+            !isSameBurst(state, signal, call) -> stopDuring(call, state, signal, settings)
+            // Absorbed by the screen still showing. A second remote-control app installed meanwhile keeps its warning and
+            // its journal line: the screen names the first one only (Claude review of 2026-11-09, 3).
+            signal.kind == SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> installWarning(state, signal, withStop = true)
+            else -> Evaluation(state)
         }
     }
 
@@ -175,11 +178,7 @@ class DetectionEngine {
 
     private fun outsideCall(state: DetectorState, signal: SensitiveAction): Evaluation =
         when (signal.kind) {
-            SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> Evaluation(
-                state = state,
-                journal = listOf(JournalEntry.Warning(signal.at.wall, WarningReason.REMOTE_CONTROL_INSTALLED, signal.source)),
-                decisions = listOf(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, signal.source)),
-            )
+            SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> installWarning(state, signal, withStop = false)
             // Outside a call these are ordinary: the user pays, checks the account, gets a code.
             SensitiveActionKind.CODE_MESSAGE,
             SensitiveActionKind.BANK_VALIDATION_REQUEST,
@@ -300,3 +299,13 @@ private fun CallSession.cutBy(restart: Moment): Moment {
     val phoneStart = restart.uptime?.let { restart.minus(it.sinceBoot) } ?: return restart
     return if (phoneStart.wall.isBefore(startedAt.wall)) restart else phoneStart
 }
+
+/**
+ * The warning that names a remote-control app installed, and its journal line (D-031): outside a call; or during one,
+ * with a STOP showing ([withStop], D-039) — a second app absorbed by the screen of the first.
+ */
+private fun installWarning(state: DetectorState, signal: SensitiveAction, withStop: Boolean) = Evaluation(
+    state = state,
+    journal = listOf(JournalEntry.Warning(signal.at.wall, WarningReason.REMOTE_CONTROL_INSTALLED, signal.source)),
+    decisions = listOf(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, signal.source, withStop)),
+)
