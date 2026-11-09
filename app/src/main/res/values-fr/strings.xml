@@ -75,7 +75,7 @@
     <string name="stop_channel_name">Écran STOP bloqué</string>
     <string name="stop_channel_description">Quand le téléphone empêche l\'écran STOP de s\'afficher : une notification qui l\'ouvre.</string>
     <string name="warning_channel_name">Applis de prise en main à distance</string>
-    <string name="warning_channel_description">Quand une appli qui permet à quelqu\'un d\'autre de voir ou de contrôler votre téléphone est installée hors appel.</string>
+    <string name="warning_channel_description">Quand une appli qui permet à quelqu\'un d\'autre de voir ou de contrôler votre téléphone est installée (pendant un appel, sans bruit, après l\'écran STOP).</string>
     <string name="warning_remote_installed_title">%1$s vient d\'être installée</string>
     <string name="warning_remote_installed_text">Cette appli permet à quelqu\'un d\'autre de voir ou de contrôler votre téléphone. Ni votre banque, ni la police, ni les impôts, ni votre assurance ne vous appelleront jamais pour vous la faire installer. Si vous ne l\'avez pas installée de vous-même, désinstallez-la.</string>
     <string name="stop_on_call">Vous êtes au téléphone.</string>

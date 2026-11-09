@@ -38,9 +38,10 @@ change that adds it to the app, and the build checks the app asks for nothing el
   what just happened (a code received, a request from your bank) — the STOP
   screen says it too, over the lock screen — but neither the number calling, nor the code, nor your bank's name. From
   Android 13, the phone asks for your consent; you can take it back in the app's notification settings. The app
-  sends one other notification, outside a call: when an app that lets someone else control the phone has just been
-  installed (AnyDesk, TeamViewer QuickSupport, RustDesk…), it names that app and opens its page in the phone's
-  settings, where it is uninstalled.
+  sends one other notification: when an app that lets someone else control the phone has just been installed
+  (AnyDesk, TeamViewer QuickSupport, RustDesk…), it names that app and opens its page in the phone's settings, where
+  it is uninstalled; during a call or just after it, the STOP screen says it first, and that notification, silent,
+  stays for after the call. It is taken away once the app is uninstalled.
 - **Vibration** (`VIBRATE`): two short buzzes as the STOP screen opens, to feel it with the phone at your ear. Granted
   at install, nothing asked; it reads nothing.
 - **Send SMS** (`SEND_SMS`): only if you choose someone close to alert, and asked on that screen, not by the

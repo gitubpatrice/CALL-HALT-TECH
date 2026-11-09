@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.filestech.callhalt.domain.model.CallChannel
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.StopChoice
+import com.filestech.callhalt.ui.stop.UNINSTALL_TRIGGERS
 
 /**
  * What one STOP screen stands for, from its first request to its answer — pure, so that every rule of the screen
@@ -30,11 +31,12 @@ data class StopSession(
     val installedApp: String? = null,
 ) {
     /**
-     * The app to uninstall, when the screen speaks of its installation ([shown]); null otherwise — a graver trigger's way
-     * out comes first.
+     * The app to uninstall, while the screen speaks of it ([shown]): installed, or at work since — the same weight, the
+     * newer taking the screen (Claude review of 2026-11-09, 1). Null under the accessibility access, graver: its way out
+     * comes first. [installedApp] only comes with the install trigger, which no lesser trigger can take the screen from.
      */
     val uninstallable: String?
-        get() = installedApp?.takeIf { shown == SensitiveActionKind.REMOTE_CONTROL_INSTALLED }
+        get() = installedApp?.takeIf { shown in UNINSTALL_TRIGGERS }
 
     /**
      * The trigger the screen speaks of: the gravest it absorbed, the newest among equals (publication audit, N-1). A

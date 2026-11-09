@@ -159,6 +159,21 @@ class StopSessionTest {
         assertThat(StopSession.of(code).replacedBy(installed).uninstallable).isEqualTo("com.anydesk.anydeskandroid")
     }
 
+    /**
+     * The app installed, then at work (its notification: a STOP of the same weight, the newer taking the screen): the
+     * screen speaks of the app at work, and still offers to uninstall it — whatever the order (Claude review of
+     * 2026-11-09, 1).
+     */
+    @Test
+    fun `the app at work taking the screen keeps the uninstall, in either order`() {
+        val atWork = remote.copy(id = 6)
+        assertThat(StopSession.of(installed).replacedBy(atWork).shown).isEqualTo(SensitiveActionKind.REMOTE_CONTROL_OPENED)
+        assertThat(StopSession.of(installed).replacedBy(atWork).uninstallable).isEqualTo("com.anydesk.anydeskandroid")
+        assertThat(StopSession.of(atWork).replacedBy(installed).uninstallable).isEqualTo("com.anydesk.anydeskandroid")
+        // At work alone, nothing was installed during this call: nothing is offered for uninstalling.
+        assertThat(StopSession.of(atWork).uninstallable).isNull()
+    }
+
     /** A graver trigger's way out comes first: the accessibility access is removed before anything else. */
     @Test
     fun `a graver trigger takes the uninstall away, the app kept for nothing else`() {

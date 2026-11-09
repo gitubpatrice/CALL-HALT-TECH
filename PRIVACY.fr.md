@@ -40,9 +40,11 @@ la même modification que dans l'appli, et le build vérifie que l'appli ne dema
   retirer). Elle dit ce qui vient d'arriver (un code reçu, une demande de
   votre banque) — l'écran STOP le dit aussi, par-dessus l'écran verrouillé — mais ni le numéro qui appelle, ni le
   code, ni le nom de votre banque. À partir d'Android 13, le téléphone vous demande votre accord ; vous pouvez le
-  retirer dans les réglages de notifications de l'appli. L'appli envoie une autre notification, hors appel : quand une
-  appli qui permet à quelqu'un d'autre de contrôler le téléphone vient d'être installée (AnyDesk, TeamViewer
-  QuickSupport, RustDesk…), elle la nomme et ouvre sa page dans les réglages du téléphone, où on la désinstalle.
+  retirer dans les réglages de notifications de l'appli. L'appli envoie une autre notification : quand une appli qui
+  permet à quelqu'un d'autre de contrôler le téléphone vient d'être installée (AnyDesk, TeamViewer QuickSupport,
+  RustDesk…), elle la nomme et ouvre sa page dans les réglages du téléphone, où on la désinstalle ; pendant un appel
+  ou juste après, l'écran STOP le dit d'abord, et cette notification, sans bruit, reste pour après l'appel. Elle est
+  retirée quand l'appli est désinstallée.
 - **Vibreur** (`VIBRATE`) : deux vibrations brèves quand l'écran STOP s'ouvre, pour le sentir le téléphone à l'oreille.
   Accordé à l'installation, sans question ; il ne lit rien.
 - **Envoyer des SMS** (`SEND_SMS`) : seulement si vous choisissez un proche à prévenir, et demandé sur cet écran, pas

@@ -628,15 +628,32 @@ class DetectionEngineTest {
             assertThat(steps.last().decisions.filterIsInstance<Decision.ShowWarning>()).isEmpty()
         }
 
+        /**
+         * A second app of the list installed while the first one's STOP shows: absorbed by that screen, which names the
+         * first only — the second keeps its own warning and journal line (Claude review of 2026-11-09, 3).
+         */
         @Test
-        fun `a repeat of the install absorbed by its STOP posts no second warning`() {
+        fun `a second install absorbed by the STOP showing keeps its warning and its journal line`() {
+            val second = SensitiveAction(at(4, 20), SensitiveActionKind.REMOTE_CONTROL_INSTALLED, source = "second")
+            val steps = run(callStarted(), action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4), second)
+
+            assertThat(steps.last().decisions)
+                .containsExactly(Decision.ShowWarning(WarningReason.REMOTE_CONTROL_INSTALLED, "second", withStop = true))
+            assertThat(steps.last().journal)
+                .containsExactly(JournalEntry.Warning(at(4, 20).wall, WarningReason.REMOTE_CONTROL_INSTALLED, "second"))
+            assertThat(steps.last().state.pendingStops).isEqualTo(steps[1].state.pendingStops)
+        }
+
+        @Test
+        fun `another repeat absorbed by its STOP is nothing`() {
             val steps = run(
                 callStarted(),
-                action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4),
-                action(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, minutes = 4, seconds = 20),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 4),
+                action(SensitiveActionKind.CODE_MESSAGE, minutes = 4, seconds = 20),
             )
 
             assertThat(steps.last().decisions).isEmpty()
+            assertThat(steps.last().journal).isEmpty()
         }
     }
 

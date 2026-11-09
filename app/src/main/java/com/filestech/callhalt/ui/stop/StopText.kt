@@ -43,7 +43,7 @@ internal fun stopText(
     installedApp: String? = null,
 ): StopText {
     val canHangUp = onCall && channel == CallChannel.CELLULAR && canEndCall
-    val uninstall = installedApp?.takeIf { trigger == SensitiveActionKind.REMOTE_CONTROL_INSTALLED }
+    val uninstall = installedApp?.takeIf { trigger in UNINSTALL_TRIGGERS }
     return StopText(
         situation = if (onCall) R.string.stop_on_call else R.string.stop_call_ended,
         happened = happened(trigger),
@@ -111,6 +111,12 @@ private fun buttons(trigger: SensitiveActionKind, onCall: Boolean, canHangUp: Bo
         )
     }
 }
+
+/**
+ * The triggers whose screen may offer to uninstall the remote-control app installed during the call (FN-3, D-039): its
+ * installation, and the app at work since — the same app, of the same weight on the screen (platform/stop/Gravest).
+ */
+internal val UNINSTALL_TRIGGERS = setOf(SensitiveActionKind.REMOTE_CONTROL_INSTALLED, SensitiveActionKind.REMOTE_CONTROL_OPENED)
 
 /** Someone may be seeing or controlling the phone: hanging up does not stop that. */
 private val REMOTE_TRIGGERS = setOf(

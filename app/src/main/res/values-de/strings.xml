@@ -73,7 +73,7 @@
     <string name="stop_channel_name">STOP-Bildschirm blockiert</string>
     <string name="stop_channel_description">Wenn das Telefon verhindert, dass der STOP-Bildschirm erscheint: eine Benachrichtigung, die ihn öffnet.</string>
     <string name="warning_channel_name">Fernsteuerungs-Apps</string>
-    <string name="warning_channel_description">Wenn außerhalb eines Anrufs eine App installiert wird, mit der jemand anderes Ihr Telefon sehen oder steuern kann.</string>
+    <string name="warning_channel_description">Wenn eine App installiert wird, mit der jemand anderes Ihr Telefon sehen oder steuern kann (während eines Anrufs lautlos, nach dem STOP-Bildschirm).</string>
     <string name="warning_remote_installed_title">%1$s wurde gerade installiert</string>
     <string name="warning_remote_installed_text">Mit dieser App kann jemand anderes Ihr Telefon sehen oder steuern. Ihre Bank, die Polizei, das Finanzamt oder Ihre Versicherung werden Sie niemals anrufen, um Sie zu bitten, sie zu installieren. Wenn Sie sie nicht aus eigenem Antrieb installiert haben, deinstallieren Sie sie.</string>
     <string name="stop_on_call">Sie telefonieren gerade.</string>
