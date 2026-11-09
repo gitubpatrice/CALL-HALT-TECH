@@ -108,13 +108,18 @@ class WarningNotifier @Inject constructor(@ApplicationContext private val contex
      * action ([systemSettings]); else the phone's settings; else nothing to open, the text says what to do.
      */
     private fun appPage(packageName: String): PendingIntent? {
-        val page = uninstallPages(packageName).firstNotNullOfOrNull { systemSettings(context, it) } ?: return null
-        return PendingIntent.getActivity(
-            context,
-            0,
-            page.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+        // A plain loop, not firstNotNullOfOrNull: CodeQL reads that one as handing back the page as it was, without the
+        // settings' package systemSettings sets — an "implicit PendingIntent" it is not (alert of 2026-11-09, PR #55).
+        for (page in uninstallPages(packageName)) {
+            val own = systemSettings(context, page) ?: continue
+            return PendingIntent.getActivity(
+                context,
+                0,
+                own.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        }
+        return null
     }
 
     /** The permission (Android 13+), the app's notifications on, and this channel not turned off by the user. */
