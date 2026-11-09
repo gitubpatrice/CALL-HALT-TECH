@@ -42,6 +42,18 @@ class HistoryTextOnDeviceTest {
         val answers = resources.getString(R.string.history_answer_left) + resources.getString(R.string.history_then) +
             resources.getString(R.string.stop_hang_up)
         assertThat(lines[3]).isEqualTo(resources.getString(R.string.history_answer, answers))
+        // The separator itself, as read: its quotes only keep its spaces, Android drops them (GPT review of 2026-11-09, 1).
+        val then = resources.getString(R.string.history_then)
+        assertThat(then).doesNotContain("\"")
+        assertThat(then).matches(", \\S.* ")
+    }
+
+    /** The date in the phone's zone, with that zone's offset: what a bank elsewhere needs to read it. */
+    @Test
+    fun theDateSaysItsOffset() {
+        val date = text.lines(Alert.Stop(at, SensitiveActionKind.CODE_MESSAGE, source = null)).first()
+
+        assertThat(date).matches(".+ \\(UTC([+-]\\d\\d:\\d\\d)?\\)")
     }
 
     /** A remote-control app by our list's name; a STOP the phone blocked, said; one unanswered, said. */

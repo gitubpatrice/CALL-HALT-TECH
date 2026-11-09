@@ -156,7 +156,9 @@ ouvert : la superposition et la liste blanche de veille trouvées retirées sur 
 **Puis l'historique des alertes** (D-041 ; Patrice, 2026-11-09 : une alerte et sa réponse par ligne, tout partager,
 un bouton sur l'accueil) : « Historique des alertes » sur l'accueil ; chaque STOP avec ce qu'il était, l'appli d'où il
 venait, et ses réponses dans l'ordre ; les avertissements ; « Partager » remet tout l'historique en texte au menu de
-partage d'Android. Mesuré sur l'émulateur Android 16 ; tests du regroupement (JVM) et des mots (appareil).
+partage d'Android ; chaque date avec son décalage UTC. Mesuré sur l'émulateur Android 16 ; relectures Claude (5
+corrigés, dont le journal lu par `id` et non par l'heure civile) et GPT Luna (0,015 $ : le fuseau lu à chaque date) ;
+**669 tests**.
 **Ensuite** : les mots d'E-2 (README) restent à proposer. **Puis, avant la
 relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
 nouveaux : FN-2, E-1, premier SMS, « quitté sans réponse », « Désinstaller », N-3), et un
@@ -461,7 +463,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 660 tests sur ordinateur, 40 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 669 tests sur ordinateur, 45 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
