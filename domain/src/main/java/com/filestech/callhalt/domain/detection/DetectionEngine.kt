@@ -179,8 +179,9 @@ class DetectionEngine {
     private fun outsideCall(state: DetectorState, signal: SensitiveAction): Evaluation =
         when (signal.kind) {
             SensitiveActionKind.REMOTE_CONTROL_INSTALLED -> installWarning(state, signal, withStop = false)
-            // Outside a call these are ordinary: the user pays, checks the account, gets a code.
+            // Outside a call these are ordinary: the user pays, checks the account, gets a code — or many texts at once.
             SensitiveActionKind.CODE_MESSAGE,
+            SensitiveActionKind.SMS_BURST,
             SensitiveActionKind.BANK_VALIDATION_REQUEST,
             SensitiveActionKind.BANK_APP_OPENED,
             SensitiveActionKind.REMOTE_CONTROL_OPENED,

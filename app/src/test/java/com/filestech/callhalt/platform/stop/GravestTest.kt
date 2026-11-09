@@ -7,6 +7,7 @@ import com.filestech.callhalt.domain.model.SensitiveActionKind.BANK_VALIDATION_R
 import com.filestech.callhalt.domain.model.SensitiveActionKind.CODE_MESSAGE
 import com.filestech.callhalt.domain.model.SensitiveActionKind.REMOTE_CONTROL_INSTALLED
 import com.filestech.callhalt.domain.model.SensitiveActionKind.REMOTE_CONTROL_OPENED
+import com.filestech.callhalt.domain.model.SensitiveActionKind.SMS_BURST
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
@@ -20,6 +21,7 @@ class GravestTest {
         REMOTE_CONTROL_OPENED to 1,
         REMOTE_CONTROL_INSTALLED to 1,
         CODE_MESSAGE to 0,
+        SMS_BURST to 0,
         BANK_VALIDATION_REQUEST to 0,
         BANK_APP_OPENED to 0,
     )

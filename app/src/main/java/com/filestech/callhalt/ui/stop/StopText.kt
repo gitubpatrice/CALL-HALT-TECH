@@ -57,6 +57,7 @@ internal fun stopText(
 @StringRes
 private fun happened(trigger: SensitiveActionKind): Int = when (trigger) {
     SensitiveActionKind.CODE_MESSAGE -> R.string.stop_trigger_code
+    SensitiveActionKind.SMS_BURST -> R.string.stop_trigger_sms_burst
     SensitiveActionKind.BANK_VALIDATION_REQUEST -> R.string.stop_trigger_bank_validation
     SensitiveActionKind.BANK_APP_OPENED -> R.string.stop_trigger_bank_app
     SensitiveActionKind.REMOTE_CONTROL_OPENED -> R.string.stop_trigger_remote_opened

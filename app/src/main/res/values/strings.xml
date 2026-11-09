@@ -112,6 +112,7 @@
     <string name="stop_call_ended">Your call has just ended.</string>
     <!-- What just happened, one text per trigger (SensitiveActionKind). -->
     <string name="stop_trigger_code">You have just received a code.</string>
+    <string name="stop_trigger_sms_burst">You are receiving many SMS messages at once, from different numbers: a code may be hidden among them.</string>
     <string name="stop_trigger_bank_validation">Your bank\'s app is asking you to approve a transaction.</string>
     <string name="stop_trigger_bank_app">Your bank\'s app has just opened.</string>
     <string name="stop_trigger_remote_opened">An app that lets someone else see or control your phone is running.</string>
@@ -160,6 +161,7 @@
     <string name="guardian_sms_set_up">Automatic message from the Call Halt Tech app: this phone will text you if the STOP screen appears, during a call or just after it, a possible sign of a scam.</string>
     <string name="guardian_sms_removed">Automatic message from the Call Halt Tech app: this phone will no longer alert you. If this surprises you, call this number.</string>
     <string name="guardian_sms_what_code">a code received by SMS</string>
+    <string name="guardian_sms_what_sms_burst">many SMS messages received at once</string>
     <string name="guardian_sms_what_bank_validation">a request from the bank to approve a transaction</string>
     <string name="guardian_sms_what_bank_app">the bank\'s app opened</string>
     <string name="guardian_sms_what_remote_installed">a remote-control app installed</string>
