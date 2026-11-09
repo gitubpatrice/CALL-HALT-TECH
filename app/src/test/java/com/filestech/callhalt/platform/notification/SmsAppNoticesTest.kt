@@ -32,25 +32,40 @@ class SmsAppNoticesTest {
         assertThat(notices.shown.value).containsExactly(SMS, 1)
     }
 
+    /** [count] notifications of [SMS] shown, all of them older than the window. */
+    private fun old(count: Int) = (0 until count).associate { "old $it" to now - RECENT_MS - 1 }
+
     /** A phone that keeps its unread messages for days, one more during a call: not "many at once". */
     @Test
     fun `past 30 with few of them new is no burst`() {
-        notices.connected(SMS, (0 until 28).associate { "old $it" to now - RECENT_MS - 1 })
+        notices.connected(SMS, old(28), now)
         assertThat(post(RECENT_MIN - 1)).isEmpty()
         assertThat(notices.shown.value[SMS]).isEqualTo(28 + RECENT_MIN - 1)
     }
 
     @Test
     fun `past 30 with enough of them new is one`() {
-        notices.connected(SMS, (0 until 30 - RECENT_MIN).associate { "old $it" to now - RECENT_MS - 1 })
+        notices.connected(SMS, old(30 - RECENT_MIN), now)
         assertThat(post(RECENT_MIN)).containsExactly(RECENT_MIN - 1)
     }
 
     /** Already past 30 by a few new ones when the flood starts: the next mark, 45, catches it, before Android's cap. */
     @Test
     fun `a flood on a phone just under 30 is caught past 45`() {
-        notices.connected(SMS, (0 until 28).associate { "old $it" to now - RECENT_MS - 1 })
+        notices.connected(SMS, old(28), now)
         assertThat(post(22)).containsExactly(16)
+    }
+
+    /**
+     * Conversations already shown that get a new message each are not new notifications: with one more, past 30, it is
+     * no burst (GPT review of 2026-11-09, 2).
+     */
+    @Test
+    fun `notifications updated keep the time they first came`() {
+        notices.connected(SMS, old(29), now)
+        (0 until RECENT_MIN).forEach { assertThat(notices.posted(SMS, "old $it", now + it)).isFalse() }
+        assertThat(notices.posted(SMS, "new", now + 10)).isFalse()
+        assertThat(notices.shown.value[SMS]).isEqualTo(30)
     }
 
     /** Messages read take their notifications away: a new flood is a new burst. */
@@ -64,12 +79,28 @@ class SmsAppNoticesTest {
 
     /** At connection, what is shown replaces what was kept: removals missed while the listener was away. */
     @Test
-    fun `the listener connecting counts again from what is shown, without a burst`() {
-        post(20)
-        notices.connected(SMS, (0 until 40).associate { "shown $it" to now })
-        assertThat(notices.shown.value[SMS]).isEqualTo(40)
-        notices.connected(null, emptyMap())
+    fun `the listener connecting counts again from what is shown`() {
+        post(35)
+        assertThat(notices.connected(SMS, old(20), now)).isFalse()
+        assertThat(notices.shown.value[SMS]).isEqualTo(20)
+        assertThat(notices.connected(null, emptyMap(), now)).isFalse()
         assertThat(notices.shown.value).isEmpty()
+    }
+
+    /** A flood that came while the listener was away came during the call perhaps (GPT review of 2026-11-09, 1). */
+    @Test
+    fun `a flood found at connection is a burst, old notifications are not`() {
+        notices.connected(SMS, old(10), now)
+        val flooded = old(10) + (0 until 25).associate { "new $it" to now - 60_000L }
+        assertThat(notices.connected(SMS, flooded, now)).isTrue()
+        assertThat(notices.connected(SMS, old(40), now)).isFalse()
+    }
+
+    /** The civil clock moved forward since: a notification "posted" after now counts as posted now, not as unknown. */
+    @Test
+    fun `a time after the present is taken as the present`() {
+        val ahead = (0 until 30).associate { "ahead $it" to now + RECENT_MS * 3 }
+        assertThat(notices.connected(SMS, ahead, now)).isTrue()
     }
 
     @Test

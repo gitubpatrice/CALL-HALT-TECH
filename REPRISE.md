@@ -149,7 +149,8 @@ plafonne à 50) ; le STOP « Vous recevez beaucoup de SMS d'un coup : un code es
 de Patrice, sans « de numéros différents ») quand leur nombre franchit 30, puis 45, avec 5 arrivées en 10 minutes,
 pendant un appel ou juste après ; dès 45, l'accueil dit « Votre appli SMS a trop de messages non lus… » (Patrice :
 « oui, sur l'accueil »). Une première version (10 conversations en 2 minutes) refaite après l'agent des faux
-positifs : SMS Tech fait une notification par message. Mesuré sur l'émulateur Android 16 (Google Messages). P-23
+positifs : SMS Tech fait une notification par message ; puis GPT Luna (0,014 $ : 3 corrigés, dont la rafale venue
+pendant l'absence de l'écouteur). Mesuré sur l'émulateur Android 16 (Google Messages) ; **660 tests**. P-23
 ouvert : la superposition et la liste blanche de veille trouvées retirées sur l'émulateur, sans cause.
 **Ensuite** : l'écran Historique ; les mots d'E-2 (README) restent à proposer. **Puis, avant la
 relecture finale** : un passage `android-i18n-strings-cleaner` (parité des 5 langues pour tous les textes
@@ -455,7 +456,7 @@ com.filestech.callhalt.debug.BANK_REQUEST --ei id 1 -n com.filestech.callhalt.de
 - Ce qui manque encore : la liste « avant toute publication » ci-dessus (les applis de prise en main, installées ou en
   marche, et un service d'accessibilité activé sont vus depuis le 2026-11-05, D-031 à D-033 ; le **SMS au proche** est
   fait le 2026-11-07, D-034 ; le **repli par notification**, P-19, le 2026-11-03 : D-024).
-- Vérifications : 644 tests sur ordinateur, 40 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
+- Vérifications : 660 tests sur ordinateur, 40 tests sur téléphone (Galaxy S9 sous Android 10, Galaxy S24 FE
   sous Android 16, émulateurs), lint et detekt à zéro, CI verte, CodeQL sans alerte.
 - Dépôt **public** : https://github.com/gitubpatrice/CALL-HALT-TECH — branche `main` protégée (la CI doit
   être verte avant toute fusion), analyse des secrets et signalement privé de failles activés.
