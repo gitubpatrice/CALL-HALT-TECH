@@ -172,6 +172,15 @@ Fusionné (#58).
 son texte devenu faux depuis D-034 corrigé (un faux STOP envoie aussi un SMS au proche, borné).
 **E-2** (Patrice, 2026-11-09 : « préciser dans la phrase ») : la méthode du README dit « valider une opération
 demandée par la banque (aujourd'hui, la demande Sécur'Pass des banques du groupe BPCE) ».
+**POINT D'ARRÊT du 2026-11-09 (Patrice : « consigne tout et je compacte »)** : C-2, S-2 et E-2 sont dans la
+**PR #59** (`fix/stop-overlays`), poussée, CI lancée, **pas encore fusionnée**. **Reprendre par** : (1) la CI de
+#59 verte (CodeQL compris) → `gh pr merge 59 --rebase --delete-branch` ; (2) les points faibles de l'audit (lignes
+« Faible » de `relectures/2026-11-07-audit-publication-1.md`, axes A, B, D et E : en trier ce qui reste vrai, beaucoup
+sont déjà faits) ; (3) deux relectures par un natif (DE/IT/ES : les libellés d'Android paraphrasés, « Warnung » /
+« Avviso » pour deux choses) ; (4) la relecture finale B3 (GPT Sol et Gemini) et la note sur la grille ; (5) les
+mesures restantes sur de vrais téléphones (P-23 sur le S24, FN-4 et l'horloge monotone écran éteint, réception du SMS
+au proche sur une vraie SIM, Samsung Messages et N-3). L'émulateur Android 16 (revue-api36) : accès de l'appli tous
+rendus (superposition et veille, perdus sans cause, P-23), RustDesk installé, Google Messages appli SMS par défaut.
 **Ensuite** : les points faibles de l'audit ; puis la relecture finale
 B3 (GPT Sol et Gemini) et la note. Le gate local est celui de la CI : `:app:assembleDebug :domain:test :app:testDebugUnitTest :app:lintDebug detekt`
 (`testDebugUnitTest` seul ne lance pas les tests du domaine).
