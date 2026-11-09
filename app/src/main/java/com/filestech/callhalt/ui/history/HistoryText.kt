@@ -29,11 +29,14 @@ internal class HistoryText(private val resources: Resources) {
         .appendOffset("+HH:MM", "")
         .appendLiteral(")")
         .toFormatter(resources.configuration.locales[0])
-        .withZone(ZoneId.systemDefault())
 
-    /** The alert's lines, its time first. */
+    /**
+     * The alert's lines, its time first — in the phone's zone as it is now, read at each call: a zone changed while the
+     * screen is open is not part of its configuration, and the text shared must not keep the old one (GPT review of
+     * 2026-11-09, 2).
+     */
     fun lines(alert: Alert): List<String> = buildList {
-        add(dates.format(alert.at))
+        add(dates.format(alert.at.atZone(ZoneId.systemDefault())))
         when (alert) {
             is Alert.Stop -> {
                 add(resources.getString(R.string.history_stop, resources.getString(what(alert.trigger))))
