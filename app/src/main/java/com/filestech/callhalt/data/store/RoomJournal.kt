@@ -8,13 +8,14 @@ import javax.inject.Singleton
 
 /**
  * The journal, read for the history screen (PROJET.md, function 8; publication audit, #1; D-041): its lines in the order
- * they were written, the oldest first — what [com.filestech.callhalt.domain.history.alerts] expects —, updated as new
- * ones are. Read only: the detector alone writes it ([RoomDetectorStore]). A line an older or newer version wrote that
- * this one cannot read is left out.
+ * they were written ([DetectorDao.journal]: by id, whatever the civil clock said) — what
+ * [com.filestech.callhalt.domain.history.alerts] expects —, updated as new ones are. Read only: the detector alone
+ * writes it ([RoomDetectorStore]). A line an older or newer version wrote that this one cannot read is left out
+ * (D-041, a limit).
  */
 @Singleton
 class RoomJournal @Inject constructor(private val database: CallHaltDatabase) {
 
     val entries: Flow<List<JournalEntry>> =
-        database.detectorDao().journal().map { rows -> rows.asReversed().mapNotNull(DetectorMapping::journalEntry) }
+        database.detectorDao().journal().map { rows -> rows.mapNotNull(DetectorMapping::journalEntry) }
 }

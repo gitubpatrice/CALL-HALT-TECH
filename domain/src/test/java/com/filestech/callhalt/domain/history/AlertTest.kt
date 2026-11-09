@@ -75,6 +75,53 @@ class AlertTest {
         assertThat((history.single() as Alert.Stop).notShown).isTrue()
     }
 
+    /** FN-4: seen, left, then its return blocked by the phone — this screen was shown (review of 2026-11-09, 3). */
+    @Test
+    fun `a return not shown does not make the screen seen read as never shown`() {
+        val history = alerts(
+            listOf(stop(0), JournalEntry.Answer(at(1), CODE_MESSAGE, StopChoice.LEFT), JournalEntry.NotShown(at(2), CODE_MESSAGE)),
+        )
+
+        val stop = history.single() as Alert.Stop
+        assertThat(stop.notShown).isFalse()
+        assertThat(stop.answers).containsExactly(StopChoice.LEFT)
+    }
+
+    /**
+     * Read in the order written, never by time: a civil clock set back between a STOP and its answer gives the answer an
+     * earlier time; it is still that STOP's (review of 2026-11-09, 1).
+     */
+    @Test
+    fun `an answer stamped before its STOP by a clock set back is still its own`() {
+        val history = alerts(
+            listOf(
+                stop(0),
+                stop(10),
+                JournalEntry.Answer(at(9), CODE_MESSAGE, StopChoice.HANG_UP),
+            ),
+        )
+
+        assertThat(history.map { (it as Alert.Stop).answers })
+            .containsExactly(listOf(StopChoice.HANG_UP), emptyList<StopChoice>())
+            .inOrder()
+    }
+
+    /** One screen standing for two triggers: one answer per trigger, each to its own STOP. */
+    @Test
+    fun `a screen that stood for two triggers gives each STOP its answer`() {
+        val history = alerts(
+            listOf(
+                stop(0),
+                stop(1, BANK_VALIDATION_REQUEST),
+                JournalEntry.Answer(at(2), CODE_MESSAGE, StopChoice.HANG_UP),
+                JournalEntry.Answer(at(2), BANK_VALIDATION_REQUEST, StopChoice.HANG_UP),
+            ),
+        )
+
+        val answers = history.map { (it as Alert.Stop).answers }
+        assertThat(answers).containsExactly(listOf(StopChoice.HANG_UP), listOf(StopChoice.HANG_UP))
+    }
+
     /** Its STOP was older than the lines kept (14 months): nothing to attach it to. */
     @Test
     fun `an answer without its STOP is left out`() {

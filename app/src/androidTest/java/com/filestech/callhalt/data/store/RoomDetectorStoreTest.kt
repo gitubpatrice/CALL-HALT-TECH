@@ -16,6 +16,7 @@ import com.filestech.callhalt.domain.model.ProtectionSettings
 import com.filestech.callhalt.domain.model.SensitiveAction
 import com.filestech.callhalt.domain.model.SensitiveActionKind
 import com.filestech.callhalt.domain.model.Signal
+import com.filestech.callhalt.domain.model.StopChoice
 import com.filestech.callhalt.domain.model.Uptime
 import com.filestech.callhalt.domain.model.WarningReason
 import com.google.common.truth.Truth.assertThat
@@ -128,6 +129,20 @@ class RoomDetectorStoreTest {
         val decisions = newStore().process(SensitiveAction(t0.plusSeconds(120), SensitiveActionKind.CODE_MESSAGE))
 
         assertThat(decisions.filterIsInstance<Decision.ShowStop>()).hasSize(1)
+    }
+
+    /**
+     * The history reads the journal in the order it was written (D-041): a civil clock set back between a STOP and its
+     * answer stamps the answer earlier; read by time, it would go before its STOP (review of 2026-11-09, 1).
+     */
+    @Test
+    fun theHistoryReadsTheJournalInTheOrderItWasWritten() = runTest {
+        val stop = JournalEntry.Stop(t0.wall, SensitiveActionKind.CODE_MESSAGE, "com.example.sms", Counterpart.Unreadable)
+        val answer = JournalEntry.Answer(t0.wall.minusSeconds(30), SensitiveActionKind.CODE_MESSAGE, StopChoice.HANG_UP)
+        database.detectorDao().insertJournal(listOf(DetectorMapping.journalRow(stop)))
+        database.detectorDao().insertJournal(listOf(DetectorMapping.journalRow(answer)))
+
+        assertThat(RoomJournal(database).entries.first()).containsExactly(stop, answer).inOrder()
     }
 
     @Test

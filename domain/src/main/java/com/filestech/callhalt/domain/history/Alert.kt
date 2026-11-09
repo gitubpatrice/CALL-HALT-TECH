@@ -32,9 +32,10 @@ sealed interface Alert {
 
 /**
  * The journal's lines as alerts, the newest first (Patrice, 2026-11-09: each STOP with its answer, on one line).
- * [entries] in the order they were written: a STOP and the "not shown" of the same decision carry the same time. Each
- * answer, and each "not shown", goes to the latest STOP of its trigger; one with no STOP before it (written before the
- * oldest line kept) is left out.
+ * [entries] in the order they were written — never sorted by their times: a STOP and the "not shown" of the same decision
+ * carry the same one, and a civil clock set back between a STOP and its answer would put the answer first (review of
+ * 2026-11-09, 1). Each answer, and each "not shown", goes to the latest STOP of its trigger; one with no STOP before it
+ * (written before the oldest line kept) is left out.
  */
 fun alerts(entries: List<JournalEntry>): List<Alert> {
     val alerts = mutableListOf<Alert>()
@@ -49,7 +50,8 @@ fun alerts(entries: List<JournalEntry>): List<Alert> {
                 alerts += Alert.Stop(entry.at, entry.trigger, entry.source)
             }
             is JournalEntry.Answer -> update(entry.trigger) { it.copy(answers = it.answers + entry.choice) }
-            is JournalEntry.NotShown -> update(entry.trigger) { it.copy(notShown = true) }
+            // Not shown after an answer: the screen it came back as (FN-4), not this one, which was seen and left.
+            is JournalEntry.NotShown -> update(entry.trigger) { if (it.answers.isEmpty()) it.copy(notShown = true) else it }
             is JournalEntry.Warning -> alerts += Alert.Warning(entry.at, entry.reason, entry.source)
         }
     }

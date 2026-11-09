@@ -1,6 +1,5 @@
 package com.filestech.callhalt.ui.history
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -83,14 +82,26 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
 @Composable
 private fun AlertCard(lines: List<String>) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        // Read as one by TalkBack: the time alone, then each line apart, said nothing (review of 2026-11-09, 7).
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .semantics(mergeDescendants = true) {},
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Text(text = lines.first(), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             lines.drop(1).forEach { line -> Text(text = line, style = MaterialTheme.typography.bodyLarge) }
         }
     }
 }
 
-/** Android's share menu, with the history as plain text: the user picks where it goes, or nothing. */
+/**
+ * Android's share menu, with the history as plain text: the user picks where it goes, or nothing. A history of thousands
+ * of alerts would pass the size of what one app may hand another (about 1 MB): the phone refuses, the app goes on
+ * (review of 2026-11-09, 4; D-041, a limit).
+ */
+// Any failure of the phone's own: ActivityNotFoundException, or a RuntimeException around TransactionTooLargeException.
+@Suppress("TooGenericExceptionCaught")
 private fun share(context: Context, history: String) {
     val send = Intent(Intent.ACTION_SEND)
         .setType("text/plain")
@@ -98,7 +109,7 @@ private fun share(context: Context, history: String) {
         .putExtra(Intent.EXTRA_TEXT, history)
     try {
         context.startActivity(Intent.createChooser(send, null))
-    } catch (none: ActivityNotFoundException) {
-        Timber.w(none, "No app to share the history with")
+    } catch (refused: RuntimeException) {
+        Timber.w(refused, "History not shared (%d characters)", history.length)
     }
 }
