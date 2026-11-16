@@ -7,7 +7,7 @@
 # Capped below 2.4.20: CodeQL 2.27 refuses to compile from there (measured on Agenda Tech). The root
 # build.gradle.kts pins the Kotlin Gradle Plugin to this EXACT version with `strictly`.
 kotlin                  = "2.4.10"
-ksp                     = "2.3.12"
+ksp                     = "2.3.14"
 
 # --- Android Gradle Plugin (Kotlin is built into AGP 9) ---
 agp                     = "9.4.1"
@@ -28,7 +28,7 @@ composeBom              = "2026.09.00"
 # AbstractMethodError in every migration test). App Manager Tech's number.
 room                    = "2.8.5"
 datastore               = "1.3.0"
-kotlinxSerialization    = "1.12.0"
+kotlinxSerialization    = "1.13.0"
 
 # --- Hilt ---
 hilt                    = "2.60.1"
